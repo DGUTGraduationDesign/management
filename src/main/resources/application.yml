@@ -1,0 +1,66 @@
+server:
+  port: 8090
+  context-path: ""
+
+#spring 配置
+spring:
+  resources:
+    static-locations: classpath:static/
+  datasource:
+    url: jdbc:mysql://localhost:3306/management?characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 3
+      min-idle: 1
+      max-active: 20
+      test-on-borrow: true
+      stat-view-servlet:
+        allow: true
+
+#mybatis 配置
+mybatis:
+  type-aliases-package: cn.itheima.pojo
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+
+mapper:
+  mappers: cn.management.util.MyMapper
+  not-empty: false
+  identity: MYSQL
+
+# 分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+#模板引擎配置
+thymeleaf:
+  cache: false
+  check-template-location: true
+  content-type: text/html
+  enabled: true
+  encoding: utf-8
+  mode: HTML5
+  prefix: classpath:/templates/
+  suffix: .html
+
+# 开启调试模式，打印sql
+logging:
+  level:
+    com:
+      alibaba:
+        druid:
+          proxy:
+            jdbc: debug
+      monda:
+        demo: debug
+    org:
+      springframework:
+        web: debug
+#      mybatis: debug
+
