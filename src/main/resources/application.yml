@@ -7,7 +7,7 @@ spring:
   resources:
     static-locations: classpath:static/
   datasource:
-    url: jdbc:mysql://localhost:3306/management?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/management?useUnicode=true&characterEncoding=utf8&useSSL=false
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver

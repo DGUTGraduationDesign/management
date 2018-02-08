@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -72,6 +73,7 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     /**
      * 是否为部门负责人
      */
+    @Column(name = "is_dept_head")
     private Boolean deptHead;
     
     /**
@@ -87,6 +89,7 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     /**
      * 职位名称
      */
+    @Transient
     private String postName;
 
     /**
@@ -97,6 +100,7 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     /**
      * 部门名称
      */
+    @Transient
     private String deptName;
 
     /**
