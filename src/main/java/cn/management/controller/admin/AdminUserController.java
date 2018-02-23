@@ -45,7 +45,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
     	Example example = new Example(AdminUser.class);
     	Example.Criteria criteria = example.createCriteria();
     	if (StringUtils.isNotBlank(adminUser.getRealName())) {
-    		criteria.andLike("real_name", "%" + adminUser.getRealName() + "%");
+    		criteria.andLike("realName", "%" + adminUser.getRealName() + "%");
     	}
     	if (StringUtils.isNotBlank(adminUser.getNumber())) {
     		criteria.andEqualTo("number", adminUser.getNumber());
