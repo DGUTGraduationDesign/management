@@ -125,6 +125,14 @@ public interface BaseService<M extends MyMapper, E extends BaseEntity> {
     List<E> getItemsByIds(List ids);
 
     /**
+     * 使用 Example 查询对象查询符合条件的记录数
+     * 
+     * @param example
+     * @return
+     */
+	int countByCondition(Example example);
+
+    /**
      * 根据主键更新属性不为null的值
      * 
      * @param entity
@@ -141,12 +149,12 @@ public interface BaseService<M extends MyMapper, E extends BaseEntity> {
     boolean fullUpdate(E entity);
 
     /**
-     * 使用 Example 查询对象进行更新
+     * 使用 Example 查询对象进行更新(不包含null值的属性)
      * 
      * @param entity
      * @param example
      * @return
      */
-    boolean updateByExample(E entity, Example example);
+    boolean updateByExampleSelective(E entity, Example example);
 
 }

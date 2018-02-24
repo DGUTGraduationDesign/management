@@ -119,6 +119,11 @@ public class BaseServiceImpl<M extends MyMapper, E extends BaseEntity> implement
     }
 
     @Override
+    public int countByCondition(Example example) {
+    	return mapper.selectCountByExample(example);
+    }
+    
+    @Override
     @Transactional
     public boolean update(E entity) {
         if (null != entity.getId()) {
@@ -138,8 +143,8 @@ public class BaseServiceImpl<M extends MyMapper, E extends BaseEntity> implement
 
     @Override
     @Transactional
-    public boolean updateByExample(E entity, Example example) {
-        return mapper.updateByExample(entity, example) >= 1;
+    public boolean updateByExampleSelective(E entity, Example example) {
+        return mapper.updateByExampleSelective(entity, example) >= 1;
     }
 
 }
