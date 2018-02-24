@@ -41,8 +41,9 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
      * 更改员工信息
      * @param adminUser
      * @return
+     * @throws SysException 
      */
-    boolean doUpdate(AdminUser adminUser);
+    boolean doUpdate(AdminUser adminUser) throws SysException;
 
     /**
      * 逻辑删除，更新表中del_flag字段为1

@@ -82,10 +82,11 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * 更改员工信息
      * @param adminUser
      * @return
+     * @throws SysException 
      */
     @RequestMapping("/edit")
     @ResponseBody
-    public Result edit(@RequestBody AdminUser adminUser) {
+    public Result edit(@RequestBody AdminUser adminUser) throws SysException {
         if (service.doUpdate(adminUser)) {
             return new Result(ResultEnum.SUCCESS);
         } else {

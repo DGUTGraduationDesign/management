@@ -61,7 +61,15 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 
 	@Override
 	@Transactional
-	public boolean doUpdate(AdminUser adminUser) {
+	public boolean doUpdate(AdminUser adminUser) throws SysException {
+		//判断要编辑的数据是否存在
+		AdminUser condition = new AdminUser();
+		condition.setId(adminUser.getId());
+		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+		AdminUser findUser = getItem(condition);
+		if (findUser == null) {
+			throw new SysException("所编辑数据不存在！");
+		}
 		//用户名不可更改
 		adminUser.setLoginName(null);
 		//判定是否修改密码
