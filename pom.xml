@@ -5,6 +5,7 @@
     <groupId>cn.management.demo</groupId>
     <artifactId>management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!-- 打包时改为war -->
     <packaging>jar</packaging>
 
     <name>management</name>
@@ -30,6 +31,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 移除嵌入式tomcat插件，打包成war时放开
+		    <exclusions>
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions> -->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -113,12 +121,20 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.5.4</version>
         </dependency>
-        
+        <!-- JSON工具类 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.28</version>
+            <version>1.2.31</version>
         </dependency>
+        
+        <!-- 打包成war时用 -->
+        <dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>3.1.0</version>
+		    <scope>provided</scope>
+		</dependency>
     </dependencies>
 
     <build>
@@ -131,6 +147,26 @@
                     <addResources>true</addResources>
                 </configuration>
             </plugin>
+            
+            <!-- war打包插件, 设定war包名称不带版本号 -->   
+	        <plugin>   
+	            <groupId>org.apache.maven.plugins</groupId>   
+	            <artifactId>maven-war-plugin</artifactId>   
+	            <version>2.5</version>   
+	            <configuration>   
+	                <warName>${project.artifactId}</warName>   
+	                <webResources>   
+	                    <resource>   
+	                        <directory>src/main/webapp</directory>   
+	                        <includes>   
+	                            <include>*.*</include>   
+	                            <include>**/*.*</include>    
+	                        </includes>    
+	                        <filtering>true</filtering>    
+	                    </resource>    
+	                </webResources>    
+	            </configuration>    
+	        </plugin>
         </plugins>
     </build>
 </project>
