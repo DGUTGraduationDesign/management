@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.management.enums.ResultEnum;
+import cn.management.exception.SysException;
 import cn.management.util.Result;
 
 /**
@@ -24,6 +25,9 @@ public class ExceptionHandler {
     @ResponseBody
     public Result handle(HttpServletRequest request, HttpServletResponse response, Exception e) {
         logger.error(e.getMessage(), e);
+    	if (e instanceof SysException) {
+            return new Result(ResultEnum.DATA_ERROR.getCode(), e.getMessage());
+        }
         return new Result(ResultEnum.UNKONW_ERROR);
     }
     

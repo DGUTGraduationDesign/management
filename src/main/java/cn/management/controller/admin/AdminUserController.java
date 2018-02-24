@@ -1,6 +1,5 @@
 package cn.management.controller.admin;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,11 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageInfo;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.admin.AdminUser;
+import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
+import cn.management.exception.SysException;
 import cn.management.service.AdminUserService;
 import cn.management.util.Result;
 import tk.mybatis.mapper.entity.Example;
@@ -37,48 +37,45 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @param adminUser
      * @return
      */
-    @RequestMapping("list")
+    @RequestMapping("/index")
     @ResponseBody
-    public Result list(@RequestBody Map<String, Object> models) {
-    	AdminUser adminUser = JSON.parseObject((String)models.get("user"), AdminUser.class);
-    	Integer page = (Integer) models.get("page");
-    	Example example = new Example(AdminUser.class);
-    	Example.Criteria criteria = example.createCriteria();
-    	if (StringUtils.isNotBlank(adminUser.getRealName())) {
-    		criteria.andLike("realName", "%" + adminUser.getRealName() + "%");
-    	}
-    	if (StringUtils.isNotBlank(adminUser.getNumber())) {
-    		criteria.andEqualTo("number", adminUser.getNumber());
-    	}
+    public Result index(@RequestBody Map<String, Object> models) {
+        AdminUser adminUser = JSON.parseObject((String)models.get("user"), AdminUser.class);
+        Integer page = (Integer) models.get("page");
+        Example example = new Example(AdminUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotBlank(adminUser.getRealName())) {
+            criteria.andLike("realName", "%" + adminUser.getRealName() + "%");
+        }
+        if (StringUtils.isNotBlank(adminUser.getNumber())) {
+            criteria.andEqualTo("number", adminUser.getNumber());
+        }
         if (null != adminUser.getDeptId() && 0 != adminUser.getDeptId()) {
             criteria.andEqualTo("deptId", adminUser.getDeptId());
         }
         if (null != adminUser.getPostId() && 0 != adminUser.getPostId()) {
             criteria.andEqualTo("postId", adminUser.getPostId());
         }
-    	setExample(example);
-    	List<AdminUser> list = service.getItemsByPage(getExample(), page, pageSize);
-    	if (list == null || list.size() == 0) {
-            return new Result(ResultEnum.NO_RECORDS);
-    	}
-		PageInfo<AdminUser> pageInfo = new PageInfo<AdminUser>(list);
-    	return new Result(ResultEnum.SUCCESS, pageInfo.getList(), pageInfo.getSize(), pageInfo.getPageNum(), getPageSize());
+        criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
+        setExample(example);
+        return list(page);
     }
     
     /**
      * 添加员工信息
      * @param adminUser
      * @return
+     * @throws SysException 
      */
-    @RequestMapping("add")
+    @RequestMapping("/add")
     @ResponseBody
-    public Result add(@RequestBody AdminUser adminUser) {
-    	AdminUser user = service.doAdd(adminUser);
-		if (user == null) {
+    public Result add(@RequestBody AdminUser adminUser) throws SysException {
+        AdminUser user = service.doAdd(adminUser);
+        if (user == null) {
             return new Result(ResultEnum.FAIL);
-		} else {
+        } else {
             return new Result(ResultEnum.SUCCESS);
-		}
+        }
     }
 
     /**
@@ -86,33 +83,53 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @param adminUser
      * @return
      */
-    @RequestMapping("edit")
+    @RequestMapping("/edit")
     @ResponseBody
     public Result edit(@RequestBody AdminUser adminUser) {
-		if (service.doUpdate(adminUser)) {
-	        return new Result(ResultEnum.FAIL);
-		} else {
-	        return new Result(ResultEnum.SUCCESS);
-		}
+        if (service.doUpdate(adminUser)) {
+            return new Result(ResultEnum.SUCCESS);
+        } else {
+            return new Result(ResultEnum.FAIL);
+        }
     }
-	
+    
     /**
      * 批量删除员工信息
      * @param ids
      * @return
      */
-    public Result delete(@RequestBody String ids) {
-    	if (ids == null) {
-    		return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
-    	}
-    	Example example = new Example(AdminUser.class);
-    	example.createCriteria().andCondition("id IN(" + ids + ")");
-    	if (service.delele(example)) {
+    @RequestMapping("/delete")
+    @ResponseBody
+    public Result delete(@RequestBody Map<String, Object> models) {
+    	String ids = (String) models.get("ids");
+    	if (!StringUtils.isNotBlank(ids)) {
+            return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
+        }
+        if (service.logicalDelete(ids)) {
             return new Result(ResultEnum.SUCCESS);
-    	} else {
+        } else {
             return new Result(ResultEnum.FAIL);
         }
     }
     
+    /**
+     * 检查用户名是否被注册
+     * @param loginName
+     * @return
+     */
+    @RequestMapping("/exists")
+    @ResponseBody
+    public Result exists(@RequestBody Map<String, Object> models) {
+    	String loginName = (String) models.get("loginName");
+    	Example example = new Example(AdminUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("loginName", loginName);
+        criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
+        if (service.countByCondition(example) == 0) {
+            return new Result(ResultEnum.NO_RECORDS.getCode(), "用户名未被注册！");
+        } else {
+            return new Result(ResultEnum.SUCCESS.getCode(), "用户名已被注册！");
+        }
+    }
     
 }

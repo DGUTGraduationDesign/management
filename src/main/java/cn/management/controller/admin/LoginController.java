@@ -64,4 +64,17 @@ public class LoginController {
         }
     }
     
+    /**
+     * 用户注销
+     * @param request
+     * @return
+     */
+    @RequestMapping("/logout")
+    @ResponseBody
+    public Result logout(HttpServletRequest request) {
+    	Subject currentUser = SecurityUtils.getSubject();
+    	currentUser.logout();
+    	request.getSession().setAttribute(AdminUserService.LOGIN_SESSION_KEY, null);
+    	return new Result(ResultEnum.SUCCESS.getCode(), "注销成功！");
+    }
 }

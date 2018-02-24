@@ -1,6 +1,7 @@
 package cn.management.service;
 
 import cn.management.domain.admin.AdminUser;
+import cn.management.exception.SysException;
 import cn.management.mapper.admin.AdminUserMapper;
 
 /**
@@ -32,8 +33,9 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
      * 添加员工信息
      * @param adminUser
      * @return
+     * @throws SysException 
      */
-    AdminUser doAdd(AdminUser adminUser);
+    AdminUser doAdd(AdminUser adminUser) throws SysException;
 
     /**
      * 更改员工信息
@@ -41,5 +43,12 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
      * @return
      */
     boolean doUpdate(AdminUser adminUser);
+
+    /**
+     * 逻辑删除，更新表中del_flag字段为1
+     * @param ids
+     * @return
+     */
+	boolean logicalDelete(String ids);
     
 }
