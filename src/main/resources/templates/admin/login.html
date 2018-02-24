@@ -67,16 +67,16 @@
             
                     <!--body-->
                     <div class="modal-body">
-                        <form id="loginForm" action="/admin/doLogin" class="form col-sm-12 col-md-12 col-lg-12 center-block" method="post">
+                        <form id="loginForm" action="" class="form col-sm-12 col-md-12 col-lg-12 center-block" method="post">
                             <div class="form-group">
-                                <input name="loginName" type="text" class="form-control input-lg" placeholder="用户名">
+                                <input id="loginName" name="loginName" type="text" class="form-control input-lg" placeholder="用户名">
                             </div>
                             <div class="form-group">
-                                <input name="password" type="password" class="form-control input-lg" placeholder="密码">
+                                <input id="password" name="password" type="password" class="form-control input-lg" placeholder="密码">
                             </div>
                             <div class="form-group">
-                                <span style="color:red;">${errorInfo}</span>
-                                <input type="submit" class="btn btn-primary btn-lg btn-block" value="登录">
+                                <span style="color:red;"><!-- ${errorInfo}--></span>
+                                <input type="button" class="btn btn-primary btn-lg btn-block" onclick="login()" value="登录">
                                 <span><a href="#" onclick="showInputloginName()">忘记密码？</a></span>
                             </div>
                         </form>
@@ -155,5 +155,20 @@
                 errorElement: 'span'
             });
         })
+        
+        function login() {
+            var loginName = $("#loginName").val();
+            var password = $("#password").val();
+        	$.ajax({
+                type:"post",
+                data:JSON.stringify({"loginName":loginName,"password":password}),
+                dataType:"json",  
+                contentType:"application/json;charset=utf-8",
+                url: "http://123.207.255.83:8080/management/admin/doLogin",
+                success:function(result) {
+                	alert(result.message)
+                }
+            });
+        }
     </script>
 </html>
