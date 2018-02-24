@@ -12,7 +12,7 @@ public enum ResultEnum {
     FAIL(1002, "操作失败.请重试"),
     NO_LOGIN(1003,"用户未登录."),
     UNKONW_ERROR(1004, "系统异常."),
-    NO_RECORDS(1005, "无符合条件的数据.");
+    NO_RECORDS(1005, "无符合数据.");
 
     private Integer code;
 
