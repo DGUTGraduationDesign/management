@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.management.domain.admin.AdminUser;
 import cn.management.enums.ResultEnum;
-import cn.management.service.AdminUserService;
+import cn.management.service.admin.AdminUserService;
 import cn.management.util.Result;
 
 /**

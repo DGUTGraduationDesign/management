@@ -17,7 +17,7 @@ import cn.management.domain.admin.AdminUser;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
-import cn.management.service.AdminUserService;
+import cn.management.service.admin.AdminUserService;
 import cn.management.util.Result;
 import tk.mybatis.mapper.entity.Example;
 
@@ -34,7 +34,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
 
     /**
      * 条件查询员工列表
-     * @param adminUser
+     * @param models
      * @return
      */
     @RequestMapping("/index")

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.management.domain.admin.AdminUser;
-import cn.management.service.AdminUserService;
+import cn.management.service.admin.AdminUserService;
 
 /**
  * shiro权限认证

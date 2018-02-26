@@ -15,20 +15,20 @@ public class AdminDepartment extends BaseEntity<Integer> implements Serializable
     /** 
      * 部门名称
      */
-    private String name;
+    private String deptName;
 
-    public String getName() {
-        return name;
-    }
+	public String getDeptName() {
+		return deptName;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
 
-    @Override
-    public String toString() {
-        return "AdminDepartment [name=" + name + ", id=" + id + ", createTime=" + createTime + ", updateTime="
-                + updateTime + ", delFlag=" + delFlag + "]";
-    }
+	@Override
+	public String toString() {
+		return "AdminDepartment [deptName=" + deptName + ", id=" + id + ", createTime=" + createTime + ", updateTime="
+				+ updateTime + ", delFlag=" + delFlag + "]";
+	}
 
 }

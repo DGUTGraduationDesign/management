@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -70,12 +69,6 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     @Transient
     private String leaderName;
 
-    /**
-     * 是否为部门负责人
-     */
-    @Column(name = "is_dept_head")
-    private Boolean deptHead;
-    
     /**
      * 个性化签名图片路径
      */
@@ -169,10 +162,6 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
         return leaderName;
     }
 
-    public Boolean getDeptHead() {
-        return deptHead;
-    }
-
     public String getUploadPath() {
         return uploadPath;
     }
@@ -233,10 +222,6 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
         this.leaderName = leaderName;
     }
 
-    public void setDeptHead(Boolean deptHead) {
-        this.deptHead = deptHead;
-    }
-
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }
@@ -261,14 +246,13 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
         this.roleIds = roleIds;
     }
 
-    @Override
-    public String toString() {
-        return "AdminUser [loginName=" + loginName + ", password=" + password + ", realName=" + realName + ", sex="
-                + sex + ", phone=" + phone + ", number=" + number + ", mail=" + mail + ", leaderId=" + leaderId
-                + ", leaderName=" + leaderName + ", deptHead=" + deptHead + ", uploadPath=" + uploadPath + ", postId="
-                + postId + ", postName=" + postName + ", deptId=" + deptId + ", deptName=" + deptName + ", roleIds="
-                + roleIds + ", id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", delFlag="
-                + delFlag + "]";
-    }
+	@Override
+	public String toString() {
+		return "AdminUser [loginName=" + loginName + ", password=" + password + ", realName=" + realName + ", sex="
+				+ sex + ", phone=" + phone + ", number=" + number + ", mail=" + mail + ", leaderId=" + leaderId
+				+ ", leaderName=" + leaderName + ", uploadPath=" + uploadPath + ", postId=" + postId + ", postName="
+				+ postName + ", deptId=" + deptId + ", deptName=" + deptName + ", roleIds=" + roleIds + ", id=" + id
+				+ ", createTime=" + createTime + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
+	}
 
 }

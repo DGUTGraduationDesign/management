@@ -88,6 +88,8 @@ public interface BaseService<M extends MyMapper, E extends BaseEntity> {
      * 使用 Example 查询对象进行分页查询
      * 
      * @param example
+     * @param page
+     * @param pageSize
      * @return
      */
     List<E> getItemsByPage(Example example, int page, int pageSize);

@@ -1,5 +1,8 @@
 package cn.management.util;
 
+import java.util.List;
+
+import cn.management.domain.admin.AdminDepartment;
 import cn.management.enums.ResultEnum;
 
 /**
@@ -64,7 +67,19 @@ public class Result {
         this.pageSize = pageSize;
     }
 
-    public int getCode() {
+    public Result(ResultEnum resultEnum, Object data) {
+    	this.code = resultEnum.getCode();
+        this.message = resultEnum.getMessage();
+        this.data = data;
+	}
+
+	public Result(Integer code, String message, Object data) {
+    	this.code = code;
+        this.message = message;
+        this.data = data;
+	}
+
+	public int getCode() {
         return code;
     }
 

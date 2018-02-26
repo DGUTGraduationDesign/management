@@ -1,8 +1,9 @@
-package cn.management.service;
+package cn.management.service.admin;
 
 import cn.management.domain.admin.AdminUser;
 import cn.management.exception.SysException;
 import cn.management.mapper.admin.AdminUserMapper;
+import cn.management.service.BaseService;
 
 /**
  * 用户Service层接口

@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * 通用数据模型
  */
@@ -22,17 +24,22 @@ public class BaseEntity<T> {
     /**
      * 添加时间
      */
-    @Column(name="create_time") protected Date createTime;
+    @Column(name="create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    protected Date createTime;
 
     /**
      * 更新时间
      */
-    @Column(name="update_time") protected Date updateTime;
+    @Column(name="update_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
+    protected Date updateTime;
 
     /**
      * 删除标识1-未删除0-已删除
      */
-    @Column(name="del_flag") protected Integer delFlag;
+    @Column(name="del_flag") 
+    protected Integer delFlag;
 
     public T getId() {
         return id;
