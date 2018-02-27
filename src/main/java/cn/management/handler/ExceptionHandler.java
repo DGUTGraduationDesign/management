@@ -3,6 +3,7 @@ package cn.management.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +28,9 @@ public class ExceptionHandler {
         logger.error(e.getMessage(), e);
     	if (e instanceof SysException) {
             return new Result(ResultEnum.DATA_ERROR.getCode(), e.getMessage());
+        }
+    	if (e instanceof UnauthorizedException) {
+            return new Result(ResultEnum.NO_AUTHORITY);
         }
         return new Result(ResultEnum.UNKONW_ERROR);
     }

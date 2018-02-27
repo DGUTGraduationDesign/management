@@ -114,8 +114,12 @@ public class BaseServiceImpl<M extends MyMapper, E extends BaseEntity> implement
 
     @Override
     public List<E> getItemsByIds(List ids) {
-        // TODO Auto-generated method stub
-        return null;
+    	if (ids == null || ids.size() == 0) {
+    		return null;
+    	}
+        String idStr = String.join(",", ids);
+        String condition = "id IN(" + idStr + ")";
+        return this.getItemsByCondition(condition);
     }
 
     @Override

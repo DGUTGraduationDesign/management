@@ -7,8 +7,9 @@ import java.util.List;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.management.domain.BaseEntity;
 
@@ -17,11 +18,6 @@ import cn.management.domain.BaseEntity;
  */
 @Table(name = "admin_user")
 public class AdminUser extends BaseEntity<Integer> implements Serializable {
-
-    /**
-     * json 处理工具
-     */
-    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * 用户名
@@ -100,14 +96,20 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
      * 角色用户角色ID集合，json字符串
      */
     private String roleIds;
-
+    
+    /**
+     * 角色集合
+     */
+    @Transient
+    private List<AdminRole> roleList;
+    
     /**
      * 以 List 格式返回角色ID
      * @return
      */
     public List<String> getRoleIdsList() {
         try {
-            return OBJECT_MAPPER.readValue(this.getRoleIds(), List.class);
+        	return JSONObject.parseArray(this.getRoleIds(), String.class);
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -119,11 +121,7 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
      * @throws JsonProcessingException
      */
     public void setRoleIdsList(List<String> roleIds) throws JsonProcessingException {
-        this.roleIds = OBJECT_MAPPER.writeValueAsString(roleIds);
-    }
-
-    public static ObjectMapper getObjectMapper() {
-        return OBJECT_MAPPER;
+        this.roleIds = JSON.toJSONString(roleIds);
     }
 
     public String getLoginName() {
@@ -186,6 +184,10 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
         return roleIds;
     }
 
+	public List<AdminRole> getRoleList() {
+		return roleList;
+	}
+
     public void setLoginName(String loginName) {
         this.loginName = loginName;
     }
@@ -245,6 +247,10 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     public void setRoleIds(String roleIds) {
         this.roleIds = roleIds;
     }
+
+	public void setRoleList(List<AdminRole> roleList) {
+		this.roleList = roleList;
+	}
 
 	@Override
 	public String toString() {

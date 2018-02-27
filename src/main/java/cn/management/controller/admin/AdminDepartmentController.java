@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
      * @return
      */
     @RequestMapping("/listAll")
+    @RequiresPermissions("adminDepartment/list")
     @ResponseBody
     public Result listAll() {
     	List<AdminDepartment> list = service.getAllItems();
@@ -51,6 +53,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
      * @return
      */
     @RequestMapping("/index")
+    @RequiresPermissions("adminDepartment/list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminDepartment adminDepartment = JSON.parseObject((String)models.get("department"), AdminDepartment.class);
@@ -72,6 +75,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
      * @throws SysException 
      */
     @RequestMapping("/add")
+    @RequiresPermissions("adminDepartment/add")
     @ResponseBody
     public Result add(@RequestBody AdminDepartment adminDepartment) throws SysException {
     	adminDepartment.setCreateTime(new Date()); 
@@ -90,6 +94,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
      * @throws SysException 
      */
     @RequestMapping("/edit")
+    @RequiresPermissions("adminDepartment/edit")
     @ResponseBody
     public Result edit(@RequestBody AdminDepartment adminDepartment) throws SysException {
     	adminDepartment.setUpdateTime(new Date());
@@ -106,6 +111,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
      * @return
      */
     @RequestMapping("/delete")
+    @RequiresPermissions("adminDepartment/delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");

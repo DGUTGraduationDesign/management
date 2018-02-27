@@ -65,6 +65,16 @@ public class LoginController {
     }
     
     /**
+     * 用户无访问权限
+     * @return
+     */
+    @RequestMapping("/unauthorized")
+    @ResponseBody
+    public Result unauthorized() {
+    	return new Result(ResultEnum.NO_AUTHORITY);
+    }
+    
+    /**
      * 用户注销
      * @param request
      * @return

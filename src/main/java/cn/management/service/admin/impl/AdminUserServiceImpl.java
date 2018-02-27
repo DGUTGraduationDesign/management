@@ -17,6 +17,7 @@ import cn.management.exception.SysException;
 import cn.management.mapper.admin.AdminUserMapper;
 import cn.management.service.admin.AdminDepartmentService;
 import cn.management.service.admin.AdminPositionService;
+import cn.management.service.admin.AdminRoleService;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.util.MD5Util;
@@ -35,6 +36,9 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 
 	@Autowired
 	private AdminPositionService adminPositionService;
+	
+	@Autowired
+	private AdminRoleService adminRoleService;
 	
 	/**
 	 * 条件查询员工列表
@@ -84,8 +88,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 		if (adminUser != null) {
 			//设置岗位职位中文名称
 			setName(adminUser);
-			//获取用户角色
-            //admin.setRoleList(roleService.getItemsByIds(admin.getRoleIdsList()));
+			adminUser.setRoleList(adminRoleService.getItemsByIds(adminUser.getRoleIdsList()));
 		}
 		return adminUser;
 	}

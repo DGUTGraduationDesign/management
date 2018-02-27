@@ -1,13 +1,14 @@
 package cn.management.domain.admin;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Table;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.management.domain.BaseEntity;
 
@@ -18,14 +19,9 @@ import cn.management.domain.BaseEntity;
 public class AdminRole extends BaseEntity<Integer> implements Serializable {
 
     /**
-     * json 处理工具
-     */
-    static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    /**
      * 角色名称
      */
-    private String name;
+    private String roleName;
 
     /**
      * 角色权限，json字符串
@@ -33,14 +29,14 @@ public class AdminRole extends BaseEntity<Integer> implements Serializable {
     private String permissions;
 
     /**
-     * 获取权限map
+     * 获取权限list
      * @return
      */
-    public Map<String, Object> getPermissionMap() {
+    public List<String> getPermissionList() {
         try {
-            return OBJECT_MAPPER.readValue(this.permissions, Map.class);
+            return JSONObject.parseArray(this.permissions, String.class);
         } catch (Exception e) {
-            return new HashMap();
+            return new ArrayList<String>();
         }
     }
 
@@ -49,34 +45,29 @@ public class AdminRole extends BaseEntity<Integer> implements Serializable {
      * @param permissions
      * @return
      */
-    public void setPermissionMap(String[] permissions) throws JsonProcessingException {
-        //将字符串数组转为 map
-        HashMap<String, Integer> map = new HashMap<>();
-        for (String key : permissions) {
-            map.put(key, 1);
-        }
-        this.permissions = OBJECT_MAPPER.writeValueAsString(map);
+    public void setPermissionList(String[] permissions) throws JsonProcessingException {
+        this.permissions = JSON.toJSONString(permissions);
     }
     
-    public String getName() {
-        return name;
-    }
-
     public String getPermissions() {
         return permissions;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getRoleName() {
+		return roleName;
+	}
 
-    public void setPermissions(String permissions) {
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
 
     @Override
     public String toString() {
-        return "AdminRole [name=" + name + ", permissions=" + permissions + ", id=" + id + ", createTime=" + createTime
+        return "AdminRole [roleName=" + roleName + ", permissions=" + permissions + ", id=" + id + ", createTime=" + createTime
                 + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
     }
 

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cn.management.domain.admin.AdminRole;
 import cn.management.domain.admin.AdminUser;
 import cn.management.service.admin.AdminUserService;
 
@@ -26,16 +27,21 @@ public class AdminShiroRealm extends AuthorizingRealm {
 	@Autowired
 	AdminUserService adminUserService;
 
+	/**
+	 * 用户授权
+	 * @param principals
+	 * @return
+	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-
+		
 		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-//		AdminUser adminUser = (AdminUser) principals.getPrimaryPrincipal();
-//		for(AdminRole role:adminUser.getRoleList()) {
-//			authorizationInfo.addRole("role_"+role.getId());
-//			role.getPermissionMap().forEach((k, v)-> authorizationInfo.addStringPermission(k));
-//
-//		}
+		AdminUser adminUser = (AdminUser) principals.getPrimaryPrincipal();
+		if (adminUser.getRoleList() != null) {
+			for (AdminRole role : adminUser.getRoleList()) {
+				role.getPermissionList().forEach(key -> authorizationInfo.addStringPermission(key));
+			}
+		}
 		return authorizationInfo;
 	}
 

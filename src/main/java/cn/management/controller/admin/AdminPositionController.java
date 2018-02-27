@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/listAll")
+    @RequiresPermissions("adminPosition/list")
     @ResponseBody
     public Result listAll() {
     	List<AdminPosition> list = service.getAllItems();
@@ -50,6 +52,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/index")
+    @RequiresPermissions("adminPosition/list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminPosition adminPosition = JSON.parseObject((String)models.get("position"), AdminPosition.class);
@@ -74,6 +77,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @throws SysException 
      */
     @RequestMapping("/add")
+    @RequiresPermissions("adminPosition/add")
     @ResponseBody
     public Result add(@RequestBody AdminPosition adminPosition) throws SysException {
     	AdminPosition position = service.doAdd(adminPosition);
@@ -91,6 +95,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @throws SysException 
      */
     @RequestMapping("/edit")
+    @RequiresPermissions("adminPosition/edit")
     @ResponseBody
     public Result edit(@RequestBody AdminPosition adminPosition) throws SysException {
         if (service.doUpdate(adminPosition)) {
@@ -106,6 +111,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/delete")
+    @RequiresPermissions("adminPosition/delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");
