@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.attendance.AttendanceHourMapper" >
+
+  <sql id="allClounm">
+  	t1.id, record_date, hours, user_id, t1.create_time, t1.update_time, t1.del_flag
+  </sql>
+  
+  <sql id="conditionQuery">
+  	<if test="number != null and number !=''">
+  		and number = #{number}
+  	</if>
+  	<if test="realName != null and realName !=''">
+  		and t2.real_name like '%${realName}%'
+  	</if>
+  	<if test="deptId != null">
+  		and t2.dept_id = #{deptId}
+  	</if>
+  	<if test="postId != null">
+  		and t2.post_id = #{postId}
+  	</if>
+  	<if test="recordDate != null">
+  		and EXTRACT(YEAR_MONTH FROM record_date) = EXTRACT(YEAR_MONTH FROM #{recordDate})
+  	</if>
+  </sql>
+
+  <select id="getItemsByCondition" parameterType="cn.management.domain.attendance.dto.AttendanceHourQueryDto"
+    resultType="cn.management.domain.attendance.AttendanceHour">
+    select <include refid="allClounm" />
+    from attendance_hour t1 
+    left join admin_user t2 on t1.user_id = t2.id and t1.del_flag = 1 
+    <where>
+    	<include refid="conditionQuery" />
+    </where>
+  </select>
+  
+</mapper>
