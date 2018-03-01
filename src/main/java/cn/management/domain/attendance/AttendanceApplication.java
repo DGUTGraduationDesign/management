@@ -3,6 +3,7 @@ package cn.management.domain.attendance;
 import java.util.Date;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import cn.management.domain.BaseEntity;
 import cn.management.enums.ApplicationStateEnum;
@@ -43,6 +44,27 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	 * 状态，0表示申请已提交，1表示上级已审核，2表示总监已审核，3表示申请被驳回
 	 */
 	private ApplicationStateEnum state;
+	
+	/**
+	 * 申请人id
+	 */
+	private Integer userId;
+	
+	/**
+	 * 申请人姓名
+	 */
+	@Transient
+	private String realName;
+	
+	/**
+	 * 直接上级id
+	 */
+	private Integer leaderId;
+	
+	/**
+	 * 部门负责人id
+	 */
+	private Integer headerId;
 
 	public ApplicationTypeEnum getType() {
 		return type;
@@ -66,6 +88,22 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 
 	public ApplicationStateEnum getState() {
 		return state;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public Integer getLeaderId() {
+		return leaderId;
+	}
+
+	public Integer getHeaderId() {
+		return headerId;
 	}
 
 	public void setType(ApplicationTypeEnum type) {
@@ -92,10 +130,27 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		this.state = state;
 	}
 
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public void setLeaderId(Integer leaderId) {
+		this.leaderId = leaderId;
+	}
+
+	public void setHeaderId(Integer headerId) {
+		this.headerId = headerId;
+	}
+
 	@Override
 	public String toString() {
 		return "AttendanceApplication [type=" + type + ", reason=" + reason + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", totalDays=" + totalDays + ", state=" + state + ", id=" + id + ", createTime="
+				+ endDate + ", totalDays=" + totalDays + ", state=" + state + ", userId=" + userId + ", realName="
+				+ realName + ", leaderId=" + leaderId + ", headerId=" + headerId + ", id=" + id + ", createTime="
 				+ createTime + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
 	}
 

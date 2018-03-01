@@ -3,7 +3,6 @@ package cn.management.controller.attendance;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,14 +14,11 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 
 import cn.management.controller.BaseController;
-import cn.management.domain.admin.AdminDepartment;
 import cn.management.domain.attendance.AttendanceHour;
 import cn.management.domain.attendance.dto.AttendanceHourQueryDto;
-import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.service.attendance.AttendanceHourService;
 import cn.management.util.Result;
-import tk.mybatis.mapper.entity.Example;
 
 /**
  * 工时统计控制器
