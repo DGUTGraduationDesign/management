@@ -15,7 +15,7 @@ public enum ApplicationStateEnum {
 	 * 3 申请被驳回
 	 */
 	STATUS_COMMIT_SELF("申请已提交", 0),
-    STATUS_COMMIT_MGR("上级已审核", 1),
+    STATUS_COMMIT_LEAD("上级已审核", 1),
     STATUS_COMMIT_HEAD("总监已审核", 2),
     STATUS_ROLL_BACK("申请被驳回", 3);;
 	

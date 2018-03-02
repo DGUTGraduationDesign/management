@@ -40,7 +40,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
      * @return
      */
     @RequestMapping("/listAll")
-    @RequiresPermissions("adminRole/list")
+    @RequiresPermissions("adminRole:list")
     @ResponseBody
     public Result listAll() {
     	List<AdminRole> list = service.getAllItems();
@@ -53,7 +53,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
      * @return
      */
     @RequestMapping("/index")
-    @RequiresPermissions("adminRole/list")
+    @RequiresPermissions("adminRole:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminRole adminRole = JSON.parseObject((String)models.get("role"), AdminRole.class);
@@ -77,7 +77,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
      * @throws SysException 
      */
     @RequestMapping("/add")
-    @RequiresPermissions("adminRole/add")
+    @RequiresPermissions("adminRole:add")
     @ResponseBody
     public Result add(@RequestBody AdminRole adminRole) throws SysException {
     	adminRole.setCreateTime(new Date()); 
@@ -96,7 +96,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
      * @throws SysException 
      */
     @RequestMapping("/edit")
-    @RequiresPermissions("adminRole/edit")
+    @RequiresPermissions("adminRole:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminRole adminRole) throws SysException {
     	adminRole.setUpdateTime(new Date());
@@ -113,7 +113,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
      * @return
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("adminRole/delete")
+    @RequiresPermissions("adminRole:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");

@@ -6,8 +6,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import cn.management.domain.BaseEntity;
-import cn.management.enums.ApplicationStateEnum;
-import cn.management.enums.ApplicationTypeEnum;
 
 /**
  * 考勤申请表实体类
@@ -18,7 +16,13 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	/**
 	 * 申请类型，0表示请假申请，1表示加班申请
 	 */
-	private ApplicationTypeEnum type;
+	private Integer type;
+
+	/**
+	 * 申请类型名称
+	 */
+	@Transient
+	private String typeName;
 	
 	/**
 	 * 申请理由
@@ -43,7 +47,13 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	/**
 	 * 状态，0表示申请已提交，1表示上级已审核，2表示总监已审核，3表示申请被驳回
 	 */
-	private ApplicationStateEnum state;
+	private Integer state;
+
+	/**
+	 * 状态名称
+	 */
+	@Transient
+	private String stateName;
 	
 	/**
 	 * 申请人id
@@ -66,10 +76,6 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	 */
 	private Integer headerId;
 
-	public ApplicationTypeEnum getType() {
-		return type;
-	}
-
 	public String getReason() {
 		return reason;
 	}
@@ -86,7 +92,7 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		return totalDays;
 	}
 
-	public ApplicationStateEnum getState() {
+	public Integer getState() {
 		return state;
 	}
 
@@ -106,8 +112,28 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		return headerId;
 	}
 
-	public void setType(ApplicationTypeEnum type) {
+	public Integer getType() {
+		return type;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 
 	public void setReason(String reason) {
@@ -126,7 +152,7 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		this.totalDays = totalDays;
 	}
 
-	public void setState(ApplicationStateEnum state) {
+	public void setState(Integer state) {
 		this.state = state;
 	}
 
@@ -148,10 +174,11 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 
 	@Override
 	public String toString() {
-		return "AttendanceApplication [type=" + type + ", reason=" + reason + ", startDate=" + startDate + ", endDate="
-				+ endDate + ", totalDays=" + totalDays + ", state=" + state + ", userId=" + userId + ", realName="
-				+ realName + ", leaderId=" + leaderId + ", headerId=" + headerId + ", id=" + id + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
+		return "AttendanceApplication [type=" + type + ", typeName=" + typeName + ", reason=" + reason + ", startDate="
+				+ startDate + ", endDate=" + endDate + ", totalDays=" + totalDays + ", state=" + state + ", stateName="
+				+ stateName + ", userId=" + userId + ", realName=" + realName + ", leaderId=" + leaderId + ", headerId="
+				+ headerId + ", id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", delFlag="
+				+ delFlag + "]";
 	}
 
 }

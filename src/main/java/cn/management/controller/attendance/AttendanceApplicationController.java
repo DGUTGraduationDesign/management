@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,8 @@ import cn.management.controller.BaseController;
 import cn.management.domain.attendance.AttendanceApplication;
 import cn.management.enums.AttendanceIdentityEnum;
 import cn.management.enums.DeleteTypeEnum;
+import cn.management.enums.ResultEnum;
+import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.attendance.AttendanceApplicationService;
 import cn.management.util.Result;
@@ -69,5 +72,63 @@ public class AttendanceApplicationController extends BaseController<AttendanceAp
         setExample(example);
         return list(page);
     }
-	
+    
+    /**
+     * 添加考核申请
+     * @param adminUser
+     * @return
+     * @throws SysException 
+     */
+    @RequestMapping("/add")
+    @RequiresPermissions("attendanceApplication:add")
+    @ResponseBody
+    public Result add(@RequestBody AttendanceApplication attendanceApplication, HttpServletRequest request) throws SysException {
+    	Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+    	attendanceApplication.setUserId(loginId);
+    	AttendanceApplication application = service.doAdd(attendanceApplication);
+        if (application == null) {
+            return new Result(ResultEnum.FAIL);
+        } else {
+            return new Result(ResultEnum.SUCCESS);
+        }
+    }
+
+    /**
+     * 考勤申请审核
+     * @param adminUser
+     * @return
+     * @throws SysException 
+     */
+    @RequestMapping("/audit")
+    @ResponseBody
+    public Result audit(@RequestBody Map<String, Object> models) throws SysException {
+    	String identity = (String) models.get("identity");
+    	AttendanceApplication attendanceApplication = JSON.parseObject((String)models.get("application"), AttendanceApplication.class);
+        if (service.doAudit(attendanceApplication, identity)) {
+            return new Result(ResultEnum.SUCCESS);
+        } else {
+            return new Result(ResultEnum.FAIL);
+        }
+    }
+
+    /**
+     * 批量删除考勤申请
+     * @param ids
+     * @return
+     */
+    @RequestMapping("/delete")
+    @RequiresPermissions("attendanceApplication:delete")
+    @ResponseBody
+    public Result delete(@RequestBody Map<String, Object> models) {
+    	String ids = (String) models.get("ids");
+    	if (!StringUtils.isNotBlank(ids)) {
+            return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
+        }
+        if (service.logicalDelete(ids)) {
+            return new Result(ResultEnum.SUCCESS);
+        } else {
+            return new Result(ResultEnum.FAIL);
+        }
+    }
+    
 }

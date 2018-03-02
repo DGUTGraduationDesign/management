@@ -8,17 +8,17 @@ package cn.management.enums;
 public enum AttendanceIdentityEnum {
 	
     /**
-     * 个人
+     * 个人考勤申请
      */
-    SELF("self","attendance:listSelf","个人"),
+    SELF("self","attendanceApplication:self","个人"),
     /**
-     * 直接上级
+     * 直接上级审核
      */
-    LEAD("lead","attendance:listLead","直接上级"),
+    LEAD("lead","attendanceApplication:leader","直接上级"),
     /**
-     * 部门总监
+     * 部门总监审核
      */
-    HEAD("head","attendance:listHead","部门总监");
+    HEAD("head","attendanceApplication:header","部门总监");
 
     /**
      * 身份

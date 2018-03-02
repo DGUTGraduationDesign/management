@@ -40,7 +40,6 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
      * @return
      */
     @RequestMapping("/listAll")
-    @RequiresPermissions("adminPermission/list")
     @ResponseBody
     public Result listAll() {
     	List<AdminPermission> list = service.getAllItems();
@@ -53,7 +52,7 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
      * @return
      */
     @RequestMapping("/index")
-    @RequiresPermissions("adminPermission/list")
+    @RequiresPermissions("adminPermission:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminPermission adminPermission = JSON.parseObject((String)models.get("permission"), AdminPermission.class);
@@ -83,7 +82,7 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
      * @throws SysException 
      */
     @RequestMapping("/add")
-    @RequiresPermissions("adminPermission/add")
+    @RequiresPermissions("adminPermission:add")
     @ResponseBody
     public Result add(@RequestBody AdminPermission adminPermission) throws SysException {
     	adminPermission.setCreateTime(new Date()); 
@@ -102,7 +101,7 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
      * @throws SysException 
      */
     @RequestMapping("/edit")
-    @RequiresPermissions("adminPermission/edit")
+    @RequiresPermissions("adminPermission:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminPermission adminPermission) throws SysException {
     	adminPermission.setUpdateTime(new Date());
@@ -119,7 +118,7 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
      * @return
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("adminPermission/delete")
+    @RequiresPermissions("adminPermission:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");

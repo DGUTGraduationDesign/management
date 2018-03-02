@@ -39,7 +39,6 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @return
      */
     @RequestMapping("/listAll")
-    @RequiresPermissions("adminUser/list")
     @ResponseBody
     public Result listAll() {
     	List<AdminUser> list = service.getAllItems();
@@ -51,7 +50,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @return
      */
     @RequestMapping("/index")
-    @RequiresPermissions("adminUser/list")
+    @RequiresPermissions("adminUser:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
         AdminUser adminUser = JSON.parseObject((String)models.get("user"), AdminUser.class);
@@ -82,7 +81,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @throws SysException 
      */
     @RequestMapping("/add")
-    @RequiresPermissions("adminUser/add")
+    @RequiresPermissions("adminUser:add")
     @ResponseBody
     public Result add(@RequestBody AdminUser adminUser) throws SysException {
         AdminUser user = service.doAdd(adminUser);
@@ -100,7 +99,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @throws SysException 
      */
     @RequestMapping("/edit")
-    @RequiresPermissions("adminUser/edit")
+    @RequiresPermissions("adminUser:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminUser adminUser) throws SysException {
         if (service.doUpdate(adminUser)) {
@@ -116,7 +115,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @return
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("adminUser/delete")
+    @RequiresPermissions("adminUser:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");

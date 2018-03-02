@@ -21,4 +21,11 @@ public interface AttendanceHourService extends BaseService<AttendanceHourMapper,
      * @return
      */
     List<AttendanceHour> getItemsByPage(AttendanceHourQueryDto attendanceHourQueryDto, int page, int pageSize);
+
+    /**
+     * 逻辑删除，更新表中del_flag字段为1
+     * @param ids
+     * @return
+     */
+	boolean logicalDelete(String ids);
 }

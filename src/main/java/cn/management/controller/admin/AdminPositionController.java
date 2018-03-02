@@ -39,7 +39,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/listAll")
-    @RequiresPermissions("adminPosition/list")
+    @RequiresPermissions("adminPosition:list")
     @ResponseBody
     public Result listAll() {
     	List<AdminPosition> list = service.getAllItems();
@@ -52,7 +52,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/index")
-    @RequiresPermissions("adminPosition/list")
+    @RequiresPermissions("adminPosition:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminPosition adminPosition = JSON.parseObject((String)models.get("position"), AdminPosition.class);
@@ -77,7 +77,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @throws SysException 
      */
     @RequestMapping("/add")
-    @RequiresPermissions("adminPosition/add")
+    @RequiresPermissions("adminPosition:add")
     @ResponseBody
     public Result add(@RequestBody AdminPosition adminPosition) throws SysException {
     	AdminPosition position = service.doAdd(adminPosition);
@@ -95,7 +95,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @throws SysException 
      */
     @RequestMapping("/edit")
-    @RequiresPermissions("adminPosition/edit")
+    @RequiresPermissions("adminPosition:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminPosition adminPosition) throws SysException {
         if (service.doUpdate(adminPosition)) {
@@ -111,7 +111,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
      * @return
      */
     @RequestMapping("/delete")
-    @RequiresPermissions("adminPosition/delete")
+    @RequiresPermissions("adminPosition:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");
