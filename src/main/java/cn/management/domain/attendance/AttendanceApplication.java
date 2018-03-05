@@ -5,6 +5,10 @@ import java.util.Date;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import cn.management.domain.BaseEntity;
 
 /**
@@ -32,11 +36,15 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	/**
 	 * 开始日期
 	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone="GMT+8")
 	private Date startDate;
 	
 	/**
 	 * 结束日期
 	 */
+	@DateTimeFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone="GMT+8")
 	private Date endDate;
 
 	/**
@@ -45,7 +53,7 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	private Double totalDays;
 	
 	/**
-	 * 状态，0表示申请已提交，1表示上级已审核，2表示总监已审核，3表示申请被驳回
+	 * 状态，0表示新建申请，1表示申请已提交，2表示上级已审核，3表示总监已审核，4表示申请被驳回
 	 */
 	private Integer state;
 
@@ -75,6 +83,18 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	 * 部门负责人id
 	 */
 	private Integer headerId;
+	
+	/**
+	 * 连线名称：批准/驳回
+	 */
+	@Transient
+	private String outcome;
+	
+	/**
+	 * 批注
+	 */
+	@Transient
+	private String comment;
 
 	public String getReason() {
 		return reason;
@@ -122,6 +142,22 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 
 	public String getStateName() {
 		return stateName;
+	}
+
+	public String getOutcome() {
+		return outcome;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setOutcome(String outcome) {
+		this.outcome = outcome;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public void setStateName(String stateName) {
@@ -177,8 +213,8 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		return "AttendanceApplication [type=" + type + ", typeName=" + typeName + ", reason=" + reason + ", startDate="
 				+ startDate + ", endDate=" + endDate + ", totalDays=" + totalDays + ", state=" + state + ", stateName="
 				+ stateName + ", userId=" + userId + ", realName=" + realName + ", leaderId=" + leaderId + ", headerId="
-				+ headerId + ", id=" + id + ", createTime=" + createTime + ", updateTime=" + updateTime + ", delFlag="
-				+ delFlag + "]";
+				+ headerId + ", outcome=" + outcome + ", comment=" + comment + ", id=" + id + ", createTime="
+				+ createTime + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
 	}
 
 }

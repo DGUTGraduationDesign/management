@@ -9,15 +9,17 @@ public enum ApplicationStateEnum {
 	
 	/**
 	 * 考勤申请状态
-	 * 0 申请已提交
-	 * 1 上级已审核
-	 * 2 总监已审核
-	 * 3 申请被驳回
+	 * 0 新建申请
+	 * 1 申请已提交
+	 * 2 上级已审核
+	 * 3 总监已审核
+	 * 4 申请被驳回
 	 */
-	STATUS_COMMIT_SELF("申请已提交", 0),
-    STATUS_COMMIT_LEAD("上级已审核", 1),
-    STATUS_COMMIT_HEAD("总监已审核", 2),
-    STATUS_ROLL_BACK("申请被驳回", 3);;
+	STATUS_COMMIT_START("新建申请", 0),
+	STATUS_COMMIT_SELF("申请已提交", 1),
+    STATUS_COMMIT_LEAD("上级已审核", 2),
+    STATUS_COMMIT_END("申请已批准", 3),
+    STATUS_ROLL_BACK("申请被驳回", 4);;
 	
 	private String name;
 	
