@@ -37,7 +37,7 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @return
      */
     @RequestMapping("/index")
-    //@RequiresPermissions("adminDataDict:list")
+    @RequiresPermissions("adminDataDict:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
     	AdminDataDict adminDataDict = JSON.parseObject((String)models.get("dataDict"), AdminDataDict.class);
@@ -62,7 +62,7 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @throws SysException 
      */
     @RequestMapping("/add")
-    //@RequiresPermissions("adminDataDict:add")
+    @RequiresPermissions("adminDataDict:add")
     @ResponseBody
     public Result add(@RequestBody AdminDataDict adminDataDict) throws SysException {
     	adminDataDict.setCreateTime(new Date()); 
@@ -81,7 +81,7 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @throws SysException 
      */
     @RequestMapping("/edit")
-    //@RequiresPermissions("adminDataDict:edit")
+    @RequiresPermissions("adminDataDict:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminDataDict adminDataDict) throws SysException {
     	adminDataDict.setUpdateTime(new Date());
@@ -98,7 +98,7 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @return
      */
     @RequestMapping("/delete")
-    //@RequiresPermissions("adminDataDict:delete")
+    @RequiresPermissions("adminDataDict:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
     	String ids = (String) models.get("ids");
