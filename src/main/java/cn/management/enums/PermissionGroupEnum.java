@@ -8,7 +8,8 @@ package cn.management.enums;
 public enum PermissionGroupEnum {
 
     SYSTEM("系统管理", "system"),
-    ATTENDANCE("考勤管理", "attendance");
+    ATTENDANCE("考勤管理", "attendance"),
+    MEETING("会议管理", "meeting");
 
     private String name;
 
