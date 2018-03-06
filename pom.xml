@@ -135,6 +135,13 @@
             <version>5.22.0</version>
         </dependency>
         
+        <!-- Quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        
         <!-- 打包成war时用 -->
         <dependency>
 		    <groupId>javax.servlet</groupId>
