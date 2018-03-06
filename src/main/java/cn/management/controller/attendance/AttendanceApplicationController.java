@@ -1,10 +1,12 @@
 package cn.management.controller.attendance;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.activiti.engine.runtime.ProcessInstance;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.attendance.AttendanceApplication;
+import cn.management.domain.attendance.vo.ApplicationCommentVo;
 import cn.management.enums.ApplicationStateEnum;
 import cn.management.enums.AttendanceIdentityEnum;
 import cn.management.enums.DeleteTypeEnum;
@@ -81,7 +84,15 @@ public class AttendanceApplicationController
 		return list(page);
 	}
 	
+	/**
+	 * 查询考勤申请详情
+	 * @param models
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	@RequestMapping("/findApplicationById")
+	@RequiresPermissions("attendanceApplication:findbyId")
 	@ResponseBody
 	public Result findApplicationById(@RequestBody Map<String, Object> models) {
 		Integer applicationId = (Integer) models.get("applicationId");
@@ -92,15 +103,19 @@ public class AttendanceApplicationController
 		if (null == attendanceApplication) {
 			return new Result(ResultEnum.NO_RECORDS);
 		} else {
-			
-			return new Result(ResultEnum.SUCCESS);
+			List<ApplicationCommentVo> commentList = service.findCommentByLeaveBillId(applicationId);
+			Map<String, Object> data = new HashMap<String, Object>(1);
+			data.put("application", attendanceApplication);
+			data.put("commentList", commentList);
+			return new Result(ResultEnum.SUCCESS, data, 1, 0, 1);
 		}
 	}
 
 	/**
 	 * 添加考核申请
 	 * 
-	 * @param adminUser
+	 * @param attendanceApplication
+	 * @param request
 	 * @return
 	 * @throws SysException
 	 */
@@ -120,7 +135,8 @@ public class AttendanceApplicationController
 	/**
 	 * 考勤申请审核
 	 * 
-	 * @param adminUser
+	 * @param attendanceApplication
+	 * @param request
 	 * @return
 	 * @throws SysException
 	 */
@@ -136,6 +152,27 @@ public class AttendanceApplicationController
 		}
 	}
 
+	/**
+	 * 考勤申请取消
+	 * 
+	 * @param models
+	 * @param request
+	 * @return
+	 * @throws SysException
+	 */
+	@RequestMapping("/cancel")
+	@RequiresPermissions("attendanceApplication:cancel")
+	@ResponseBody
+	public Result cancel(@RequestBody Map<String, Object> models, HttpServletRequest request) throws SysException {
+		Integer applicationId  = (Integer) models.get("applicationId");
+		Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+		if (service.doCancel(applicationId, loginUserId)) {
+			return new Result(ResultEnum.SUCCESS);
+		} else {
+			return new Result(ResultEnum.FAIL);
+		}
+	}
+	
 	/**
 	 * 批量删除考勤申请
 	 * 

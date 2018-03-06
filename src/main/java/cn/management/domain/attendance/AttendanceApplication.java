@@ -53,7 +53,7 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	private Double totalDays;
 	
 	/**
-	 * 状态，0表示新建申请，1表示申请已提交，2表示上级已审核，3表示总监已审核，4表示申请被驳回
+	 * 状态，0表示新建申请，1表示申请已提交，2表示上级已审核，3表示总监已审核，4表示申请被驳回, 5申请已取消
 	 */
 	private Integer state;
 
@@ -78,17 +78,29 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 	 * 直接上级id
 	 */
 	private Integer leaderId;
+
+	/**
+	 * 直接上级姓名
+	 */
+	@Transient
+	private String leaderName;
 	
 	/**
 	 * 部门负责人id
 	 */
 	private Integer headerId;
-	
+
 	/**
-	 * 连线名称：批准/驳回
+	 * 部门负责人姓名
 	 */
 	@Transient
-	private String outcome;
+	private String headerName;
+	
+	/**
+	 * 连线名称：1 表示批准,0 表示驳回
+	 */
+	@Transient
+	private Integer outcome;
 	
 	/**
 	 * 批注
@@ -144,7 +156,7 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		return stateName;
 	}
 
-	public String getOutcome() {
+	public Integer getOutcome() {
 		return outcome;
 	}
 
@@ -152,7 +164,15 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		return comment;
 	}
 
-	public void setOutcome(String outcome) {
+	public String getLeaderName() {
+		return leaderName;
+	}
+
+	public String getHeaderName() {
+		return headerName;
+	}
+
+	public void setOutcome(Integer outcome) {
 		this.outcome = outcome;
 	}
 
@@ -208,13 +228,22 @@ public class AttendanceApplication extends BaseEntity<Integer> {
 		this.headerId = headerId;
 	}
 
+	public void setLeaderName(String leaderName) {
+		this.leaderName = leaderName;
+	}
+
+	public void setHeaderName(String headerName) {
+		this.headerName = headerName;
+	}
+
 	@Override
 	public String toString() {
 		return "AttendanceApplication [type=" + type + ", typeName=" + typeName + ", reason=" + reason + ", startDate="
 				+ startDate + ", endDate=" + endDate + ", totalDays=" + totalDays + ", state=" + state + ", stateName="
-				+ stateName + ", userId=" + userId + ", realName=" + realName + ", leaderId=" + leaderId + ", headerId="
-				+ headerId + ", outcome=" + outcome + ", comment=" + comment + ", id=" + id + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + ", delFlag=" + delFlag + "]";
+				+ stateName + ", userId=" + userId + ", realName=" + realName + ", leaderId=" + leaderId
+				+ ", leaderName=" + leaderName + ", headerId=" + headerId + ", headerName=" + headerName + ", outcome="
+				+ outcome + ", comment=" + comment + ", id=" + id + ", createTime=" + createTime + ", updateTime="
+				+ updateTime + ", delFlag=" + delFlag + "]";
 	}
 
 }

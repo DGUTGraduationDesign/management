@@ -19,6 +19,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.github.pagehelper.PageHelper;
 
@@ -26,6 +27,8 @@ import cn.management.domain.admin.AdminDataDict;
 import cn.management.domain.admin.AdminPosition;
 import cn.management.domain.admin.AdminUser;
 import cn.management.domain.attendance.AttendanceApplication;
+import cn.management.domain.attendance.vo.ApplicationCommentVo;
+import cn.management.enums.ApplicationOutcomeEnum;
 import cn.management.enums.ApplicationStateEnum;
 import cn.management.enums.ApplicationTypeEnum;
 import cn.management.enums.AttendanceIdentityEnum;
@@ -77,10 +80,29 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
     public List<AttendanceApplication> getItemsByPage(Example example, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
         List<AttendanceApplication> list = mapper.selectByExample(example);
-        //设置申请类型名称、状态名称、申请人姓名
-        setName(list);
+        //设置申请类型名称、状态名称、申请人姓名、上级姓名、总监姓名
+		for (AttendanceApplication attendanceApplication : list) {
+			setName(attendanceApplication);
+        }
         return list;
     }
+	
+	/**
+	 * 根据实体中的属性进行查询，只能有一个返回值，有多个结果是抛出异常，查询条件使用等号
+     * @param condition
+     * @return
+	 */
+	@Override
+	public AttendanceApplication getItem(AttendanceApplication condition) {
+		List<AttendanceApplication> items = getItemsByPage(condition, 1, 1);
+		if (CollectionUtils.isEmpty(items)) {
+            return null;
+        }
+		AttendanceApplication attendanceApplication =  items.get(0);
+		//设置申请类型名称、状态名称、申请人姓名、上级姓名、总监姓名
+		setName(attendanceApplication);
+		return attendanceApplication;
+	}
 
 	/**
 	 * 使用考勤申请id，查询历史批注信息
@@ -88,32 +110,48 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 	 * @return
 	 */
 	@Override
-	public List<Comment> findCommentByLeaveBillId(Integer id) {
-		List<Comment> list = new ArrayList<Comment>();
+	public List<ApplicationCommentVo> findCommentByLeaveBillId(Integer id) {
 		/**1:使用历史的流程实例查询，返回历史的流程实例对象，获取流程实例ID*/
 		HistoricProcessInstance hpi = historyService.createHistoricProcessInstanceQuery()
 						.processInstanceBusinessKey(id.toString()) //使用BusinessKey字段查询
 						.singleResult();
 		String processInstanceId = hpi.getId();
-		list = taskService.getProcessInstanceComments(processInstanceId);
-		return list;
+		List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
+		List<ApplicationCommentVo> voList = new ArrayList<ApplicationCommentVo>(5);
+		//entity to vo
+		for (Comment comment : commentList) {
+			ApplicationCommentVo vo = new ApplicationCommentVo();
+			vo.setTime(comment.getTime());
+			vo.setUserId(comment.getUserId());
+			vo.setFullMessage(comment.getFullMessage());
+			voList.add(vo);
+		}
+		return voList;
 	}
 	
 	/**
-	 * 设置申请类型名称、状态名称、申请人姓名
+	 * 设置申请类型名称、状态名称、申请人姓名、上级姓名、总监姓名
 	 * @param list
 	 */
-    private void setName(List<AttendanceApplication> list) {
-		for (AttendanceApplication attendanceApplication : list) {
-			//设置申请类型名称
-			attendanceApplication.setTypeName(ApplicationTypeEnum.getName(attendanceApplication.getType()));
-			//状态名称
-			attendanceApplication.setStateName(ApplicationStateEnum.getName(attendanceApplication.getState()));
-			//设置申请人姓名
-			AdminUser user = adminUserService.getItemById(attendanceApplication.getId());
-			if (user != null) {
-				attendanceApplication.setRealName(user.getRealName());
-			}
+    private void setName(AttendanceApplication attendanceApplication) {
+		//设置申请类型名称
+		attendanceApplication.setTypeName(ApplicationTypeEnum.getName(attendanceApplication.getType()));
+		//状态名称
+		attendanceApplication.setStateName(ApplicationStateEnum.getName(attendanceApplication.getState()));
+		//设置申请人姓名
+		AdminUser user = adminUserService.getItemById(attendanceApplication.getUserId());
+		if (user != null) {
+			attendanceApplication.setRealName(user.getRealName());
+		}
+		//直接上级姓名
+		AdminUser leader = adminUserService.getItemById(attendanceApplication.getLeaderId());
+		if (leader != null) {
+			attendanceApplication.setLeaderName(leader.getRealName());
+		}
+		//部门总监姓名
+		AdminUser header = adminUserService.getItemById(attendanceApplication.getHeaderId());
+		if (header != null) {
+			attendanceApplication.setHeaderName(header.getRealName());
 		}
 	}
 
@@ -124,6 +162,7 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 	 * @throws SysException 
 	 */
 	@Override
+	@Transactional
 	public boolean doAdd(AttendanceApplication attendanceApplication, Integer loginUserId) throws SysException {
     	//个人id
 		attendanceApplication.setUserId(loginUserId);
@@ -164,15 +203,22 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 	 * @throws SysException 
 	 */
 	@Override
+	@Transactional
 	public boolean doAudit(AttendanceApplication attendanceApplication, String identity, Integer loginUserId) throws SysException {
 		//检查权限
 		SecurityUtils.getSubject().checkPermission(AttendanceIdentityEnum.getPermission(identity));
-		AttendanceApplication application = getItemById(attendanceApplication.getId());
+		AttendanceApplication condition = new AttendanceApplication();
+		condition.setId(attendanceApplication.getId());
+		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+		AttendanceApplication application = getItem(condition);
 		if (null == application) {
 			throw new SysException("考勤申请不存在.");
 		}
 		if (ApplicationStateEnum.STATUS_COMMIT_END.getValue().equals(application.getState())) {
 			throw new SysException("审核已结束.");
+		}
+		if (ApplicationStateEnum.STATUS_COMMIT_CANCEL.getValue().equals(application.getState())) {
+			throw new SysException("申请已取消.");
 		}
 		//批准or驳回
 		application.setOutcome(attendanceApplication.getOutcome());
@@ -181,6 +227,39 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 		application.setUpdateTime(new Date());
 		//执行任务
 		return excuteTask(application, loginUserId);
+	}
+
+	/**
+	 * 考勤申请取消
+	 * @param applicationId
+	 * @param loginUserId
+	 * @return
+	 * @throws SysException 
+	 */
+	@Override
+	@Transactional
+	public boolean doCancel(Integer applicationId, Integer loginUserId) throws SysException {
+		AttendanceApplication application = new AttendanceApplication();
+		application.setId(applicationId);
+		application.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+		AttendanceApplication findApplication = getItem(application);
+		if (null == findApplication) {
+			throw new SysException("考勤申请不存在.");
+		}
+		if (ApplicationStateEnum.STATUS_COMMIT_END.getValue().equals(application.getState())) {
+			throw new SysException("申请已结束.");
+		}
+		if (!findApplication.getUserId().equals(loginUserId)) {
+			throw new SysException("不是本人不能取消.");
+		}
+		ProcessInstance instance = runtimeService.createProcessInstanceQuery()
+				.processInstanceBusinessKey(applicationId.toString())
+				.singleResult();
+    	if (null != instance && null != instance.getProcessInstanceId()) {
+    		runtimeService.deleteProcessInstance(instance.getProcessInstanceId(), "deleted");
+    	}
+    	application.setState(ApplicationStateEnum.STATUS_COMMIT_CANCEL.getValue());
+    	return update(application);
 	}
 	
 	/**
@@ -270,14 +349,14 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 			}
 			//添加批注
 			taskService.addComment(task.getId(), task.getProcessInstanceId(), attendanceApplication.getComment());
-			variables.put("outcome", attendanceApplication.getOutcome());
+			variables.put("outcome", ApplicationOutcomeEnum.getName(attendanceApplication.getOutcome()));
 			variables.put("leadEqHead", attendanceApplication.getLeaderId().equals(attendanceApplication.getHeaderId()));
 			//完成任务
 			taskService.complete(task.getId(), variables);
 			//更改状态,如果上级和部门总监是同一人且上级批准则直接结束审核
-			if ("批准".equals(attendanceApplication.getOutcome()) && attendanceApplication.getLeaderId().equals(attendanceApplication.getHeaderId())) {
+			if (ApplicationOutcomeEnum.OUTCOME_APPROVAL.getValue().equals(attendanceApplication.getOutcome()) && attendanceApplication.getLeaderId().equals(attendanceApplication.getHeaderId())) {
 				attendanceApplication.setState(ApplicationStateEnum.STATUS_COMMIT_END.getValue());
-			} else if ("驳回".equals(attendanceApplication.getOutcome())) {
+			} else if (ApplicationOutcomeEnum.OUTCOME_REJECTED.getValue().equals(attendanceApplication.getOutcome())) {
 				attendanceApplication.setState(ApplicationStateEnum.STATUS_ROLL_BACK.getValue());
 			} else {
 				attendanceApplication.setState(ApplicationStateEnum.STATUS_COMMIT_LEAD.getValue());
@@ -294,11 +373,11 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 			}
 			//添加批注
 			taskService.addComment(task.getId(), task.getProcessInstanceId(), attendanceApplication.getComment());
-			variables.put("outcome", attendanceApplication.getOutcome());
+			variables.put("outcome", ApplicationOutcomeEnum.getName(attendanceApplication.getOutcome()));
 			//完成任务
 			taskService.complete(task.getId(), variables);
 			//更改状态
-			if ("批准".equals(attendanceApplication.getOutcome())) {
+			if (ApplicationOutcomeEnum.OUTCOME_APPROVAL.getValue().equals(attendanceApplication.getOutcome())) {
 				attendanceApplication.setState(ApplicationStateEnum.STATUS_COMMIT_END.getValue());
 			} else {
 				attendanceApplication.setState(ApplicationStateEnum.STATUS_ROLL_BACK.getValue());

@@ -2,9 +2,8 @@ package cn.management.service.attendance;
 
 import java.util.List;
 
-import org.activiti.engine.task.Comment;
-
 import cn.management.domain.attendance.AttendanceApplication;
+import cn.management.domain.attendance.vo.ApplicationCommentVo;
 import cn.management.exception.SysException;
 import cn.management.mapper.attendance.AttendanceApplicationMapper;
 import cn.management.service.BaseService;
@@ -21,7 +20,7 @@ public interface AttendanceApplicationService extends BaseService<AttendanceAppl
 	 * @param id
 	 * @return
 	 */
-	List<Comment> findCommentByLeaveBillId(Integer id);
+	List<ApplicationCommentVo> findCommentByLeaveBillId(Integer id);
 
 	/**
 	 * 添加考勤申请
@@ -47,5 +46,14 @@ public interface AttendanceApplicationService extends BaseService<AttendanceAppl
      * @return
      */
 	boolean logicalDelete(String ids);
+
+	/**
+	 * 考勤申请取消
+	 * @param applicationId
+	 * @param loginUserId
+	 * @return
+	 * @throws SysException 
+	 */
+	boolean doCancel(Integer applicationId, Integer loginUserId) throws SysException;
 
 }
