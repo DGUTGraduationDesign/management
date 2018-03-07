@@ -1,6 +1,9 @@
 package cn.management.service.meeting;
 
+import org.quartz.SchedulerException;
+
 import cn.management.domain.meeting.MeetingBespeak;
+import cn.management.exception.SysException;
 import cn.management.mapper.meeting.MeetingBespeakMapper;
 import cn.management.service.BaseService;
 
@@ -12,18 +15,47 @@ import cn.management.service.BaseService;
 public interface MeetingBespeakService extends BaseService<MeetingBespeakMapper, MeetingBespeak> {
 
 	/**
-	 * 预约会议室
+	 * 查询会议室在对应时间段内是否被预约
 	 * @param meetingBespeak
 	 * @return
 	 */
-	MeetingBespeak doBespeak(MeetingBespeak meetingBespeak);
+	boolean existsBespeakByIdAndTime(MeetingBespeak meetingBespeak);
+	
+	/**
+	 * 预约会议室
+	 * @param meetingBespeak
+	 * @return
+	 * @throws SysException 
+	 */
+	MeetingBespeak doBespeak(MeetingBespeak meetingBespeak) throws SysException;
 
 	/**
 	 * 修改会议室预约
 	 * @param meetingBespeak
+	 * @param loginUserId
 	 * @return
+	 * @throws SysException 
 	 */
-	boolean doUpdate(MeetingBespeak meetingBespeak);
+	boolean doUpdate(MeetingBespeak meetingBespeak, Integer loginUserId) throws SysException;
+
+	/**
+	 * 取消预约
+	 * @param bespeakId
+	 * @param loginUserId
+	 * @return
+	 * @throws SysException 
+	 */
+	boolean doCancel(Integer bespeakId, Integer loginUserId) throws SysException;
+
+	/**
+	 * 修改通知方式
+	 * @param bespeakId
+	 * @param loginUserId
+	 * @param informWay
+	 * @return
+	 * @throws SysException
+	 */
+	boolean doChangeInformWay(Integer bespeakId, Integer loginUserId, Integer informWay) throws SysException;
 
     /**
      * 逻辑删除，更新表中del_flag字段为1

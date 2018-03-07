@@ -8,4 +8,11 @@ import cn.management.util.MyMapper;
  */
 public interface MeetingBespeakMapper extends MyMapper<MeetingBespeak> {
 
+	/**
+	 * 查询会议室在对应时间段内是否被预约
+	 * @param meetingBespeak
+	 * @return
+	 */
+	int countBespeakByIdAndTime(MeetingBespeak meetingBespeak);
+
 }

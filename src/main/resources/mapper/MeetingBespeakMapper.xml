@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.meeting.MeetingBespeakMapper" >
+
+  <select id="countBespeakByIdAndTime" parameterType="cn.management.domain.meeting.MeetingBespeak" resultType="int">
+    SELECT COUNT(*)
+        FROM meeting_bespeak
+        WHERE meeting_room_id = #{meetingRoomId}
+            <if test="id != null"> AND id != #{id}</if>
+            AND ((begin_time &gt;= #{beginTime} AND begin_time &lt;= #{endTime})
+            OR (begin_time &lt;= #{beginTime} AND end_time &gt;= #{endTime})
+            OR (end_time &gt;= #{beginTime} AND end_time &lt;= #{endTime}))
+            AND bespeak_status = 0
+            AND del_flag = 1
+  </select>
+  
+</mapper>

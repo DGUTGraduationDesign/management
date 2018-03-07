@@ -41,7 +41,7 @@ public class BaseController<SERVICE extends BaseService, M extends BaseEntity> {
             return new Result(ResultEnum.NO_RECORDS);
         }
         PageInfo<M> pageInfo = new PageInfo<M>(list);
-        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), pageInfo.getSize(), pageInfo.getPageNum(), getPageSize());
+        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), (int) pageInfo.getTotal(), pageInfo.getPageNum(), getPageSize());
     }
     
     public Example getExample() {
