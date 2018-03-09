@@ -61,7 +61,8 @@ public interface MeetingBespeakService extends BaseService<MeetingBespeakMapper,
      * 逻辑删除，更新表中del_flag字段为1
      * @param ids
      * @return
+     * @throws SysException 
      */
-	boolean logicalDelete(String ids);
+	void logicalDelete(String ids) throws SysException;
 
 }

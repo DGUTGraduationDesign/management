@@ -226,17 +226,8 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
 		//后面判断时间是否有修改会用到
 		MeetingBespeak findMeetingBespeak = getItem(condition);
-		if (null == findMeetingBespeak) {
-			throw new SysException("所编辑对象不存在.");
-		}
-		//判断是否是预约者本人操作
-		if (!loginUserId.equals(findMeetingBespeak.getUserId())) {
-			throw new SysException("非预约者本人操作.");
-		}
-		//判断预约状态
-		if (!BespeakStatusEnum.BESPEAK.getValue().equals(findMeetingBespeak.getBespeakStatus())) {
-			throw new SysException("该预约记录已失效.");
-		}
+		//会议室修改常规判断
+		checkChangeBespeak(findMeetingBespeak, loginUserId);
 		//会议室预约常规判断
 		checkBespeak(meetingBespeak);
 		//更新数据库
@@ -306,17 +297,8 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
 		//后面判断会用到
 		MeetingBespeak findMeetingBespeak = getItem(condition);
-		if (null == findMeetingBespeak) {
-			throw new SysException("所编辑对象不存在.");
-		}
-		//判断是否是预约者本人操作
-		if (!loginUserId.equals(findMeetingBespeak.getUserId())) {
-			throw new SysException("非预约者本人操作.");
-		}
-		//判断预约状态
-		if (!BespeakStatusEnum.BESPEAK.getValue().equals(findMeetingBespeak.getBespeakStatus())) {
-			throw new SysException("该预约记录已失效.");
-		}
+		//会议室修改常规判断
+		checkChangeBespeak(findMeetingBespeak, loginUserId);
 		//修改预约状态
 		findMeetingBespeak.setUpdateTime(new Date());
 		findMeetingBespeak.setBespeakStatus(BespeakStatusEnum.CANCEL.getValue());
@@ -374,17 +356,8 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
 		//后面判断会用到
 		MeetingBespeak findMeetingBespeak = getItem(condition);
-		if (null == findMeetingBespeak) {
-			throw new SysException("所编辑对象不存在.");
-		}
-		//判断是否是预约者本人操作
-		if (!loginUserId.equals(findMeetingBespeak.getUserId())) {
-			throw new SysException("非预约者本人操作.");
-		}
-		//判断预约状态
-		if (!BespeakStatusEnum.BESPEAK.getValue().equals(findMeetingBespeak.getBespeakStatus())) {
-			throw new SysException("该预约记录已失效.");
-		}
+		//会议室修改常规判断
+		checkChangeBespeak(findMeetingBespeak, loginUserId);
 		//修改通知方式
 		MeetingBespeak meetingBespeak = new MeetingBespeak();
 		meetingBespeak.setId(bespeakId);
@@ -436,19 +409,47 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
         }
 	}
 
+	/**
+	 * 会议室修改常规判断
+	 * @param findMeetingBespeak
+	 * @param loginUserId
+	 * @throws SysException
+	 */
+	public void checkChangeBespeak(MeetingBespeak findMeetingBespeak, Integer loginUserId) throws SysException {
+		if (null == findMeetingBespeak) {
+			throw new SysException("所编辑对象不存在.");
+		}
+		//判断是否是预约者本人操作
+		if (!loginUserId.equals(findMeetingBespeak.getUserId())) {
+			throw new SysException("非预约者本人操作.");
+		}
+		//判断预约状态
+		if (!BespeakStatusEnum.BESPEAK.getValue().equals(findMeetingBespeak.getBespeakStatus())) {
+			throw new SysException("该预约记录已失效.");
+		}
+	}
+
     /**
      * 逻辑删除，更新表中del_flag字段为1
      * @param ids
      * @return
+     * @throws SysException 
      */
 	@Override
 	@Transactional
-	public boolean logicalDelete(String ids) {
-		Example example = new Example(MeetingBespeak.class);
-		example.createCriteria().andCondition("id IN(" + ids + ")");
-		MeetingBespeak meetingBespeak = new MeetingBespeak();
-		meetingBespeak.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
-		return updateByExampleSelective(meetingBespeak, example);
+	public void logicalDelete(String ids) throws SysException {
+		String[] bespeakIds = ids.split(",");
+		for (String id : bespeakIds) {
+			MeetingBespeak meetingBespeak = getItemById(id);
+			if (null != meetingBespeak) {
+				if (BespeakStatusEnum.BESPEAK.getValue().equals(meetingBespeak.getBespeakStatus())) {
+					throw new SysException("请先取消会议.");
+				} else {
+					meetingBespeak.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
+					update(meetingBespeak);
+				}
+			}
+		}
 	}
 
 }

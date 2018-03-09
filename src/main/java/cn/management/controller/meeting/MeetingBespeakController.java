@@ -178,20 +178,18 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
      * 批量删除会议室预约信息
      * @param ids
      * @return
+     * @throws SysException 
      */
     @RequestMapping("/delete")
     @RequiresPermissions("meetingBespeak:delete")
     @ResponseBody
-    public Result delete(@RequestBody Map<String, Object> models) {
+    public Result delete(@RequestBody Map<String, Object> models) throws SysException {
     	String ids = (String) models.get("ids");
     	if (!StringUtils.isNotBlank(ids)) {
             return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
         }
-        if (service.logicalDelete(ids)) {
-            return new Result(ResultEnum.SUCCESS);
-        } else {
-            return new Result(ResultEnum.FAIL);
-        }
+        service.logicalDelete(ids);
+        return new Result(ResultEnum.SUCCESS);
     }
     
 }
