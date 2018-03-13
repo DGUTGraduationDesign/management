@@ -150,14 +150,14 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-            <version>2.2.1</version>
+            <version>2.3.0</version>
         </dependency>
         <!-- 该依赖必加，里面有sping对schedule的支持 -->
-        <dependency>  
-            <groupId>org.springframework</groupId>  
-            <artifactId>spring-context-support</artifactId>  
-        </dependency> 
-        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
         <!-- 打包成war时用 -->
         <dependency>
 		    <groupId>javax.servlet</groupId>
@@ -177,25 +177,25 @@
                     <addResources>true</addResources>
                 </configuration>
             </plugin>
-            
-            <!-- war打包插件, 设定war包名称不带版本号 -->   
-	        <plugin>   
-	            <groupId>org.apache.maven.plugins</groupId>   
-	            <artifactId>maven-war-plugin</artifactId>   
-	            <version>2.5</version>   
-	            <configuration>   
-	                <warName>${project.artifactId}</warName>   
-	                <webResources>   
-	                    <resource>   
-	                        <directory>src/main/webapp</directory>   
-	                        <includes>   
-	                            <include>*.*</include>   
-	                            <include>**/*.*</include>    
-	                        </includes>    
-	                        <filtering>true</filtering>    
-	                    </resource>    
-	                </webResources>    
-	            </configuration>    
+
+            <!-- war打包插件, 设定war包名称不带版本号 -->
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <version>2.5</version>
+	            <configuration>
+	                <warName>${project.artifactId}</warName>
+	                <webResources>
+	                    <resource>
+	                        <directory>src/main/webapp</directory>
+	                        <includes>
+	                            <include>*.*</include>
+	                            <include>**/*.*</include>
+	                        </includes>
+	                        <filtering>true</filtering>
+	                    </resource>
+	                </webResources>
+	            </configuration>
 	        </plugin>
         </plugins>
     </build>

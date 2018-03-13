@@ -36,12 +36,12 @@ public class SmsUtilTest {
         //会议时间
         params.add("2018-01-02 16:30");
         //发送短信通知
-        try {
-        	smsMultiSenderResult = SmsUtil.sendMultiMessageWithParam(tmplId, params, phoneNumbers);
-            System.out.println(smsMultiSenderResult);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//        	smsMultiSenderResult = SmsUtil.sendMultiMessageWithParam(tmplId, params, phoneNumbers);
+//            System.out.println(smsMultiSenderResult);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     
 }
