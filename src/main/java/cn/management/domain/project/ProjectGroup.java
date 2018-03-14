@@ -32,7 +32,7 @@ public class ProjectGroup extends BaseEntity<Integer> {
     /**
      * 所属项目id
      */
-    private Integer item_id;
+    private Integer itemId;
 
     /**
      * 项目名称
@@ -43,7 +43,7 @@ public class ProjectGroup extends BaseEntity<Integer> {
     /**
      * 创建人id
      */
-    private Integer creat_by;
+    private Integer createBy;
 
     /**
      * 创建人姓名
@@ -54,7 +54,7 @@ public class ProjectGroup extends BaseEntity<Integer> {
     /**
      * 项目组成员ID集合，使用json存储
      */
-    private String user_ids;
+    private String userIds;
 
     /**
      * 项目组成员
@@ -74,24 +74,24 @@ public class ProjectGroup extends BaseEntity<Integer> {
         return headName;
     }
 
-    public Integer getItem_id() {
-        return item_id;
+    public Integer getItemId() {
+        return itemId;
     }
 
     public String getItemName() {
         return itemName;
     }
 
-    public Integer getCreat_by() {
-        return creat_by;
+    public Integer getCreateBy() {
+        return createBy;
     }
 
     public String getCreateName() {
         return createName;
     }
 
-    public String getUser_ids() {
-        return user_ids;
+    public String getUserIds() {
+        return userIds;
     }
 
     public List<AdminUser> getUsers() {
@@ -110,29 +110,31 @@ public class ProjectGroup extends BaseEntity<Integer> {
         this.headName = headName;
     }
 
-    public void setItem_id(Integer item_id) {
-        this.item_id = item_id;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
 
-    public void setCreat_by(Integer creat_by) {
-        this.creat_by = creat_by;
+    public void setCreatBy(Integer createBy) {
+        this.createBy = createBy;
     }
 
     public void setCreateName(String createName) {
         this.createName = createName;
     }
 
-    public void setUser_ids(String user_ids) {
-        this.user_ids = user_ids;
+    public void setUserIds(String userIds) {
+        this.userIds = userIds;
     }
 
     public void setUsers(List<AdminUser> users) {
         this.users = users;
     }
+
+    public void setCreateBy(Integer createBy) { this.createBy = createBy; }
 
     @Override
     public String toString() {
@@ -140,11 +142,11 @@ public class ProjectGroup extends BaseEntity<Integer> {
                 "groupName='" + groupName + '\'' +
                 ", headId=" + headId +
                 ", headName='" + headName + '\'' +
-                ", item_id=" + item_id +
+                ", itemId=" + itemId +
                 ", itemName='" + itemName + '\'' +
-                ", creat_by=" + creat_by +
+                ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
-                ", user_ids='" + user_ids + '\'' +
+                ", userIds='" + userIds + '\'' +
                 ", users=" + users +
                 ", id=" + id +
                 ", createTime=" + createTime +

@@ -2,12 +2,11 @@ package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectGroup;
-import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
+import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectGroupService;
-import cn.management.service.project.ProjectItemService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -51,16 +51,42 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         return list(page);
     }
 
+
+    /**
+     * 查询项目组详情
+     * @param models
+     * @return
+     */
+    @RequestMapping("/findProjectGroupById")
+    @RequiresPermissions("projectGroup:findbyId")
+    @ResponseBody
+    public Result findProjectGroupById(@RequestBody Map<String, Object> models) {
+        Integer projectGroupId = (Integer) models.get("projectGroupId");
+        ProjectGroup condition = new ProjectGroup();
+        condition.setId(projectGroupId);
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        ProjectGroup projectGroup = service.getItem(condition);
+        if (null == projectGroup) {
+            return new Result(ResultEnum.NO_RECORDS);
+        } else {
+            return new Result(ResultEnum.SUCCESS, projectGroup, 1, 0, 1);
+        }
+    }
+
+
     /**
      * 添加项目组
      * @param projectGroup
+     * @param request
      * @return
      * @throws SysException
      */
     @RequestMapping("/add")
     @RequiresPermissions("projectGroup:add")
     @ResponseBody
-    public Result add(@RequestBody ProjectGroup projectGroup) throws SysException {
+    public Result add(@RequestBody ProjectGroup projectGroup, HttpServletRequest request) throws SysException {
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        projectGroup.setCreatBy(loginUserId);
         projectGroup.setCreateTime(new Date());
         projectGroup.setUpdateTime(new Date());
         if (null == service.addSelectiveMapper(projectGroup)) {

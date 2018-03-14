@@ -5,6 +5,7 @@ import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
+import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectItemService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -55,13 +57,16 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     /**
      * 添加项目
      * @param projectItem
+     * @param request
      * @return
      * @throws SysException
      */
     @RequestMapping("/add")
     @RequiresPermissions("projectItem:add")
     @ResponseBody
-    public Result add(@RequestBody ProjectItem projectItem) throws SysException {
+    public Result add(@RequestBody ProjectItem projectItem, HttpServletRequest request) throws SysException {
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        projectItem.setCreateBy(loginUserId);
         projectItem.setCreateTime(new Date());
         projectItem.setUpdateTime(new Date());
         if (null == service.addSelectiveMapper(projectItem)) {

@@ -1,19 +1,110 @@
 package cn.management.service.project.impl;
 
+import cn.management.domain.admin.AdminUser;
 import cn.management.domain.project.ProjectGroup;
+import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.mapper.project.ProjectGroupMapper;
+import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectGroupService;
+import cn.management.service.project.ProjectItemService;
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 项目组Service层实现类
  */
 @Service
 public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper, ProjectGroup> implements ProjectGroupService {
+
+    @Autowired
+    private AdminUserService adminUserService;
+
+    @Autowired
+    private ProjectItemService projectItemService;
+
+    /**
+     * 条件查询项目列表
+     * @param example
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<ProjectGroup> getItemsByPage(Example example, int page, int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<ProjectGroup> list = mapper.selectByExample(example);
+        for (ProjectGroup projectGroup : list) {
+            //设置项目名称、项目组组长、创建人姓名
+            setName(projectGroup);
+        }
+        return list;
+    }
+
+    /**
+     * 查询项目组详情
+     * @param condition
+     * @return
+     */
+    @Override
+    public ProjectGroup getItem(ProjectGroup condition) {
+        List<ProjectGroup> items = getItemsByPage(condition, 1, 1);
+        if (CollectionUtils.isEmpty(items)) {
+            return null;
+        }
+        ProjectGroup projectGroup = items.get(0);
+        //设置项目名称、项目组组长、创建人姓名
+        setName(projectGroup);
+        //参会人员
+        setUserList(projectGroup);
+        return projectGroup;
+    }
+
+    /**
+     * 设置项目名称、项目组组长、创建人姓名
+     * @param projectGroup
+     */
+    public void setName(ProjectGroup projectGroup) {
+        //项目
+        ProjectItem projectItem = projectItemService.getItemById(projectGroup.getItemId());
+        //项目组组长
+        AdminUser header = adminUserService.getItemById(projectGroup.getHeadId());
+        //创建人
+        AdminUser createUser = adminUserService.getItemById(projectGroup.getCreateBy());
+        if (null != projectItem) {
+            projectGroup.setItemName(projectItem.getItemName());
+        }
+        if (null != header) {
+            projectGroup.setHeadName(header.getRealName());
+        }
+        if (null != createUser) {
+            projectGroup.setCreateName(createUser.getRealName());
+        }
+    }
+
+    /**
+     * 设置项目组成员
+     * @param projectGroup
+     */
+    public void setUserList(ProjectGroup projectGroup) {
+        //项目组成员
+        List<AdminUser> users = new ArrayList<AdminUser>();
+        List<Integer> userIds = JSONObject.parseArray(projectGroup.getUserIds(), Integer.class);
+        for (Integer id : userIds) {
+            AdminUser user = adminUserService.getItemById(id);
+            users.add(user);
+        }
+        projectGroup.setUsers(users);
+    }
 
     /**
      * 逻辑删除，更新表中del_flag字段为1
@@ -29,4 +120,5 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
         projectGroup.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
         return updateByExampleSelective(projectGroup, example);
     }
+
 }

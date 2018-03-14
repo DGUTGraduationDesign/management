@@ -1,9 +1,12 @@
 package cn.management.domain.project;
 
 import cn.management.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * 项目数据模型
@@ -19,7 +22,7 @@ public class ProjectItem extends BaseEntity<Integer> {
     /**
      * 项目状态，默认为0，0表示未完成，1表示已完成
      */
-    private String itemState;
+    private Integer itemState;
 
     /**
      * 项目状态名称
@@ -36,6 +39,20 @@ public class ProjectItem extends BaseEntity<Integer> {
      * 已完成任务数
      */
     private Integer completeTask;
+
+    /**
+     * 项目开始时间
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    private Date beginDate;
+
+    /**
+     * 项目完成时间
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone="GMT+8")
+    private Date endDate;
 
     /**
      * 负责人id
@@ -63,7 +80,7 @@ public class ProjectItem extends BaseEntity<Integer> {
         return itemName;
     }
 
-    public String getItemState() {
+    public Integer getItemState() {
         return itemState;
     }
 
@@ -95,11 +112,15 @@ public class ProjectItem extends BaseEntity<Integer> {
         return createName;
     }
 
+    public Date getBeginDate() { return beginDate; }
+
+    public Date getEndDate() { return endDate; }
+
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
 
-    public void setItemState(String itemState) {
+    public void setItemState(Integer itemState) {
         this.itemState = itemState;
     }
 
@@ -130,6 +151,10 @@ public class ProjectItem extends BaseEntity<Integer> {
     public void setCreateName(String createName) {
         this.createName = createName;
     }
+
+    public void setBeginDate(Date beginDate) { this.beginDate = beginDate; }
+
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
 
     @Override
     public String toString() {

@@ -64,9 +64,21 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
         }
         return list;
     }
-	
-    /**
-     * 
+
+	/**
+	 * 根据id查询员工信息
+	 * @param id
+	 * @return
+	 */
+	public AdminUser getItemById(Object id) {
+		AdminUser adminUser = mapper.selectByPrimaryKey(id);
+		//设置部门岗位名
+		setName(adminUser);
+		return adminUser;
+	}
+
+	/**
+     * 用户登录
      * @param loginName
      * @return
      */
@@ -104,7 +116,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 			adminUser.setDeptName(department.getDeptName());
 		}
 		if (position != null) {
-			adminUser.setPostName(adminUser.getPostName());
+			adminUser.setPostName(position.getPostName());
 		}
 	}
 

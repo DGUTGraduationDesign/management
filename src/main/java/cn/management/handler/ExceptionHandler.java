@@ -3,6 +3,7 @@ package cn.management.handler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -31,6 +32,9 @@ public class ExceptionHandler {
         }
     	if (e instanceof UnauthorizedException) {
             return new Result(ResultEnum.NO_AUTHORITY);
+        }
+        if (e instanceof UnauthenticatedException) {
+    	    return new Result(ResultEnum.NO_LOGIN);
         }
         return new Result(ResultEnum.UNKONW_ERROR);
     }
