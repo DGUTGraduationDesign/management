@@ -4,12 +4,13 @@ import cn.management.domain.BaseEntity;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * 通知数据模型
  */
-@Table(name = "protject_notice")
-public class ProtjectNotice extends BaseEntity<Integer> {
+@Table(name = "project_notice")
+public class ProjectNotice extends BaseEntity<Integer> {
 
     /**
      * 通知内容
@@ -27,6 +28,12 @@ public class ProtjectNotice extends BaseEntity<Integer> {
     @Transient
     private String createName;
 
+    /**
+     * 知会人
+     */
+    @Transient
+    private List<ProjectNoticeInform> informList;
+
     public String getContent() {
         return content;
     }
@@ -38,6 +45,8 @@ public class ProtjectNotice extends BaseEntity<Integer> {
     public String getCreateName() {
         return createName;
     }
+
+    public List<ProjectNoticeInform> getInformList() { return informList; }
 
     public void setContent(String content) {
         this.content = content;
@@ -51,12 +60,15 @@ public class ProtjectNotice extends BaseEntity<Integer> {
         this.createName = createName;
     }
 
+    public void setInformList(List<ProjectNoticeInform> informList) { this.informList = informList; }
+
     @Override
     public String toString() {
-        return "ProtjectNotice{" +
+        return "ProjectNotice{" +
                 "content='" + content + '\'' +
                 ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
+                ", informList=" + informList +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

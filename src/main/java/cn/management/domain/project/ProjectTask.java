@@ -1,6 +1,8 @@
 package cn.management.domain.project;
 
 import cn.management.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -11,6 +13,11 @@ import java.util.Date;
  */
 @Table(name = "project_task")
 public class ProjectTask extends BaseEntity<Integer> {
+
+    /**
+     * 任务名称
+     */
+    private String taskName;
 
     /**
      * 任务内容
@@ -29,13 +36,23 @@ public class ProjectTask extends BaseEntity<Integer> {
     private String taskStateName;
 
     /**
+     * 任务开始日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date beginDate;
+
+    /**
      * 任务截止日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date closingDate;
 
     /**
      * 任务完成日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date completeDate;
 
     /**
@@ -71,6 +88,16 @@ public class ProjectTask extends BaseEntity<Integer> {
     @Transient
     private String userName;
 
+    /**
+     * 通知方式
+     */
+    @Transient
+    private Integer informWay;
+
+    public String getTaskName() {
+        return taskName;
+    }
+
     public String getContent() {
         return content;
     }
@@ -81,6 +108,10 @@ public class ProjectTask extends BaseEntity<Integer> {
 
     public String getTaskStateName() {
         return taskStateName;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
     }
 
     public Date getClosingDate() {
@@ -115,6 +146,14 @@ public class ProjectTask extends BaseEntity<Integer> {
         return userName;
     }
 
+    public Integer getInformWay() {
+        return informWay;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
     public void setContent(String content) {
         this.content = content;
     }
@@ -125,6 +164,10 @@ public class ProjectTask extends BaseEntity<Integer> {
 
     public void setTaskStateName(String taskStateName) {
         this.taskStateName = taskStateName;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
     }
 
     public void setClosingDate(Date closingDate) {
@@ -159,12 +202,18 @@ public class ProjectTask extends BaseEntity<Integer> {
         this.userName = userName;
     }
 
+    public void setInformWay(Integer informWay) {
+        this.informWay = informWay;
+    }
+
     @Override
     public String toString() {
         return "ProjectTask{" +
-                "content='" + content + '\'' +
+                "taskName='" + taskName + '\'' +
+                ", content='" + content + '\'' +
                 ", taskState=" + taskState +
                 ", taskStateName='" + taskStateName + '\'' +
+                ", beginDate=" + beginDate +
                 ", closingDate=" + closingDate +
                 ", completeDate=" + completeDate +
                 ", itemId=" + itemId +
@@ -173,6 +222,7 @@ public class ProjectTask extends BaseEntity<Integer> {
                 ", createName='" + createName + '\'' +
                 ", userId=" + userId +
                 ", userName='" + userName + '\'' +
+                ", informWay=" + informWay +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

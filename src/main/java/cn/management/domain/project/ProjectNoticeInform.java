@@ -8,8 +8,8 @@ import javax.persistence.Transient;
 /**
  * 通知知会表数据模型
  */
-@Table(name = "protject_notice_inform")
-public class ProtjectNoticeInform extends BaseEntity<Integer> {
+@Table(name = "project_notice_inform")
+public class ProjectNoticeInform extends BaseEntity<Integer> {
 
     /**
      * 知会人id
