@@ -4,12 +4,18 @@ import cn.management.domain.BaseEntity;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * 通知知会表数据模型
  */
 @Table(name = "project_notice_inform")
 public class ProjectNoticeInform extends BaseEntity<Integer> {
+
+    /**
+     * 通知id
+     */
+    private Integer noticeId;
 
     /**
      * 知会人id
@@ -27,11 +33,9 @@ public class ProjectNoticeInform extends BaseEntity<Integer> {
      */
     private Integer readFlag;
 
-    /**
-     * 是否已读
-     */
-    @Transient
-    private String readFlagName;
+    public Integer getNoticeId() {
+        return noticeId;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -45,8 +49,8 @@ public class ProjectNoticeInform extends BaseEntity<Integer> {
         return readFlag;
     }
 
-    public String getReadFlagName() {
-        return readFlagName;
+    public void setNoticeId(Integer noticeId) {
+        this.noticeId = noticeId;
     }
 
     public void setUserId(Integer userId) {
@@ -61,17 +65,13 @@ public class ProjectNoticeInform extends BaseEntity<Integer> {
         this.readFlag = readFlag;
     }
 
-    public void setReadFlagName(String readFlagName) {
-        this.readFlagName = readFlagName;
-    }
-
     @Override
     public String toString() {
         return "ProtjectNoticeInform{" +
+                "noticeId=" + noticeId +
                 "userId=" + userId +
                 ", userName='" + userName + '\'' +
                 ", readFlag=" + readFlag +
-                ", readFlagName='" + readFlagName + '\'' +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

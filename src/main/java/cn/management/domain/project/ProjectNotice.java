@@ -13,6 +13,11 @@ import java.util.List;
 public class ProjectNotice extends BaseEntity<Integer> {
 
     /**
+     * 通知标题
+     */
+    private String title;
+
+    /**
      * 通知内容
      */
     private String content;
@@ -34,6 +39,16 @@ public class ProjectNotice extends BaseEntity<Integer> {
     @Transient
     private List<ProjectNoticeInform> informList;
 
+    /**
+     * 是否已读
+     */
+    @Transient
+    private String readFlagName;
+
+    public String getTitle() {
+        return title;
+    }
+
     public String getContent() {
         return content;
     }
@@ -47,6 +62,14 @@ public class ProjectNotice extends BaseEntity<Integer> {
     }
 
     public List<ProjectNoticeInform> getInformList() { return informList; }
+
+    public String getReadFlagName() {
+        return readFlagName;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public void setContent(String content) {
         this.content = content;
@@ -62,13 +85,19 @@ public class ProjectNotice extends BaseEntity<Integer> {
 
     public void setInformList(List<ProjectNoticeInform> informList) { this.informList = informList; }
 
+    public void setReadFlagName(String readFlagName) {
+        this.readFlagName = readFlagName;
+    }
+
     @Override
     public String toString() {
         return "ProjectNotice{" +
+                "title='" + title + '\'' +
                 "content='" + content + '\'' +
                 ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
                 ", informList=" + informList +
+                ", readFlagName='" + readFlagName + '\'' +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

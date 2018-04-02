@@ -3,22 +3,18 @@ package cn.management.enums;
 /**
  * 考勤申请表页面 身份 权限 枚举
  * @author ZhouJiaKai
- * @since  2018/03/01
+ * @since  2018/03/21
  */
-public enum AttendanceIdentityEnum {
-	
+public enum NoticeIdentityEnum {
+
     /**
-     * 个人考勤申请
+     * 我的通知
      */
-    SELF("self","attendanceApplication:self","个人"),
+    SELF("self","projectNotice:self", "我的通知"),
     /**
-     * 直接上级审核
+     * 发布的通知
      */
-    LEAD("lead","attendanceApplication:leader","直接上级"),
-    /**
-     * 部门总监审核
-     */
-    HEAD("head","attendanceApplication:header","部门总监");
+    PUBLISH("publish", "projectNotice:publish", "发布的通知");
 
     /**
      * 身份
@@ -35,7 +31,7 @@ public enum AttendanceIdentityEnum {
      */
     private String identityCn;
 
-    AttendanceIdentityEnum(String identity, String permission, String identityCn) {
+    NoticeIdentityEnum(String identity, String permission, String identityCn) {
         this.identity = identity;
         this.permission = permission;
         this.identityCn = identityCn;
@@ -59,7 +55,7 @@ public enum AttendanceIdentityEnum {
      * @return
      */
     public static String getPermission(String identity) {
-        for (AttendanceIdentityEnum groupEnum : AttendanceIdentityEnum.values()) {
+        for (NoticeIdentityEnum groupEnum : NoticeIdentityEnum.values()) {
             if(groupEnum.getIdentity().equals(identity)) {
                 return  groupEnum.getPermission();
             }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.project.ProjectNoticeMapper" >
+
+	<resultMap id="noticeMap" type="cn.management.domain.project.ProjectNotice">
+		<id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+		<result column="content" property="content"></result>
+		<result column="create_by" property="createBy"></result>
+		<result column="create_time" property="createTime"></result>
+		<result column="update_time" property="updateTime"></result>
+		<result column="del_flag" property="delFlag"></result>
+		<collection property="informList" ofType="cn.management.domain.project.ProjectNoticeInform">
+			<result column="id" property="noticeId"></result>
+			<result column="user_id" property="userId"></result>
+			<result column="read_flag" property="readFlag"></result>
+			<result column="create_time" property="createTime"></result>
+			<result column="update_time" property="updateTime"></result>
+			<result column="del_flag" property="delFlag"></result>
+		</collection>
+	</resultMap>
+
+  <sql id="allClounm">
+  	t1.id, title, content, create_by, t1.create_time, t1.update_time, t1.del_flag, user_id, read_flag, t2.create_time, t2.update_time, t2.del_flag
+  </sql>
+  
+  <sql id="conditionQuery">
+  	<if test="createBy != null">
+  		and create_by = #{createBy}
+  	</if>
+	  <if test="userId != null">
+		  and user_id = #{userId}
+	  </if>
+	  <if test="readFlag != null">
+		  and read_flag = #{readFlag}
+	  </if>
+  </sql>
+
+  <select id="getItemsByCondition" parameterType="cn.management.domain.project.dto.ProjectNoticeDto"
+    resultMap="noticeMap">
+    select <include refid="allClounm" />
+    from project_notice t1
+    left join project_notice_inform t2 on t1.id = t2.notice_id and t1.del_flag = 1
+    <where>
+    	<include refid="conditionQuery" />
+    </where>
+	order by t1.id DESC
+  </select>
+
+	<select id="getReadFlagById" resultType="int">
+		select read_flag
+		from project_notice_inform
+		where notice_id = #{noticeId} and user_id = #{userId}
+	</select>
+
+	<select id="getProjectNoticeById" parameterType="int" resultMap="noticeMap">
+		select <include refid="allClounm" />
+		from project_notice t1
+		left join project_notice_inform t2 on t1.id = t2.notice_id and t1.del_flag = 1
+		where t1.id = #{projectNoticeId}
+	</select>
+
+</mapper>

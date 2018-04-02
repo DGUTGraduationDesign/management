@@ -72,8 +72,10 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 	 */
 	public AdminUser getItemById(Object id) {
 		AdminUser adminUser = mapper.selectByPrimaryKey(id);
-		//设置部门岗位名
-		setName(adminUser);
+		if (null != adminUser) {
+			//设置部门岗位名
+			setName(adminUser);
+		}
 		return adminUser;
 	}
 
@@ -142,6 +144,7 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 		adminUser.setPassword(MD5Util.getMD5Value(password));
 		//设置添加时间
 		adminUser.setCreateTime(new Date());
+		adminUser.setUpdateTime(new Date());
 		return addSelectiveMapper(adminUser);
 	}
 
