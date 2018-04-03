@@ -98,7 +98,7 @@ public class SendProjectInformUtil {
      * @throws MessagingException
      * @throws IOException
      */
-    public static void sendUpdateMeetingMail(ProjectNotice projectNotice, List<AdminUser> users)
+    public static void sendProjectNoticeMail(ProjectNotice projectNotice, List<AdminUser> users)
         throws SysException, MessagingException, IOException {
         //收件人地址
         List<String> toAddrs = buildToAddrs(users);
@@ -118,16 +118,16 @@ public class SendProjectInformUtil {
         StringBuilder mailContent = new StringBuilder();
         if (null == projectNotice.getId()) {
             mailContent.append("您有新的项目通知.<br/>"
-                    + "<b>标题：</b>" + title
-                    + "<b>内容：</b>" + content
-                    + "<b>发布人：</b>" + createName
+                    + "<b>标题：</b>" + title + "<br/>"
+                    + "<b>内容：</b>" + content + "<br/>"
+                    + "<b>发布人：</b>" + createName + "<br/>"
                     + "<b>发布时间：</b>" + createDateStr);
         } else if (null != projectNotice) {
             mailContent.append("您有变更的项目通知.<br/>"
-                    + "<b>标题：</b>" + title
-                    + "<b>内容：</b>" + content
-                    + "<b>发布人：</b>" + createName
-                    + "<b>发布时间：</b>" + createDateStr
+                    + "<b>标题：</b>" + title + "<br/>"
+                    + "<b>内容：</b>" + content + "<br/>"
+                    + "<b>发布人：</b>" + createName + "<br/>"
+                    + "<b>发布时间：</b>" + createDateStr + "<br/>"
                     + "<b>修改时间：</b>" + updateDateStr);
         }
         //发送邮件

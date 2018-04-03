@@ -45,6 +45,20 @@ public class ProjectNotice extends BaseEntity<Integer> {
     @Transient
     private String readFlagName;
 
+    /**
+     * 通知方式
+     * 0 表示 "无"
+     * 1 表示 "邮件通知"
+     * 2 表示 "短信通知"
+     * 3 表示 "邮件、短信通知"
+     */
+    @Transient
+    private Integer informWay;
+
+    public Integer getInformWay() {
+        return informWay;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -87,6 +101,10 @@ public class ProjectNotice extends BaseEntity<Integer> {
 
     public void setReadFlagName(String readFlagName) {
         this.readFlagName = readFlagName;
+    }
+
+    public void setInformWay(Integer informWay) {
+        this.informWay = informWay;
     }
 
     @Override

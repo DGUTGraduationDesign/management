@@ -5,6 +5,7 @@ import cn.management.domain.project.ProjectNotice;
 import cn.management.domain.project.ProjectNoticeInform;
 import cn.management.domain.project.dto.ProjectNoticeDto;
 import cn.management.enums.DeleteTypeEnum;
+import cn.management.enums.InformWayEnum;
 import cn.management.enums.NoticeIdentityEnum;
 import cn.management.enums.NoticeReadEnum;
 import cn.management.exception.SysException;
@@ -13,17 +14,23 @@ import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectNoticeInformService;
 import cn.management.service.project.ProjectNoticeService;
+import cn.management.util.SendProjectInformUtil;
 import com.github.pagehelper.PageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class ProjectNoticeServiceImpl extends BaseServiceImpl<ProjectNoticeMapper, ProjectNotice> implements ProjectNoticeService {
+
+    private final static Logger logger =  LoggerFactory.getLogger(ProjectNoticeServiceImpl.class);
 
     @Autowired
     private ProjectNoticeInformService projectNoticeInformService;
@@ -81,6 +88,42 @@ public class ProjectNoticeServiceImpl extends BaseServiceImpl<ProjectNoticeMappe
             projectNoticeInform.setUpdateTime(new Date());
             projectNoticeInformService.addSelectiveMapper(projectNoticeInform);
         }
+
+        //判断是否需要发送通知
+        Integer informWay = projectNotice.getInformWay();
+        if (!InformWayEnum.NONE.getValue().equals(informWay)) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //知会人
+                    List<AdminUser> users = new ArrayList<AdminUser>();
+                    List<ProjectNoticeInform> list = projectNotice.getInformList();
+                    for (ProjectNoticeInform projectNoticeInform : list) {
+                        AdminUser user = adminUserService.getItemById(projectNoticeInform.getUserId());
+                        if (null != user) {
+                            users.add(user);
+                        }
+                    }
+                    //发布人
+                    AdminUser createUser = adminUserService.getItemById(projectNotice.getCreateBy());
+                    projectNotice.setCreateName(createUser.getRealName());
+                    try {
+                        projectNotice.setId(null);
+                        if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
+                            //发送邮件通知
+                            SendProjectInformUtil.sendProjectNoticeMail(projectNotice, users);
+                        }
+                        if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
+                            //发送短信通知
+                            SendProjectInformUtil.sendProjectNoticeMessage(projectNotice, users);
+                        }
+                    } catch (Exception e) {
+                        logger.error(projectNotice.toString(), e);
+                    }
+                }
+            }).start();
+        }
+
         return true;
     }
 
@@ -90,6 +133,42 @@ public class ProjectNoticeServiceImpl extends BaseServiceImpl<ProjectNoticeMappe
             throw new SysException("所编辑对象不存在.");
         }
         update(projectNotice);
+
+        //判断是否需要发送通知
+        Integer informWay = projectNotice.getInformWay();
+        if (!InformWayEnum.NONE.getValue().equals(informWay)) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //知会人
+                    List<AdminUser> users = new ArrayList<AdminUser>();
+                    List<ProjectNoticeInform> list = projectNotice.getInformList();
+                    for (ProjectNoticeInform projectNoticeInform : list) {
+                        AdminUser user = adminUserService.getItemById(projectNoticeInform.getUserId());
+                        if (null != user) {
+                            users.add(user);
+                        }
+                    }
+                    //发布人
+                    AdminUser createUser = adminUserService.getItemById(projectNotice.getCreateBy());
+                    projectNotice.setCreateName(createUser.getRealName());
+                    try {
+                        projectNotice.setId(null);
+                        if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
+                            //发送邮件通知
+                            SendProjectInformUtil.sendProjectNoticeMail(projectNotice, users);
+                        }
+                        if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
+                            //发送短信通知
+                            SendProjectInformUtil.sendProjectNoticeMessage(projectNotice, users);
+                        }
+                    } catch (Exception e) {
+                        logger.error(projectNotice.toString(), e);
+                    }
+                }
+            }).start();
+        }
+
         return true;
     }
 
