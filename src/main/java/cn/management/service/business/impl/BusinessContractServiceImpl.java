@@ -4,6 +4,7 @@ import cn.management.domain.admin.AdminUser;
 import cn.management.domain.business.BusinessContract;
 import cn.management.domain.business.BusinessCustomer;
 import cn.management.enums.DeleteTypeEnum;
+import cn.management.exception.SysException;
 import cn.management.mapper.business.BusinessContractMapper;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.business.BusinessContractService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,6 +54,17 @@ public class BusinessContractServiceImpl extends BaseServiceImpl<BusinessContrac
             }
         }
         return list;
+    }
+
+    @Override
+    public Object doAdd(BusinessContract businessContract) throws SysException {
+        BusinessCustomer businessCustomer = businessCustomerService.getItemById(businessContract.getCustomerId());
+        if (null == businessCustomer) {
+            throw new SysException("所选客户不存在.");
+        }
+        businessContract.setCreateTime(new Date());
+        businessContract.setUpdateTime(new Date());
+        return addSelectiveMapper(businessContract);
     }
 
     /**

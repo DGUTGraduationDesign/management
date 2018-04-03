@@ -1,9 +1,11 @@
 package cn.management.domain.business;
 
 import cn.management.domain.BaseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.File;
 
 /**
  * 报告数据模型
@@ -37,6 +39,12 @@ public class BusinessReport extends BaseEntity<Integer> {
     @Transient
     private String createName;
 
+    /**
+     * 报给文件
+     */
+    @Transient
+    private MultipartFile file;
+
     public String getReportName() {
         return reportName;
     }
@@ -55,6 +63,10 @@ public class BusinessReport extends BaseEntity<Integer> {
 
     public String getCreateName() {
         return createName;
+    }
+
+    public MultipartFile getFile() {
+        return file;
     }
 
     public void setReportName(String reportName) {
@@ -77,6 +89,10 @@ public class BusinessReport extends BaseEntity<Integer> {
         this.createName = createName;
     }
 
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
+
     @Override
     public String toString() {
         return "BusinessReport{" +
@@ -85,6 +101,7 @@ public class BusinessReport extends BaseEntity<Integer> {
                 ", filePath='" + filePath + '\'' +
                 ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
+                ", file='" + file + '\'' +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class BusinessReportServiceImpl extends BaseServiceImpl<BusinessReportMap
     }
 
     /**
-     * 逻辑删除，更新表中del_flag字段为1
+     * 逻辑删除，更新表中del_flag字段为1，并删除文件
      * @param ids
      * @return
      */

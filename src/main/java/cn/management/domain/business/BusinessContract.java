@@ -1,6 +1,7 @@
 package cn.management.domain.business;
 
 import cn.management.domain.BaseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -48,6 +49,16 @@ public class BusinessContract extends BaseEntity<Integer> {
     @Transient
     private String customerName;
 
+    /**
+     * 报给文件
+     */
+    @Transient
+    private MultipartFile file;
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
     public String getContractName() {
         return contractName;
     }
@@ -74,6 +85,10 @@ public class BusinessContract extends BaseEntity<Integer> {
 
     public String getCustomerName() {
         return customerName;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public void setContractName(String contractName) {
