@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import cn.management.domain.admin.AdminUser;
 /**
  * 会议室预约记录数据模型
  */
+@Table(name = "meeting_bespeak")
 public class MeetingBespeak extends BaseEntity<Integer> implements Serializable {
 
     /**

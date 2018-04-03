@@ -4,9 +4,12 @@ import java.io.Serializable;
 
 import cn.management.domain.BaseEntity;
 
+import javax.persistence.Table;
+
 /**
  * 会议室数据模型
  */
+@Table(name = "meeting_room")
 public class MeetingRoom extends BaseEntity<Integer> implements Serializable {
 
     /**
