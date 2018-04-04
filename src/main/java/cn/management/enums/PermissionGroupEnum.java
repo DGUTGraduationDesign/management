@@ -10,7 +10,9 @@ public enum PermissionGroupEnum {
     SYSTEM("系统管理", "system"),
     ATTENDANCE("考勤管理", "attendance"),
     MEETING("会议管理", "meeting"),
-    PROJECT("项目管理", "project");
+    PROJECT("项目管理", "project"),
+    MESSAGE("信息管理", "message"),
+    BUSINESS("业务管理", "business");
 
     private String name;
 

@@ -107,6 +107,23 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 		return adminUser;
 	}
 
+	@Override
+	public List<AdminUser> getAllUsers() {
+	    String condition = "del_flag = 1";
+		List<AdminUser> userList = getItemsByCondition(condition);
+		for (AdminUser user : userList) {
+			AdminDepartment department = adminDepartmentService.getItemById(user.getDeptId());
+			if (null != department) {
+				user.setDeptName(department.getDeptName());
+			}
+			AdminPosition position = adminPositionService.getItemById(user.getPostId());
+			if (null != position) {
+				user.setPostName(position.getPostName());
+			}
+		}
+		return userList;
+	}
+
 	/**
 	 * 设置部门岗位中文
 	 * @param adminUser

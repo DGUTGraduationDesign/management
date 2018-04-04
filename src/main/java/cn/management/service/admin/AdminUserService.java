@@ -5,6 +5,8 @@ import cn.management.exception.SysException;
 import cn.management.mapper.admin.AdminUserMapper;
 import cn.management.service.BaseService;
 
+import java.util.List;
+
 /**
  * 用户Service层接口
  * @author ZhouJiaKai
@@ -31,6 +33,12 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
     AdminUser getUserAndRoles(AdminUser user);
 
     /**
+     * 查询所有员工信息
+     * @return
+     */
+    List<AdminUser> getAllUsers();
+
+    /**
      * 添加员工信息
      * @param adminUser
      * @return
@@ -52,5 +60,5 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
      * @return
      */
 	boolean logicalDelete(String ids);
-    
+
 }
