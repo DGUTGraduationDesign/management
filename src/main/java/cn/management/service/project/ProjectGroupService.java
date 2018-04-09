@@ -10,6 +10,20 @@ import cn.management.service.BaseService;
 public interface ProjectGroupService extends BaseService<ProjectGroupMapper, ProjectGroup> {
 
     /**
+     * 添加项目组
+     * @param projectGroup
+     * @return
+     */
+    Object doAdd(ProjectGroup projectGroup);
+
+    /**
+     * 修改项目组
+     * @param projectGroup
+     * @return
+     */
+    boolean doUpdate(ProjectGroup projectGroup);
+
+    /**
      * 逻辑删除，更新表中del_flag字段为1
      * @param ids
      * @return

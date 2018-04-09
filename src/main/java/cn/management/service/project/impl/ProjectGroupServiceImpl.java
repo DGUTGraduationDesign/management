@@ -2,12 +2,14 @@ package cn.management.service.project.impl;
 
 import cn.management.domain.admin.AdminUser;
 import cn.management.domain.project.ProjectGroup;
+import cn.management.domain.project.ProjectGroupUser;
 import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.mapper.project.ProjectGroupMapper;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectGroupService;
+import cn.management.service.project.ProjectGroupUserService;
 import cn.management.service.project.ProjectItemService;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -18,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +34,9 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
 
     @Autowired
     private ProjectItemService projectItemService;
+
+    @Autowired
+    private ProjectGroupUserService projectGroupUserService;
 
     /**
      * 条件查询项目列表
@@ -107,6 +113,45 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
     }
 
     /**
+     * 添加项目组
+     * @param projectGroup
+     * @return
+     */
+    @Override
+    public Object doAdd(ProjectGroup projectGroup) {
+        //添加项目组信息
+        addSelectiveMapper(projectGroup);
+        //添加项目组员工关联信息
+        List<Integer> userIds = JSONObject.parseArray(projectGroup.getUserIds(), Integer.class);
+        for (Integer userId : userIds) {
+            ProjectGroupUser projectGroupUser = new ProjectGroupUser();
+            projectGroupUser.setGroupId(projectGroup.getId());
+            projectGroupUser.setUserId(userId);
+            projectGroupUser.setCreateTime(new Date());
+            projectGroupUser.setUpdateTime(new Date());
+            projectGroupUserService.addSelectiveMapper(projectGroupUser);
+        }
+        return projectGroup;
+    }
+
+    @Override
+    public boolean doUpdate(ProjectGroup projectGroup) {
+        //修改项目组员工关联信息
+        projectGroupUserService.deleteByGroupId(projectGroup.getId());
+        List<Integer> userIds = JSONObject.parseArray(projectGroup.getUserIds(), Integer.class);
+        for (Integer userId : userIds) {
+            ProjectGroupUser projectGroupUser = new ProjectGroupUser();
+            projectGroupUser.setGroupId(projectGroup.getId());
+            projectGroupUser.setUserId(userId);
+            projectGroupUser.setCreateTime(new Date());
+            projectGroupUser.setUpdateTime(new Date());
+            projectGroupUserService.addSelectiveMapper(projectGroupUser);
+        }
+        //修改项目组信息
+        return update(projectGroup);
+    }
+
+    /**
      * 逻辑删除，更新表中del_flag字段为1
      * @param ids
      * @return
@@ -114,6 +159,12 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
     @Override
     @Transactional
     public boolean logicalDelete(String ids) {
+        //删除项目组员工关联信息
+        String[] list = ids.split(",");
+        for (String id : list) {
+            projectGroupUserService.deleteByGroupId(Integer.valueOf(id));
+        }
+        //删除项目组信息
         Example example = new Example(ProjectGroup.class);
         example.createCriteria().andCondition("id IN(" + ids + ")");
         ProjectGroup projectGroup = new ProjectGroup();

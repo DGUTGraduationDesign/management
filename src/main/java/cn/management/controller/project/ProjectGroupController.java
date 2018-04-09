@@ -51,7 +51,6 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         return list(page);
     }
 
-
     /**
      * 查询项目组详情
      * @param models
@@ -73,7 +72,6 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         }
     }
 
-
     /**
      * 添加项目组
      * @param projectGroup
@@ -89,7 +87,7 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         projectGroup.setCreatBy(loginUserId);
         projectGroup.setCreateTime(new Date());
         projectGroup.setUpdateTime(new Date());
-        if (null == service.addSelectiveMapper(projectGroup)) {
+        if (null == service.doAdd(projectGroup)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -107,7 +105,7 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
     @ResponseBody
     public Result edit(@RequestBody ProjectGroup projectGroup) throws SysException {
         projectGroup.setUpdateTime(new Date());
-        if (service.update(projectGroup)) {
+        if (service.doUpdate(projectGroup)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);
