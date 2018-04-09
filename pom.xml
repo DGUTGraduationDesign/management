@@ -158,6 +158,13 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
 
+        <!-- jersey，跨服务器上传 -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.19</version>
+        </dependency>
+
         <!-- 打包成war时用 -->
         <dependency>
 		    <groupId>javax.servlet</groupId>

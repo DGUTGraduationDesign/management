@@ -6,9 +6,12 @@ import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.business.BusinessReportService;
+import cn.management.util.Commons;
 import cn.management.util.DownloadUtil;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -81,23 +84,17 @@ public class BusinessReportController extends BaseController<BusinessReportServi
         //生成新的文件名
         String prefix = UUID.randomUUID().toString().replace("-", "");
         String newFileName = prefix + suffix;
-        //获取保存路径
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormat.format(new Date());
-        String path = request.getSession().getServletContext().getRealPath("/files/reports/" + date);
-        //如果不存在则创建一个
-        File pathFile = new File(path);
-        if (!pathFile.exists()) {
-            pathFile.mkdirs();
-        }
-        //保存图片
-        file.transferTo(new File(path, newFileName));
-
+        //创建jersey服务器，进行跨服务器上传
+        Client client = new Client();
+        //把文件关联到远程服务器
+        WebResource resource = client.resource(Commons.FILE_HOST + Commons.REPORTS_PATH + "/" + newFileName);
+        //上传
+        resource.put(String.class, file.getBytes());
         //更新到数据库
         //原文件名
         businessReport.setFileName(fileName);
         //文件下载地址
-        businessReport.setFilePath("/files/reports/" + date + "/" + newFileName);
+        businessReport.setFilePath(Commons.REPORTS_PATH + "/" + newFileName);
         //上传者
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         businessReport.setCreateBy(loginId);
@@ -119,11 +116,17 @@ public class BusinessReportController extends BaseController<BusinessReportServi
      */
     @RequestMapping("/download")
     @RequiresPermissions("businessReport:download")
-    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
         Integer reportId = (Integer) models.get("reportId");
         BusinessReport businessReport = service.getItemById(reportId);
-        String path = request.getSession().getServletContext().getRealPath("/") + businessReport.getFilePath();
-        InputStream inputStream = new FileInputStream(path);
+        String path = Commons.FILE_HOST + businessReport.getFilePath();
+        //创建jersey服务器，进行跨服务器下载
+        Client client = new Client();
+        //把文件关联到远程服务器
+        WebResource resource = client.resource(path);
+        //下载
+        File file = resource.get(File.class);
+        InputStream inputStream = new FileInputStream(file);
         //内存中的缓存区
         BufferedInputStream bis = new BufferedInputStream(inputStream);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -155,11 +158,13 @@ public class BusinessReportController extends BaseController<BusinessReportServi
         String[] idArray = ids.split(",");
         for (String id : idArray) {
             BusinessReport businessReport = service.getItemById(Integer.valueOf(id));
-            String path = request.getSession().getServletContext().getRealPath("/") + businessReport.getFilePath();
-            File file = new File(path);
-            if (file.exists() && file.isFile()) {
-                file.delete();
-            }
+            String path = Commons.FILE_HOST + businessReport.getFilePath();
+            //创建jersey服务器
+            Client client = new Client();
+            //把文件关联到远程服务器
+            WebResource resource = client.resource(path);
+            //删除
+            resource.delete();
         }
         //更新删除字段
         if (service.logicalDelete(ids)) {
