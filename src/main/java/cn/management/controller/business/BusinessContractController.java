@@ -84,7 +84,8 @@ public class BusinessContractController extends BaseController<BusinessContractS
         String suffix = fileName.substring(fileName.lastIndexOf("."));
         //生成新的文件名
         String prefix = UUID.randomUUID().toString().replace("-", "");
-        String newFileName = prefix + suffix;
+        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String newFileName = date + "-" + prefix + suffix;
         //创建jersey服务器，进行跨服务器上传
         Client client = new Client();
         //把文件关联到远程服务器
