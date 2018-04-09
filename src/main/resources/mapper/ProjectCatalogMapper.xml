@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.project.ProjectCatalogMapper" >
+
+	<resultMap id="noticeMap" type="cn.management.domain.project.ProjectCatalog">
+		<id column="id" property="id"></id>
+        <result column="catalog_name" property="catalogName"></result>
+		<result column="parent_id" property="parentId"></result>
+		<result column="group_id" property="groupId"></result>
+		<result column="create_by" property="createBy"></result>
+		<result column="create_time" property="createTime"></result>
+		<result column="update_time" property="updateTime"></result>
+		<result column="del_flag" property="delFlag"></result>
+	</resultMap>
+
+	  <sql id="allClounm">
+		t1.id, catalog_name, parent_id, t1.group_id, create_by, t1.create_time, t1.update_time, t1.del_flag
+	  </sql>
+
+	  <select id="getCatalogsByLoginId" parameterType="int" resultMap="noticeMap">
+		SELECT <include refid="allClounm" />
+		FROM project_catalog t1, project_group_user t2
+		WHERE t1.group_id = t2.group_id
+		  AND t2.user_id = #{loginId}
+		  AND t1.parent_id IS NULL
+		  AND t1.del_flag = 1
+		ORDER BY t1.id DESC
+	  </select>
+
+</mapper>
