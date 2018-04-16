@@ -2,12 +2,10 @@ package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectCatalog;
-import cn.management.domain.project.ProjectFile;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectCatalogService;
-import cn.management.service.project.ProjectFileService;
 import cn.management.util.Commons;
 import cn.management.util.DownloadUtil;
 import cn.management.util.Result;
@@ -38,9 +36,6 @@ import java.util.UUID;
 @Controller
 public class ProjectCatalogController extends BaseController<ProjectCatalogService, ProjectCatalog> {
 
-    @Autowired
-    private ProjectFileService projectFileService;
-
     /**
      * 查询网盘列表
      * @param request
@@ -49,9 +44,10 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequestMapping("/index")
     @RequiresPermissions("projectCatalog:list")
     @ResponseBody
-    public Result index(HttpServletRequest request) {
+    public Result index(@RequestBody Map<String, Object> models, HttpServletRequest request) {
+        Integer parentId = (Integer) models.get("catalogId");
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
-        List<ProjectCatalog> list = service.getCatalogsByLoginId(loginId);
+        List<ProjectCatalog> list = service.getCatalogsByIds(loginId, parentId);
         if (list == null || list.size() == 0) {
             return new Result(ResultEnum.NO_RECORDS);
         } else {
@@ -83,7 +79,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
 
     /**
      * 上传文件
-     * @param projectFile
+     * @param projectCatalog
      * @param request
      * @return
      * @throws IOException
@@ -91,8 +87,8 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequestMapping("/upload")
     @RequiresPermissions("projectCatalog:upload")
     @ResponseBody
-    public Result upload(ProjectFile projectFile, HttpServletRequest request) throws IOException {
-        MultipartFile file = projectFile.getFile();
+    public Result upload(ProjectCatalog projectCatalog, HttpServletRequest request) throws IOException {
+        MultipartFile file = projectCatalog.getFile();
         //判断文件大小
         long fileSize = file.getSize();
         if (file == null || fileSize == 0) {
@@ -105,6 +101,22 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         String fileName = file.getOriginalFilename();
         //文件后缀名
         String suffix = fileName.substring(fileName.lastIndexOf("."));
+        //设置文件类型
+        if ("doc".equals(suffix) || "docx".equals(suffix)) {
+            projectCatalog.setFileType(1);
+        } else if ("xls".equals(suffix) || "xlsx".equals(suffix)) {
+            projectCatalog.setFileType(2);
+        } else if ("ppt".equals(suffix) || "pptx".equals(suffix)) {
+            projectCatalog.setFileType(3);
+        } else if ("txt".equals(suffix)) {
+            projectCatalog.setFileType(4);
+        } else if ("txt".equals(suffix)) {
+            projectCatalog.setFileType(5);
+        } else if ("zip".equals(suffix) || "rar".equals(suffix) ) {
+            projectCatalog.setFileType(6);
+        } else {
+            projectCatalog.setFileType(7);
+        }
         //生成新的文件名
         String prefix = UUID.randomUUID().toString().replace("-", "");
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -117,15 +129,15 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         resource.put(String.class, file.getBytes());
         //更新到数据库
         //原文件名
-        projectFile.setFileName(fileName);
+        projectCatalog.setName(fileName);
         //文件下载地址
-        projectFile.setFilePath(Commons.PROJECTS_PATH + "/" + newFileName);
+        projectCatalog.setFilePath(Commons.PROJECTS_PATH + "/" + newFileName);
         //上传者
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
-        projectFile.setCreateBy(loginId);
-        projectFile.setCreateTime(new Date());
-        projectFile.setUpdateTime(new Date());
-        if (null == projectFileService.addSelectiveMapper(projectFile)) {
+        projectCatalog.setCreateBy(loginId);
+        projectCatalog.setCreateTime(new Date());
+        projectCatalog.setUpdateTime(new Date());
+        if (null == service.addSelectiveMapper(projectCatalog)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -161,8 +173,8 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequiresPermissions("projectCatalog:download")
     public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
         Integer fileId = (Integer) models.get("fileId");
-        ProjectFile projectFile = projectFileService.getItemById(fileId);
-        String path = Commons.FILE_HOST + projectFile.getFilePath();
+        ProjectCatalog projectCatalog = service.getItemById(fileId);
+        String path = Commons.FILE_HOST + projectCatalog.getFilePath();
         //创建jersey服务器，进行跨服务器下载
         Client client = new Client();
         //把文件关联到远程服务器
@@ -179,7 +191,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         }
         inputStream.close();
         //文件下载
-        DownloadUtil.download(baos, request, response, projectFile.getFileName());
+        DownloadUtil.download(baos, request, response, projectCatalog.getName());
         return null;
     }
 

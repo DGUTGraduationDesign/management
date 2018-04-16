@@ -20,13 +20,10 @@ import java.util.List;
 @Service
 public class ProjectCatalogServiceImpl extends BaseServiceImpl<ProjectCatalogMapper, ProjectCatalog> implements ProjectCatalogService {
 
-    @Autowired
-    private ProjectGroupService projectGroupService;
-
     @Override
-    public List<ProjectCatalog> getCatalogsByLoginId(Integer loginId) {;
+    public List<ProjectCatalog> getCatalogsByIds(Integer loginId, Integer parentId) {
         //网盘目录list
-        List<ProjectCatalog> catalogList = mapper.getCatalogsByLoginId(loginId);
+        List<ProjectCatalog> catalogList = mapper.getCatalogsByIds(loginId, parentId);
         return catalogList;
     }
 

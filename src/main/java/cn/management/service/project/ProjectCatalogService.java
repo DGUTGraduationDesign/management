@@ -13,11 +13,11 @@ import java.util.List;
 public interface ProjectCatalogService extends BaseService<ProjectCatalogMapper, ProjectCatalog> {
 
     /**
-     * 查询网盘目录
+     * 查询网盘目录和文件
      * @param loginId
      * @return
      */
-    List<ProjectCatalog> getCatalogsByLoginId(Integer loginId);
+    List<ProjectCatalog> getCatalogsByIds(Integer loginId, Integer parentId);
 
     /**
      * 逻辑删除，更新表中del_flag字段为1

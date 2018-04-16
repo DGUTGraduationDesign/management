@@ -2,6 +2,7 @@ package cn.management.mapper.project;
 
 import cn.management.domain.project.ProjectCatalog;
 import cn.management.util.MyMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,6 +16,6 @@ public interface ProjectCatalogMapper extends MyMapper<ProjectCatalog> {
      * @param loginId
      * @return
      */
-    List<ProjectCatalog> getCatalogsByLoginId(Integer loginId);
+    List<ProjectCatalog> getCatalogsByIds(@Param("loginId") Integer loginId, @Param("parentId") Integer parentId);
 
 }
