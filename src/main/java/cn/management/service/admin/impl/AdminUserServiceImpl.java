@@ -129,8 +129,12 @@ public class AdminUserServiceImpl extends BaseServiceImpl<AdminUserMapper, Admin
 	 * @param adminUser
 	 */
 	private void setName(AdminUser adminUser) {
+	    AdminUser leader = mapper.selectByPrimaryKey(adminUser.getLeaderId());
 		AdminDepartment department = adminDepartmentService.getItemById(adminUser.getDeptId());
 		AdminPosition position = adminPositionService.getItemById(adminUser.getPostId());
+        if (leader != null) {
+            adminUser.setLeaderName(leader.getRealName());
+        }
 		if (department != null) {
 			adminUser.setDeptName(department.getDeptName());
 		}
