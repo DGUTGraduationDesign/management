@@ -18,6 +18,9 @@ spring:
       test-on-borrow: true
       stat-view-servlet:
         allow: true
+  # 自动部署resources下的processes文件夹里的流程文件，默认为true
+  activiti:
+    check-process-definitions: false
 
 #mybatis 配置
 mybatis:

@@ -1,24 +1,24 @@
 package cn.management.service.attendance.impl;
 
-import java.io.File;
+import cn.management.domain.attendance.WorkflowDeployment;
+import cn.management.exception.SysException;
+import cn.management.service.attendance.WorkflowService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipInputStream;
-
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.repository.ProcessDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import cn.management.domain.attendance.WorkflowDeployment;
-import cn.management.exception.SysException;
-import cn.management.service.attendance.WorkflowService;
 
 /**
  * 工作流部署管理Service接口实现类
@@ -59,28 +59,29 @@ public class WorkflowServiceImpl implements WorkflowService {
 	/**
 	 * 流程部署定义
 	 * @param file
-	 * @param fileName
+	 * @param pdName
 	 * @throws SysException 
 	 */
 	@Override
-	public Deployment saveNewDeploye(File file, String fileName) throws SysException {
+	public Deployment saveNewDeploye(MultipartFile file, String pdName) throws SysException {
 		//文件后缀名
-		String suffix = fileName.substring(file.getName().lastIndexOf("."));
-		if (!"zip".equals(suffix)) {
+		String fileName = file.getOriginalFilename();
+		String suffix = fileName.substring(fileName.lastIndexOf("."));
+		if (!".zip".equals(suffix)) {
 			throw new SysException("请上传zip类型的文件.");
 		}
 		//将File类型的文件转化成ZipInputStream流
 		ZipInputStream zipInputStream;
 		try {
-			zipInputStream = new ZipInputStream(new FileInputStream(file));
+			zipInputStream = new ZipInputStream(file.getInputStream());
 			return repositoryService.createDeployment()
-						.name(fileName)
+						.name(pdName)
 						.addZipInputStream(zipInputStream)
 						.deploy();
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new SysException("流程部署失败.");
 		}
-	}
+    }
 	
 	/**
 	 * 查看流程图

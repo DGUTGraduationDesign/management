@@ -1,8 +1,8 @@
 package cn.management.domain.attendance;
 
-import java.io.Serializable;
+import org.springframework.web.multipart.MultipartFile;
 
-import cn.management.domain.BaseEntity;
+import java.io.Serializable;
 
 /**
  * 工作流部署
@@ -41,6 +41,11 @@ public class WorkflowDeployment implements Serializable {
      */
     private String deployment_id;
 
+    /**
+     * 流程部署文件(上传时用)
+     */
+    private MultipartFile file;
+
     public String getKey() {
         return key;
     }
@@ -69,6 +74,10 @@ public class WorkflowDeployment implements Serializable {
         return version;
     }
 
+    public MultipartFile getFile() {
+        return file;
+    }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -89,6 +98,10 @@ public class WorkflowDeployment implements Serializable {
         this.sid = sid;
     }
 
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
+
     @Override
     public String toString() {
         return "WorkflowDeployment{" +
@@ -97,7 +110,8 @@ public class WorkflowDeployment implements Serializable {
                 ", pdName='" + pdName + '\'' +
                 ", srTime='" + srTime + '\'' +
                 ", version='" + version + '\'' +
-                ", deployment_id='" + deployment_id +
+                ", deployment_id='" + deployment_id + '\'' +
+                ", file=" + file +
                 '}';
     }
 

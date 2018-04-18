@@ -104,15 +104,15 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         //设置文件类型
         if ("doc".equals(suffix) || "docx".equals(suffix)) {
             projectCatalog.setFileType(1);
-        } else if ("xls".equals(suffix) || "xlsx".equals(suffix)) {
+        } else if (".xls".equals(suffix) || ".xlsx".equals(suffix)) {
             projectCatalog.setFileType(2);
-        } else if ("ppt".equals(suffix) || "pptx".equals(suffix)) {
+        } else if (".ppt".equals(suffix) || ".pptx".equals(suffix)) {
             projectCatalog.setFileType(3);
-        } else if ("txt".equals(suffix)) {
+        } else if (".txt".equals(suffix)) {
             projectCatalog.setFileType(4);
-        } else if ("txt".equals(suffix)) {
+        } else if (".txt".equals(suffix)) {
             projectCatalog.setFileType(5);
-        } else if ("zip".equals(suffix) || "rar".equals(suffix) ) {
+        } else if (".zip".equals(suffix) || ".rar".equals(suffix) ) {
             projectCatalog.setFileType(6);
         } else {
             projectCatalog.setFileType(7);
