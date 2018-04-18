@@ -41,6 +41,9 @@ public class MessageAnnouncementController extends BaseController<MessageAnnounc
         Integer page = (Integer) models.get("page");
         Example example = new Example(MessageAnnouncement.class);
         Example.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotBlank(messageAnnouncement.getTitle())) {
+            criteria.andLike("title", "%" + messageAnnouncement.getTitle() + "%");
+        }
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);
         return list(page);

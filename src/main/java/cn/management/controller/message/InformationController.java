@@ -46,10 +46,10 @@ public class InformationController extends BaseController<AdminUserService, Admi
         Example example = new Example(AdminUser.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(user.getRealName())) {
-            criteria.andLike("realName", user.getRealName());
+            criteria.andLike("realName", "%" + user.getRealName() + "%");
         }
         if (StringUtils.isNotBlank(user.getNumber())) {
-            criteria.andLike("number", user.getNumber());
+            criteria.andLike("number", "%" + user.getNumber() + "%");
         }
         if (null != user.getDeptId()) {
             criteria.andEqualTo("deptId", user.getDeptId());

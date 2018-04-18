@@ -5,6 +5,7 @@ import cn.management.domain.admin.dto.EditProfileDto;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
+import cn.management.util.MD5Util;
 import cn.management.util.Result;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,8 @@ public class ProfileController {
         AdminUser user = new AdminUser();
         user.setId(loginId);
         EditProfileDto.dtoToEntity(dto, user);
+        //MD5加密
+        user.setPassword(MD5Util.getMD5Value(user.getPassword()));
         if (adminUserService.update(user)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
