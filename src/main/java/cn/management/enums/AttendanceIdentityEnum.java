@@ -18,7 +18,11 @@ public enum AttendanceIdentityEnum {
     /**
      * 部门总监审核
      */
-    HEAD("head","attendanceApplication:header","部门总监");
+    HEAD("head","attendanceApplication:header","部门总监"),
+    /**
+     * 申请记录汇总
+     */
+    HR("all","attendanceApplication:all","申请汇总");
 
     /**
      * 身份

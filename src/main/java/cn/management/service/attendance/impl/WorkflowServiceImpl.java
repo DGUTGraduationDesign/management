@@ -64,6 +64,11 @@ public class WorkflowServiceImpl implements WorkflowService {
 	 */
 	@Override
 	public Deployment saveNewDeploye(File file, String fileName) throws SysException {
+		//文件后缀名
+		String suffix = fileName.substring(file.getName().lastIndexOf("."));
+		if (!"zip".equals(suffix)) {
+			throw new SysException("请上传zip类型的文件.");
+		}
 		//将File类型的文件转化成ZipInputStream流
 		ZipInputStream zipInputStream;
 		try {

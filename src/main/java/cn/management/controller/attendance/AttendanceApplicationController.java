@@ -176,7 +176,7 @@ public class AttendanceApplicationController
 	/**
 	 * 批量删除考勤申请
 	 * 
-	 * @param ids
+	 * @param models
 	 * @return
 	 */
 	@RequestMapping("/delete")

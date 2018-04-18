@@ -18,7 +18,6 @@ public interface WorkflowService {
 	
 	/**
      * 获取所有已部署流程定义的流程
-     * @param request 请求 modelMap 视图
      * @return
      * */
 	Set<WorkflowDeployment> list();

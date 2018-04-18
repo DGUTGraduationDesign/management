@@ -9,11 +9,11 @@ import cn.management.domain.BaseEntity;
  * @author ZhouJiaKai
  * @date 2018-03-05
  */
-public class WorkflowDeployment extends BaseEntity<Integer> implements Serializable {
+public class WorkflowDeployment implements Serializable {
 
-	/**
-	 * 流程ID，由“流程编号：流程版本号：自增长ID”组成
-	 */
+    /**
+     * 流程ID，由“流程编号：流程版本号：自增长ID”组成
+     */
     private String sid;
 
     /**
@@ -41,16 +41,6 @@ public class WorkflowDeployment extends BaseEntity<Integer> implements Serializa
      */
     private String deployment_id;
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getKey() {
         return key;
     }
@@ -66,7 +56,7 @@ public class WorkflowDeployment extends BaseEntity<Integer> implements Serializa
     public void setPdName(String pdName) {
         this.pdName = pdName;
     }
-    
+
     public String getSrTime() {
         return srTime;
     }
@@ -107,11 +97,7 @@ public class WorkflowDeployment extends BaseEntity<Integer> implements Serializa
                 ", pdName='" + pdName + '\'' +
                 ", srTime='" + srTime + '\'' +
                 ", version='" + version + '\'' +
-                ", deployment_id='" + deployment_id + '\'' +
-                ", id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", delFlag=" + delFlag +
+                ", deployment_id='" + deployment_id +
                 '}';
     }
 
@@ -129,4 +115,5 @@ public class WorkflowDeployment extends BaseEntity<Integer> implements Serializa
     public int hashCode() {
         return key != null ? key.hashCode() : 0;
     }
+
 }

@@ -115,6 +115,9 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 		HistoricProcessInstance hpi = historyService.createHistoricProcessInstanceQuery()
 						.processInstanceBusinessKey(id.toString()) //使用BusinessKey字段查询
 						.singleResult();
+		if (null == hpi) {
+			return null;
+		}
 		String processInstanceId = hpi.getId();
 		List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
 		List<ApplicationCommentVo> voList = new ArrayList<ApplicationCommentVo>(5);
@@ -131,7 +134,7 @@ public class AttendanceApplicationServiceImpl extends BaseServiceImpl<Attendance
 	
 	/**
 	 * 设置申请类型名称、状态名称、申请人姓名、上级姓名、总监姓名
-	 * @param list
+	 * @param attendanceApplication
 	 */
     private void setName(AttendanceApplication attendanceApplication) {
 		//设置申请类型名称
