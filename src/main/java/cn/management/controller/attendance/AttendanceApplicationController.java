@@ -67,16 +67,19 @@ public class AttendanceApplicationController
 		if (AttendanceIdentityEnum.LEAD.getIdentity().equals(identity)) {
 			criteria.andEqualTo("leaderId", loginId);
 			criteria.andGreaterThanOrEqualTo("state", ApplicationStateEnum.STATUS_COMMIT_SELF.getValue());
+			if (null != attendanceApplication.getUserId()) {
+				criteria.andEqualTo("userId", attendanceApplication.getUserId());
+			}
 		}
 		// 部门总监
 		if (AttendanceIdentityEnum.HEAD.getIdentity().equals(identity)) {
 			criteria.andEqualTo("headerId", loginId);
 			criteria.andGreaterThanOrEqualTo("state", ApplicationStateEnum.STATUS_COMMIT_LEAD.getValue());
+			if (null != attendanceApplication.getUserId()) {
+				criteria.andEqualTo("userId", attendanceApplication.getUserId());
+			}
 		}
-		if (StringUtils.isNotBlank(attendanceApplication.getRealName())) {
-			criteria.andLike("realName", attendanceApplication.getRealName());
-		}
-		if (attendanceApplication.getState() != null) {
+		if (null != attendanceApplication.getState()) {
 			criteria.andEqualTo("state", attendanceApplication.getState());
 		}
 		criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
