@@ -1,6 +1,7 @@
 package cn.management.controller.meeting;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +43,7 @@ public class MeetingRoomController extends BaseController<MeetingRoomService, Me
     public Result index(@RequestBody Map<String, Object> models) {
     	MeetingRoom meetingRoom = JSON.parseObject((String)models.get("meetingRoom"), MeetingRoom.class);
         Integer page = (Integer) models.get("page");
-        Example example = new Example(AdminDataDict.class);
+        Example example = new Example(MeetingRoom.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(meetingRoom.getRoomName())) {
             criteria.andLike("roomName", "%" + meetingRoom.getRoomName() + "%");
@@ -51,7 +52,20 @@ public class MeetingRoomController extends BaseController<MeetingRoomService, Me
         setExample(example);
         return list(page);
     }
-    
+
+    /**
+     * 查询所有会议室
+     * @return
+     */
+    @RequestMapping("/listAll")
+    @ResponseBody
+    public Result listAll() {
+        MeetingRoom condition = new MeetingRoom();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<MeetingRoom> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
+    }
+
     /**
      * 添加会议室
      * @param meetingRoom
@@ -91,7 +105,7 @@ public class MeetingRoomController extends BaseController<MeetingRoomService, Me
     
     /**
      * 批量删除会议室
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")
