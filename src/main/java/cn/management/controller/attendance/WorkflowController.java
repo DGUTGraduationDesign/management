@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,7 +73,32 @@ public class WorkflowController {
     		return new Result(ResultEnum.FAIL.getCode(), "流程部署失败.");
     	}
     }
-    
+
+    /**
+     * 查看流程图
+     * @param models
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("/image")
+    @RequiresPermissions("attendanceWorkflow:image")
+    public String viewImage(@RequestBody Map<String, Object> models, HttpServletResponse response) throws IOException {
+        String deploymentId = (String) models.get("deploymentId");
+        String imageName = (String) models.get("imageName");
+        //获取图片输入流
+        InputStream in = workflowService.findImageInputStream(deploymentId, imageName);
+        //从response对象获取输出流
+        OutputStream out = response.getOutputStream();
+        //输出图片到浏览器
+        for(int b = -1;(b=in.read()) != -1;){
+            out.write(b);
+        }
+        out.close();
+        in.close();
+        return null;
+    }
+
     /**
      * 删除流程部署
      * @param models

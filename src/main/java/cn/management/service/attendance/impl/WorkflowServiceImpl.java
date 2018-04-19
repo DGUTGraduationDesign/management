@@ -39,15 +39,16 @@ public class WorkflowServiceImpl implements WorkflowService {
     public Set<WorkflowDeployment> list() {
         List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().desc().orderByProcessDefinitionVersion().desc().list();
         Set<WorkflowDeployment> beans = new HashSet<WorkflowDeployment>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
         if(list!=null) {
             for (ProcessDefinition processDefinition : list) {
                 WorkflowDeployment workflowDeployment = new WorkflowDeployment();
                 Deployment singleResult = repositoryService.createDeploymentQuery().deploymentId(processDefinition.getDeploymentId()).singleResult();
                 workflowDeployment.setSid(processDefinition.getId());
                 workflowDeployment.setKey(processDefinition.getKey());
+                workflowDeployment.setName(singleResult.getName());
                 workflowDeployment.setPdName(processDefinition.getName());
-                workflowDeployment.setSrTime(format.format(singleResult.getDeploymentTime()));
+                workflowDeployment.setImageName(processDefinition.getDiagramResourceName());
+                workflowDeployment.setSrTime(singleResult.getDeploymentTime());
                 workflowDeployment.setVersion(processDefinition.getVersion() + "");
                 workflowDeployment.setDeployment_id(processDefinition.getDeploymentId());
                 beans.add(workflowDeployment);
