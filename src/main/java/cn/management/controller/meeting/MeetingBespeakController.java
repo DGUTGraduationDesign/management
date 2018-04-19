@@ -106,8 +106,10 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
     @RequestMapping("/add")
     @RequiresPermissions("meetingBespeak:add")
     @ResponseBody
-    public Result add(@RequestBody MeetingBespeak meetingBespeak) throws SysException, SchedulerException {
-    	meetingBespeak.setCreateTime(new Date()); 
+    public Result add(@RequestBody MeetingBespeak meetingBespeak, HttpServletRequest request) throws SysException, SchedulerException {
+    	Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+    	meetingBespeak.setUserId(loginUserId);
+        meetingBespeak.setCreateTime(new Date());
     	meetingBespeak.setUpdateTime(new Date()); 
         if (null == service.doBespeak(meetingBespeak)) {
             return new Result(ResultEnum.FAIL);
@@ -176,7 +178,7 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
     
     /**
      * 批量删除会议室预约信息
-     * @param ids
+     * @param models
      * @return
      * @throws SysException 
      */
