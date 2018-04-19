@@ -41,8 +41,10 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
     @RequestMapping("/listAll")
     @ResponseBody
     public Result listAll() {
-    	List<AdminUser> list = service.getAllItems();
-    	return new Result(ResultEnum.SUCCESS.getCode(), "查询成功", list);
+        AdminUser condition = new AdminUser();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<AdminUser> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
     }
     /**
      * 条件查询员工列表
@@ -111,7 +113,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
     
     /**
      * 批量删除员工信息
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")
@@ -131,7 +133,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
     
     /**
      * 检查用户名是否被注册
-     * @param loginName
+     * @param models
      * @return
      */
     @RequestMapping("/exists")

@@ -42,8 +42,10 @@ public class AdminPositionController extends BaseController<AdminPositionService
     @RequiresPermissions("adminPosition:list")
     @ResponseBody
     public Result listAll() {
-    	List<AdminPosition> list = service.getAllItems();
-    	return new Result(ResultEnum.SUCCESS.getCode(), "查询成功", list);
+        AdminPosition condition = new AdminPosition();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<AdminPosition> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
     }
     
     /**
@@ -107,7 +109,7 @@ public class AdminPositionController extends BaseController<AdminPositionService
     
     /**
      * 批量删除职位信息
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")

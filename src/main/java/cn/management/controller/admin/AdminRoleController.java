@@ -109,7 +109,7 @@ public class AdminRoleController extends BaseController<AdminRoleService, AdminR
     
     /**
      * 批量删除角色
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")

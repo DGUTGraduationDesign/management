@@ -114,7 +114,7 @@ public class AdminPermissionController extends BaseController<AdminPermissionSer
     
     /**
      * 批量删除权限
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")

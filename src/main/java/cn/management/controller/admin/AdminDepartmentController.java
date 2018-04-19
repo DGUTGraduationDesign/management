@@ -42,8 +42,10 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
     @RequestMapping("/listAll")
     @ResponseBody
     public Result listAll() {
-    	List<AdminDepartment> list = service.getAllItems();
-    	return new Result(ResultEnum.SUCCESS.getCode(), "查询成功", list);
+        AdminDepartment condition = new AdminDepartment();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<AdminDepartment> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
     }
     
     /**
@@ -106,7 +108,7 @@ public class AdminDepartmentController extends BaseController<AdminDepartmentSer
     
     /**
      * 批量删除部门信息
-     * @param ids
+     * @param models
      * @return
      */
     @RequestMapping("/delete")
