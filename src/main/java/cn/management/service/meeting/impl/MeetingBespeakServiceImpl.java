@@ -94,7 +94,7 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 	@Override
 	public MeetingBespeak getItemById(Object bespeakId) {
         MeetingBespeak condition = new MeetingBespeak();
-        condition.setId(Integer.valueOf((String) bespeakId));
+        condition.setId((Integer) bespeakId);
         condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
 		MeetingBespeak meetingBespeak = getItem(condition);
     	//设置预约状态、通知方式、预约人、对应的会议室
@@ -447,7 +447,7 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 	public void logicalDelete(String ids) throws SysException {
 		String[] bespeakIds = ids.split(",");
 		for (String id : bespeakIds) {
-			MeetingBespeak meetingBespeak = getItemById(id);
+			MeetingBespeak meetingBespeak = getItemById(Integer.valueOf(id));
 			if (null != meetingBespeak) {
 				if (BespeakStatusEnum.BESPEAK.getValue().equals(meetingBespeak.getBespeakStatus())) {
 					throw new SysException("请先取消会议.");
