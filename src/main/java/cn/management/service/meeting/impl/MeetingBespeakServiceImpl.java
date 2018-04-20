@@ -88,12 +88,15 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 
 	/**
 	 * 根据id查询会议室预约
-     * @param id
+     * @param bespeakId
      * @return
 	 */
 	@Override
-	public MeetingBespeak getItemById(Object id) {
-		MeetingBespeak meetingBespeak = mapper.selectByPrimaryKey(id);
+	public MeetingBespeak getItemById(Object bespeakId) {
+        MeetingBespeak condition = new MeetingBespeak();
+        condition.setId(Integer.valueOf((String) bespeakId));
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+		MeetingBespeak meetingBespeak = getItem(condition);
     	//设置预约状态、通知方式、预约人、对应的会议室
     	setName(meetingBespeak);
     	//参会人员
@@ -166,10 +169,6 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 		//更新数据库
 		MeetingBespeak bespeak = addSelectiveMapper(meetingBespeak);
 		if (null != bespeak) {
-			//查询会议室
-			setName(bespeak);
-			//查询参会人员
-			setUserList(bespeak);
 			//通知方式
 			Integer informWay = meetingBespeak.getInformWay();
 	        try {
@@ -183,9 +182,15 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 	        } catch (SchedulerException e) {
 	            throw new SysException("添加定时任务失败！请重试");
 	        }
-	        
+
 			//发送通知
 			if (!InformWayEnum.NONE.getValue().equals(informWay)) {
+                //设置预约状态
+                meetingBespeak.setBespeakStatus(BespeakStatusEnum.BESPEAK.getValue());
+                //查询会议室
+                setName(bespeak);
+                //查询参会人员
+                setUserList(bespeak);
 	            //再开启一个新的线程发送会议邮件通知、短信通知
 	            Thread th = new Thread(new Runnable() {
 	                public void run() {
@@ -234,10 +239,6 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 		boolean flag = update(meetingBespeak);
 		if (flag) {
 			Integer informWay = findMeetingBespeak.getInformWay();
-			//设置参会人员
-			setUserList(meetingBespeak);
-			//设置会议室
-			setName(meetingBespeak);
 	        try {
 				//判断会议开始时间是否有修改
 	            if (findMeetingBespeak.getBeginTime().getTime() != meetingBespeak.getBeginTime().getTime()) {
@@ -259,6 +260,12 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 	        
 	       //判断是否发送邮件通知和短信通知
 	        if (!InformWayEnum.NONE.getValue().equals(informWay)) {
+	            //设置知会人
+                meetingBespeak.setUserIds(findMeetingBespeak.getUserIds());
+                //设置参会人员
+                setUserList(meetingBespeak);
+                //设置会议室
+                setName(meetingBespeak);
 	            //再开启一个新的线程发送会议邮件通知、短信通知
 	            Thread th = new Thread(new Runnable() {
 	                public void run() {

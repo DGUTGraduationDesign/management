@@ -82,13 +82,12 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
 
     /**
      * 查询会议室是否已被预约
-     * @param models
+     * @param meetingBespeak
      * @return
      */
     @RequestMapping("/exists")
     @ResponseBody
-    public Result exists(@RequestBody Map<String, Object> models) {
-    	MeetingBespeak meetingBespeak = (MeetingBespeak) models.get("meetingBespeak");
+    public Result exists(@RequestBody MeetingBespeak meetingBespeak) {
         if (service.existsBespeakByIdAndTime(meetingBespeak)) {
             return new Result(ResultEnum.NO_RECORDS.getCode(), "会议室可以预约.");
         } else {
@@ -110,7 +109,7 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
     	Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
     	meetingBespeak.setUserId(loginUserId);
         meetingBespeak.setCreateTime(new Date());
-    	meetingBespeak.setUpdateTime(new Date()); 
+    	meetingBespeak.setUpdateTime(new Date());
         if (null == service.doBespeak(meetingBespeak)) {
             return new Result(ResultEnum.FAIL);
         } else {
