@@ -24,7 +24,7 @@ public class SendMeetingInformJob implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
     	//从spring容器获取实例对象
     	MeetingBespeakService meetingBespeakService =  ApplicationContextHelper.getBean(MeetingBespeakService.class);
-        
+
     	//查询会议预约记录
         Integer bespeakId = Integer.valueOf(jobExecutionContext
             .getJobDetail().getJobDataMap().getString("bespeakId"));

@@ -17,7 +17,7 @@ public class ManagementApplication {
 
 	public static void main(String[] args) {
 		 ApplicationContext app = SpringApplication.run(ManagementApplication.class, args);
-		 ApplicationContextHelper.setApplicationContext(app);
+		 //ApplicationContextHelper.setApplicationContext(app);
 	}
 	
 }
