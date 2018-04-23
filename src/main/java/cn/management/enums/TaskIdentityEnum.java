@@ -18,7 +18,7 @@ public enum TaskIdentityEnum {
     /**
      * 完成任务
      */
-    COMPLETE("comlete","projectTask:complete","完成任务"),
+    COMPLETE("complete","projectTask:complete","完成任务"),
     /**
      * 取消任务
      */

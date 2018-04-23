@@ -296,6 +296,8 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
         String completeDate = sd.format(taskUser.getCompleteDate());
         if (Integer.valueOf(completeDate) > Integer.valueOf(closingDate)) {
             taskUser.setTaskState(TaskStateEnum.DELAY.getValue());
+        } else {
+            taskUser.setTaskState(TaskStateEnum.COMPLETE.getValue());
         }
         taskUser.setUpdateTime(new Date());
         boolean flag = projectTaskUserService.update(taskUser);
@@ -405,7 +407,7 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
     public boolean logicalDelete(String ids) throws SysException {
         String[] list = ids.split(",");
         for (String id : list) {
-            ProjectTask task = getItemById(id);
+            ProjectTask task = getItemById(Integer.valueOf(id));
             if (TaskStateEnum.UNCOMPLETE.getValue().equals(task.getTaskState())) {
                 throw new SysException("任务进行中，若想删除请先取消.");
             }

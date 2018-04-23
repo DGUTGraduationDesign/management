@@ -7,7 +7,7 @@
         WHERE task_id = #{taskId} AND task_state = 0
     </select>
 
-    <update id="" parameterType="int">
+    <update id="setCancelByTaskId" parameterType="int">
         UPDATE project_task_user
         SET task_state = 3
         WHERE task_id = #{taskId}

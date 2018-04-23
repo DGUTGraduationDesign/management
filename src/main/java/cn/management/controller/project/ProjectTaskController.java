@@ -191,7 +191,7 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	@RequiresPermissions("protjectTask:delete")
+	@RequiresPermissions("projectTask:delete")
 	@ResponseBody
 	public Result delete(@RequestBody Map<String, Object> models) throws SysException {
 		String ids = (String) models.get("ids");
