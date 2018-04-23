@@ -19,6 +19,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +56,23 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     }
 
     /**
+     * 查询所创建的项目
+     * @param request
+     * @return
+     */
+    @RequestMapping("/findItemByUserId")
+    @RequiresPermissions("projectItem:list")
+    @ResponseBody
+    public Result findItemByUserId(HttpServletRequest request) {
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        ProjectItem condition = new ProjectItem();
+        condition.setCreateBy(loginUserId);
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<ProjectItem> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
+    }
+
+    /**
      * 添加项目
      * @param projectItem
      * @param request
@@ -79,15 +97,17 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     /**
      * 更改项目组
      * @param projectItem
+     * @param request
      * @return
      * @throws SysException
      */
     @RequestMapping("/edit")
     @RequiresPermissions("projectItem:edit")
     @ResponseBody
-    public Result edit(@RequestBody ProjectItem projectItem) throws SysException {
+    public Result edit(@RequestBody ProjectItem projectItem, HttpServletRequest request) throws SysException {
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         projectItem.setUpdateTime(new Date());
-        if (service.update(projectItem)) {
+        if (service.doUpdate(projectItem, loginUserId)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);

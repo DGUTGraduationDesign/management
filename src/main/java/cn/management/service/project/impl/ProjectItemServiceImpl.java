@@ -4,6 +4,7 @@ import cn.management.domain.admin.AdminUser;
 import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ItemStateEnum;
+import cn.management.exception.SysException;
 import cn.management.mapper.project.ProjectItemMapper;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +61,31 @@ public class ProjectItemServiceImpl extends BaseServiceImpl<ProjectItemMapper, P
         if (null != createUser) {
             projectItem.setCreateName(createUser.getRealName());
         }
+    }
+
+    /**
+     * 修改项目信息
+     * @param projectItem
+     * @param loginUserId
+     * @return
+     * @throws SysException
+     */
+    @Override
+    public boolean doUpdate(ProjectItem projectItem, Integer loginUserId) throws SysException {
+        ProjectItem findItem = getItemById(projectItem.getId());
+        if (null == findItem) {
+            throw new SysException("请选择要编辑的数据.");
+        }
+        if (!(loginUserId.equals(findItem.getCreateBy()) || loginUserId.equals(findItem.getMainId()))) {
+            throw new SysException("只能由创建人或负责人修改.");
+        }
+        if (ItemStateEnum.FINISHED.getValue().equals(projectItem.getItemState())) {
+            if (!findItem.getItemTask().equals(findItem.getCompleteTask())) {
+                throw new SysException("还有任务未完成.");
+            }
+            projectItem.setEndDate(new Date());
+        }
+        return update(projectItem);
     }
 
     /**
