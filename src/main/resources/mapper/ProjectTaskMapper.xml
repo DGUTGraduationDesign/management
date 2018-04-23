@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.project.ProjectTaskMapper" >
+
+    <sql id="select_condition">
+        <if test="projectTask != null">
+            <if test="projectTask.taskState != null">
+                AND t2.task_state = #{projectTask.taskState}
+            </if>
+        </if>
+    </sql>
+
+    <select id="selectItemByUserIdAndCond" resultType="cn.management.domain.project.dto.ProjectMyTaskDto">
+        SELECT t1.id, t2.user_id, t2.task_state, t2.complete_date, t1.task_name, t1.content, t1.begin_date, t1.closing_date, t1.item_id, t1.create_by
+        FROM project_task t1, project_task_user t2
+        <where>
+            <include refid="select_condition"/>
+            AND t1.id = t2.task_id
+            AND t2.user_id = #{userId}
+            AND t2.del_flag = 1
+        </where>
+        ORDER BY t1.id DESC
+    </select>
+
+</mapper>

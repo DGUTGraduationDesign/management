@@ -2,6 +2,7 @@ package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectTask;
+import cn.management.domain.project.dto.ProjectMyTaskDto;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.enums.TaskIdentityEnum;
@@ -11,6 +12,7 @@ import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectTaskService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +27,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,26 +42,47 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 
 	static Logger logger = LoggerFactory.getLogger(ProjectTaskController.class);
 
-	@RequestMapping("/{identity}/index")
+    /**
+     * 我的任务
+     * @param models
+     * @param request
+     * @return
+     */
+    @RequestMapping("/self/index")
+    @RequiresPermissions("projectTask:self")
+    @ResponseBody
+    public Result selfIndex(@RequestBody Map<String, Object> models, HttpServletRequest request) {
+        // 拼接条件
+        Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        ProjectTask projectTask = JSON.parseObject((String) models.get("projectTask"), ProjectTask.class);
+        Integer page = (Integer) models.get("page");
+        // 我的任务
+        List<ProjectMyTaskDto> list = service.getMyTaskByPage(projectTask, loginId, page, getPageSize());
+        if (list == null || list.size() == 0) {
+            return new Result(ResultEnum.NO_RECORDS);
+        }
+        PageInfo<ProjectMyTaskDto> pageInfo = new PageInfo<ProjectMyTaskDto>(list);
+        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), (int) pageInfo.getTotal(), pageInfo.getPageNum(), getPageSize());
+    }
+
+    /**
+     * 发布的任务
+     * @param models
+     * @param request
+     * @return
+     */
+	@RequestMapping("/publish/index")
+    @RequiresPermissions("projectTask:publish")
 	@ResponseBody
-	public Result index(@RequestBody Map<String, Object> models, HttpServletRequest request,
-			@PathVariable String identity) {
-		// 检查权限
-		SecurityUtils.getSubject().checkPermission(TaskIdentityEnum.getPermission(identity));
+	public Result publishIndex(@RequestBody Map<String, Object> models, HttpServletRequest request) {
 		// 拼接条件
 		Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
 		ProjectTask projectTask = JSON.parseObject((String) models.get("projectTask"), ProjectTask.class);
 		Integer page = (Integer) models.get("page");
 		Example example = new Example(ProjectTask.class);
 		Example.Criteria criteria = example.createCriteria();
-		// 我的任务
-		if (TaskIdentityEnum.SELF.getIdentity().equals(identity)) {
-			criteria.andEqualTo("userId", loginId);
-		}
 		// 发布的任务
-		if (TaskIdentityEnum.PUBLISH.getIdentity().equals(identity)) {
-			criteria.andEqualTo("createBy", loginId);
-		}
+        criteria.andEqualTo("createBy", loginId);
 		if (null != projectTask.getTaskState()) {
 			criteria.andEqualTo("taskState", projectTask.getTaskState());
 		}
@@ -76,9 +100,9 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 	@RequiresPermissions("projectTask:findTaskById")
 	@ResponseBody
 	public Result findApplicationById(@RequestBody Map<String, Object> models) {
-		Integer applicationId = (Integer) models.get("applicationId");
+		Integer taskId = (Integer) models.get("taskId");
 		ProjectTask condition = new ProjectTask();
-		condition.setId(applicationId);
+		condition.setId(taskId);
 		condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
 		ProjectTask projectTask = service.getItem(condition);
 		if (null == projectTask) {
@@ -120,7 +144,7 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 	@RequestMapping("/edit")
 	@RequiresPermissions("projectTask:edit")
 	@ResponseBody
-	public Result edit(@RequestBody ProjectTask projectTask, HttpServletRequest request, @PathVariable String identity) throws SysException {
+	public Result edit(@RequestBody ProjectTask projectTask, HttpServletRequest request) throws SysException {
 		Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
 		projectTask.setUpdateTime(new Date());
 		if (service.doUpdate(projectTask, loginUserId)) {
@@ -146,15 +170,15 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 		Integer projectTaskId = (Integer) models.get("projectTaskId");
 		ProjectTask projectTask = new ProjectTask();
 		projectTask.setId(projectTaskId);
+		boolean flag = false;
 		if (TaskIdentityEnum.COMPLETE.getIdentity().equals(identity)) {
 			//完成任务
-			projectTask.setTaskState(TaskStateEnum.COMPLETE.getValue());
-			projectTask.setCompleteDate(new Date());
+			flag = service.doComplete(projectTaskId, loginUserId);
 		} else if (TaskIdentityEnum.CANCEL.getIdentity().equals(identity)) {
 			//取消任务
-			projectTask.setTaskState(TaskStateEnum.CANCEL.getValue());
+			flag = service.doCancel(projectTaskId, loginUserId);
 		}
-		if (service.doUpdate(projectTask, loginUserId)) {
+		if (flag) {
 			return new Result(ResultEnum.SUCCESS);
 		} else {
 			return new Result(ResultEnum.FAIL);
@@ -169,7 +193,7 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 	@RequestMapping("/delete")
 	@RequiresPermissions("protjectTask:delete")
 	@ResponseBody
-	public Result delete(@RequestBody Map<String, Object> models) {
+	public Result delete(@RequestBody Map<String, Object> models) throws SysException {
 		String ids = (String) models.get("ids");
 		if (!StringUtils.isNotBlank(ids)) {
 			return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");

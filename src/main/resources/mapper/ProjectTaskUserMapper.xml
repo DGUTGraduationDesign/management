@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.management.mapper.project.ProjectTaskUserMapper" >
+
+    <select id="countUnComleteByTaskId" parameterType="int" resultType="int">
+        SELECT COUNT(id) FROM project_task_user
+        WHERE task_id = #{taskId} AND task_state = 0
+    </select>
+
+    <update id="" parameterType="int">
+        UPDATE project_task_user
+        SET task_state = 3
+        WHERE task_id = #{taskId}
+    </update>
+
+    <update id="deleteByTaskId" parameterType="int">
+        UPDATE project_task_user
+        SET del_flag = 0
+        WHERE task_id = #{taskId}
+    </update>
+
+</mapper>

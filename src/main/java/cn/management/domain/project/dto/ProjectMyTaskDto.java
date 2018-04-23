@@ -1,19 +1,37 @@
-package cn.management.domain.project;
+package cn.management.domain.project.dto;
 
-import cn.management.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-/**
- * 任务数据模型
- */
-@Table(name = "project_task")
-public class ProjectTask extends BaseEntity<Integer> {
+public class ProjectMyTaskDto implements Serializable {
+
+    /**
+     * 任务id
+     */
+    private Integer id;
+
+    /**
+     * 任务对象id
+     */
+    private Integer userId;
+
+    /**
+     * 任务状态，0表示未完成，1表示已完成，2表示延期完成，3表示已取消
+     */
+    private Integer taskState;
+
+    /**
+     * 任务状态名称
+     */
+    private String taskStateName;
+
+    /**
+     * 任务完成日期
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date completeDate;
 
     /**
      * 任务名称
@@ -28,27 +46,14 @@ public class ProjectTask extends BaseEntity<Integer> {
     /**
      * 任务开始日期
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date beginDate;
 
     /**
      * 任务截止日期
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date closingDate;
-
-    /**
-     * 任务总状态，0表示未完成，1表示已完成，2表示延期完成，3表示已取消
-     */
-    private Integer taskState;
-
-    /**
-     * 任务总状态名称
-     */
-    @Transient
-    private String taskStateName;
 
     /**
      * 所属项目id
@@ -58,7 +63,6 @@ public class ProjectTask extends BaseEntity<Integer> {
     /**
      * 项目名称
      */
-    @Transient
     private String itemName;
 
     /**
@@ -69,26 +73,15 @@ public class ProjectTask extends BaseEntity<Integer> {
     /**
      * 创建人姓名
      */
-    @Transient
     private String createName;
 
-    /**
-     * 任务对象id,json字符串
-     */
-    @Transient
-    private String userIds;
+    public Integer getId() {
+        return id;
+    }
 
-    /**
-     * 通知方式
-     */
-    @Transient
-    private Integer informWay;
-
-    /**
-     * 任务对象集合
-     */
-    @Transient
-    private List<ProjectTaskUser> userList;
+    public Integer getUserId() {
+        return userId;
+    }
 
     public Integer getTaskState() {
         return taskState;
@@ -96,6 +89,10 @@ public class ProjectTask extends BaseEntity<Integer> {
 
     public String getTaskStateName() {
         return taskStateName;
+    }
+
+    public Date getCompleteDate() {
+        return completeDate;
     }
 
     public String getTaskName() {
@@ -130,16 +127,12 @@ public class ProjectTask extends BaseEntity<Integer> {
         return createName;
     }
 
-    public Integer getInformWay() {
-        return informWay;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getUserIds() {
-        return userIds;
-    }
-
-    public List<ProjectTaskUser> getUserList() {
-        return userList;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public void setTaskState(Integer taskState) {
@@ -148,6 +141,10 @@ public class ProjectTask extends BaseEntity<Integer> {
 
     public void setTaskStateName(String taskStateName) {
         this.taskStateName = taskStateName;
+    }
+
+    public void setCompleteDate(Date completeDate) {
+        this.completeDate = completeDate;
     }
 
     public void setTaskName(String taskName) {
@@ -182,38 +179,22 @@ public class ProjectTask extends BaseEntity<Integer> {
         this.createName = createName;
     }
 
-    public void setInformWay(Integer informWay) {
-        this.informWay = informWay;
-    }
-
-    public void setUserIds(String userIds) {
-        this.userIds = userIds;
-    }
-
-    public void setUserList(List<ProjectTaskUser> userList) {
-        this.userList = userList;
-    }
-
     @Override
     public String toString() {
-        return "ProjectTask{" +
-                "taskName='" + taskName + '\'' +
+        return "ProjectMyTaskDto{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", taskState=" + taskState +
+                ", taskStateName='" + taskStateName + '\'' +
+                ", completeDate=" + completeDate +
+                ", taskName='" + taskName + '\'' +
                 ", content='" + content + '\'' +
                 ", beginDate=" + beginDate +
                 ", closingDate=" + closingDate +
-                ", taskState=" + taskState +
-                ", taskStateName='" + taskStateName + '\'' +
                 ", itemId=" + itemId +
                 ", itemName='" + itemName + '\'' +
                 ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
-                ", userIds='" + userIds + '\'' +
-                ", informWay=" + informWay +
-                ", userList=" + userList +
-                ", id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", delFlag=" + delFlag +
                 '}';
     }
 
