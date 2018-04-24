@@ -331,7 +331,7 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
                         }
                         if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
                             //发送短信通知
-                            //SendMeetingInformUtil.sendTaskUpdateMessage(task1);
+                            SendTaskInformUtil.sendProjectNoticeMessage(projectTask);
                         }
                     } catch (Exception e) {
                         logger.error(projectTask.toString(), e);

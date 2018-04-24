@@ -55,6 +55,63 @@ public class SendTaskInformUtil {
     }
 
     /**
+     * 发送任务通知短信
+     * @param projectTask
+     * @throws Exception
+     */
+    public static void sendProjectNoticeMessage(ProjectTask projectTask)
+            throws Exception {
+        //模版填充内容
+        ArrayList<String> params = new ArrayList<String>(5);
+        //从spring容器获取实例对象
+        AdminUserService adminUserService =  ApplicationContextHelper.getBean(AdminUserService.class);
+        List<ProjectTaskUser> list = projectTask.getUserList();
+        List<AdminUser> users = new ArrayList<AdminUser>();
+        for (ProjectTaskUser projectTaskUser : list) {
+            AdminUser user = adminUserService.getItemById(projectTaskUser.getUserId());
+            if (null != user) {
+                users.add(user);
+            }
+        }
+        //短信接收人
+        ArrayList<String> phoneNumbers = buildPhoneNumbers(users);
+        //短信模版id
+        int tmplId = 0;
+        if (null == projectTask.getId()) {
+            tmplId = 112068;
+        } else if (null != projectTask.getId() && TaskStateEnum.UNCOMPLETE.getValue().equals(projectTask.getTaskState())) {
+            tmplId = 112070;
+            params.add(projectTask.getTaskName());
+        } else if (TaskStateEnum.CANCEL.getValue().equals(projectTask.getTaskState())) {
+            tmplId = 112097;
+            params.add(projectTask.getTaskName());
+        } else if (TaskStateEnum.COMPLETE.getValue().equals(projectTask.getTaskState()) ||
+                TaskStateEnum.DELAY.getValue().equals(projectTask.getTaskState())) {
+            tmplId = 112100;
+            params.add(projectTask.getTaskName());
+            //创建人
+            AdminUser create = adminUserService.getItemById(projectTask.getCreateBy());
+            if (null == create) {
+                throw new SysException("用户不存在.");
+            }
+            phoneNumbers.clear();
+            phoneNumbers.add(create.getPhone());
+        }
+        //任务名称
+        params.add(projectTask.getTaskName());
+        //任务内容
+        params.add(projectTask.getContent());
+        //创建人
+        params.add(projectTask.getCreateName());
+        //开始日期
+        params.add(dateFormat.format(projectTask.getBeginDate()));
+        //截止日期
+        params.add(dateFormat.format(projectTask.getClosingDate()));
+        //发送短信通知
+        SmsUtil.sendMultiMessageWithParam(tmplId, params, phoneNumbers);
+    }
+
+    /**
      * 发送任务邮件通知
      * @param projectTask
      * @throws SysException
