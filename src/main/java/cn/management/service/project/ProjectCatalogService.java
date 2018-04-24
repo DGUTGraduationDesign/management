@@ -20,6 +20,20 @@ public interface ProjectCatalogService extends BaseService<ProjectCatalogMapper,
     List<ProjectCatalog> getCatalogsByIds(Integer loginId, Integer parentId);
 
     /**
+     * 添加文件目录信息
+     * @param projectCatalog
+     * @return
+     */
+    ProjectCatalog doAdd(ProjectCatalog projectCatalog);
+
+    /**
+     * 修改文件目录信息
+     * @param projectCatalog
+     * @return
+     */
+    boolean doUpdate(ProjectCatalog projectCatalog);
+
+    /**
      * 逻辑删除，更新表中del_flag字段为1
      * @param ids
      * @return

@@ -4,6 +4,7 @@ import cn.management.domain.BaseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * 网盘目录/文件实体类
@@ -31,15 +32,10 @@ public class ProjectCatalog extends BaseEntity<Integer> {
     private Integer parentId;
 
     /**
-     * 项目组id
-     */
-    private Integer groupId;
-
-    /**
-     * 项目组名称
+     * 项目组id,用json字符串表示
      */
     @Transient
-    private String groupName;
+    private String groupIds;
 
     /**
      * 创建人id
@@ -47,10 +43,26 @@ public class ProjectCatalog extends BaseEntity<Integer> {
     private Integer createBy;
 
     /**
+     * 创建人姓名
+     */
+    @Transient
+    private String createByName;
+
+    /**
      * 报给文件
      */
     @Transient
     private MultipartFile file;
+
+    /**
+     * 文件目录项目组关联信息
+     */
+    @Transient
+    private List<ProjectCatalogGroup> catalogGroups;
+
+    public String getCreateByName() {
+        return createByName;
+    }
 
     public String getName() {
         return name;
@@ -68,20 +80,20 @@ public class ProjectCatalog extends BaseEntity<Integer> {
         return parentId;
     }
 
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
     public Integer getCreateBy() {
         return createBy;
     }
 
     public MultipartFile getFile() {
         return file;
+    }
+
+    public List<ProjectCatalogGroup> getCatalogGroups() {
+        return catalogGroups;
+    }
+
+    public String getGroupIds() {
+        return groupIds;
     }
 
     public void setName(String name) {
@@ -100,20 +112,24 @@ public class ProjectCatalog extends BaseEntity<Integer> {
         this.parentId = parentId;
     }
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
     public void setCreateBy(Integer createBy) {
         this.createBy = createBy;
     }
 
     public void setFile(MultipartFile file) {
         this.file = file;
+    }
+
+    public void setCatalogGroups(List<ProjectCatalogGroup> catalogGroups) {
+        this.catalogGroups = catalogGroups;
+    }
+
+    public void setGroupIds(String groupIds) {
+        this.groupIds = groupIds;
+    }
+
+    public void setCreateByName(String createByName) {
+        this.createByName = createByName;
     }
 
     @Override
@@ -123,10 +139,11 @@ public class ProjectCatalog extends BaseEntity<Integer> {
                 ", fileType=" + fileType +
                 ", filePath='" + filePath + '\'' +
                 ", parentId=" + parentId +
-                ", groupId=" + groupId +
-                ", groupName='" + groupName + '\'' +
+                ", groupIds='" + groupIds + '\'' +
                 ", createBy=" + createBy +
+                ", createByName='" + createByName + '\'' +
                 ", file=" + file +
+                ", catalogGroups=" + catalogGroups +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

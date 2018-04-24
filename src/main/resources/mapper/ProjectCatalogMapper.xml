@@ -8,21 +8,21 @@
 		<result column="file_type" property="fileType"></result>
 		<result column="file_path" property="filePath"></result>
 		<result column="parent_id" property="parentId"></result>
-		<result column="group_id" property="groupId"></result>
 		<result column="create_by" property="createBy"></result>
 		<result column="create_time" property="createTime"></result>
 		<result column="update_time" property="updateTime"></result>
 		<result column="del_flag" property="delFlag"></result>
 	</resultMap>
 
-	  <sql id="allClounm">
-		t1.id, name, file_type, file_path, parent_id, t1.group_id, create_by, t1.create_time, t1.update_time, t1.del_flag
+	  <sql id="baseClounm">
+		t1.id, name, file_type, file_path, parent_id, create_by, t1.create_time, t1.update_time, t1.del_flag
 	  </sql>
 
-	  <select id="getCatalogsByIds" resultMap="noticeMap">
-		SELECT <include refid="allClounm" />
-		FROM project_catalog t1, project_group_user t2
-		WHERE t1.group_id = t2.group_id
+	  <select id="getCatalogsByIds" resultType="cn.management.domain.project.ProjectCatalog">
+		SELECT <include refid="baseClounm" />
+		FROM project_catalog t1, project_group_user t2, project_catalog_group t3
+		WHERE t1.id = t3.catalog_id
+		  AND t2.group_id = t3.group_id
 		  AND t2.user_id = #{loginId}
 		  AND t1.del_flag = 1
 		  <if test="parentId == null">
@@ -31,6 +31,7 @@
 		  <if test="parentId != null">
 			  AND t1.parent_id = #{parentId}
 		  </if>
+        GROUP BY t1.id
 		ORDER BY t1.id DESC
 	  </select>
 

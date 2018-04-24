@@ -2,6 +2,7 @@ package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectCatalog;
+import cn.management.enums.CatalogTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
@@ -70,7 +71,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         projectCatalog.setCreateBy(loginUserId);
         projectCatalog.setCreateTime(new Date());
         projectCatalog.setUpdateTime(new Date());
-        if (null == service.addSelectiveMapper(projectCatalog)) {
+        if (null == service.doAdd(projectCatalog)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -103,19 +104,17 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         String suffix = fileName.substring(fileName.lastIndexOf("."));
         //设置文件类型
         if ("doc".equals(suffix) || "docx".equals(suffix)) {
-            projectCatalog.setFileType(1);
+            projectCatalog.setFileType(CatalogTypeEnum.DOC.getValue());
         } else if (".xls".equals(suffix) || ".xlsx".equals(suffix)) {
-            projectCatalog.setFileType(2);
+            projectCatalog.setFileType(CatalogTypeEnum.XLS.getValue());
         } else if (".ppt".equals(suffix) || ".pptx".equals(suffix)) {
-            projectCatalog.setFileType(3);
+            projectCatalog.setFileType(CatalogTypeEnum.PPT.getValue());
         } else if (".txt".equals(suffix)) {
-            projectCatalog.setFileType(4);
-        } else if (".txt".equals(suffix)) {
-            projectCatalog.setFileType(5);
+            projectCatalog.setFileType(CatalogTypeEnum.TXT.getValue());
         } else if (".zip".equals(suffix) || ".rar".equals(suffix) ) {
-            projectCatalog.setFileType(6);
+            projectCatalog.setFileType(CatalogTypeEnum.ZIP.getValue());
         } else {
-            projectCatalog.setFileType(7);
+            projectCatalog.setFileType(CatalogTypeEnum.OTHER.getValue());
         }
         //生成新的文件名
         String prefix = UUID.randomUUID().toString().replace("-", "");
@@ -137,7 +136,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         projectCatalog.setCreateBy(loginId);
         projectCatalog.setCreateTime(new Date());
         projectCatalog.setUpdateTime(new Date());
-        if (null == service.addSelectiveMapper(projectCatalog)) {
+        if (null == service.doAdd(projectCatalog)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -156,7 +155,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @ResponseBody
     public Result edit(@RequestBody ProjectCatalog projectCatalog, HttpServletRequest request) throws SysException {
         projectCatalog.setUpdateTime(new Date());
-        if (service.update(projectCatalog)) {
+        if (service.doUpdate(projectCatalog)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);
