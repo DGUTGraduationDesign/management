@@ -21,6 +21,7 @@ import cn.management.service.project.ProjectItemService;
 import cn.management.service.project.ProjectTaskService;
 import cn.management.service.project.ProjectTaskUserService;
 import cn.management.util.SendMeetingInformUtil;
+import cn.management.util.SendTaskInformUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import org.apache.shiro.SecurityUtils;
@@ -176,31 +177,11 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
             projectTaskUser.setUpdateTime(new Date());
             projectTaskUserService.addSelectiveMapper(projectTaskUser);
         }
-
         //发送通知
-        Integer informWay = projectTask.getInformWay();
-        if (null != informWay && !InformWayEnum.NONE.getValue().equals(informWay)) {
-            //再开启一个新的线程发送会议邮件通知、短信通知
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        projectTask.setId(null);
-                        setName(projectTask);
-                        if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送邮件通知
-                            //SendMeetingInformUtil.sendTaskInformMail(projectTask);
-                        }
-                        if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送短信通知
-                            //SendMeetingInformUtil.sendTaskInformMessage(projectTask);
-                        }
-                    } catch (Exception e) {
-                        logger.error(projectTask.toString(), e);
-                    }
-                }
-            });
-            th.start();
-        }
+        projectTask.setId(null);
+        setName(projectTask);
+        setUsers(projectTask);
+        sendTaskInform(projectTask, projectTask.getInformWay());
         return projectTask;
     }
 
@@ -230,30 +211,9 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
         }
         projectTask.setUpdateTime(new Date());
         boolean flag = update(projectTask);
-
         //发送通知
-        Integer informWay = projectTask.getInformWay();
-        if (null != informWay && !InformWayEnum.NONE.getValue().equals(informWay)) {
-            //再开启一个新的线程发送会议邮件通知、短信通知
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-                    ProjectTask task1 = getItemById(projectTask.getId());
-                    try {
-                        if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送邮件通知
-                            //SendMeetingInformUtil.sendTaskInformMail(task1);
-                        }
-                        if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送短信通知
-                            //SendMeetingInformUtil.sendTaskUpdateMessage(task1);
-                        }
-                    } catch (Exception e) {
-                        logger.error(projectTask.toString(), e);
-                    }
-                }
-            });
-            th.start();
-        }
+        ProjectTask task1 = getItem(projectTask);
+        sendTaskInform(task1, projectTask.getInformWay());
         return flag;
     }
 
@@ -266,7 +226,7 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
      */
     @Override
     @Transactional
-    public boolean doComplete(Integer taskId, Integer loginUserId) throws SysException {
+    public boolean doComplete(Integer taskId, Integer loginUserId, Integer informWay) throws SysException {
         //任务信息
         ProjectTask taskCondition = new ProjectTask();
         taskCondition.setId(taskId);
@@ -311,30 +271,9 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
             task.setUpdateTime(new Date());
             //更新任务信息
             update(task);
-        }
-
-        //发送通知
-        Integer informWay = task.getInformWay();
-        if (null != informWay && !InformWayEnum.NONE.getValue().equals(informWay)) {
-            //再开启一个新的线程发送会议邮件通知、短信通知
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-                    ProjectTask task1 = getItemById(task.getId());
-                    try {
-                        if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送邮件通知
-                            //SendMeetingInformUtil.sendTaskInformMail(task1);
-                        }
-                        if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
-                            //发送短信通知
-                            //SendMeetingInformUtil.sendTaskUpdateMessage(task1);
-                        }
-                    } catch (Exception e) {
-                        logger.error(task.toString(), e);
-                    }
-                }
-            });
-            th.start();
+            //发送通知
+            task = getItem(task);
+            sendTaskInform(task, informWay);
         }
         return flag;
     }
@@ -348,7 +287,7 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
      */
     @Override
     @Transactional
-    public boolean doCancel(Integer taskId, Integer loginUserId) throws SysException {
+    public boolean doCancel(Integer taskId, Integer loginUserId, Integer informWay) throws SysException {
         ProjectTask condition = new ProjectTask();
         condition.setId(taskId);
         condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
@@ -370,31 +309,37 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
         boolean flag = update(task);
         //更新任务对象关联信息
         projectTaskUserService.setCancelByTaskId(taskId);
-
         //发送通知
-        Integer informWay = task.getInformWay();
+        sendTaskInform(task, informWay);
+        return flag;
+    }
+
+    /**
+     * 发送任务通知
+     * @param projectTask
+     * @param informWay
+     */
+    public void sendTaskInform(ProjectTask projectTask, Integer informWay) {
         if (null != informWay && !InformWayEnum.NONE.getValue().equals(informWay)) {
             //再开启一个新的线程发送会议邮件通知、短信通知
             Thread th = new Thread(new Runnable() {
                 public void run() {
-                    ProjectTask task1 = getItemById(task.getId());
                     try {
                         if (InformWayEnum.MAIL.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
                             //发送邮件通知
-                            //SendMeetingInformUtil.sendTaskInformMail(task1);
+                            SendTaskInformUtil.sendTaskInformMail(projectTask);
                         }
                         if (InformWayEnum.MESSAGE.getValue().equals(informWay) || InformWayEnum.ALL.getValue().equals(informWay)) {
                             //发送短信通知
                             //SendMeetingInformUtil.sendTaskUpdateMessage(task1);
                         }
                     } catch (Exception e) {
-                        logger.error(task.toString(), e);
+                        logger.error(projectTask.toString(), e);
                     }
                 }
             });
             th.start();
         }
-        return flag;
     }
 
     /**

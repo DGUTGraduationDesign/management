@@ -47,7 +47,7 @@ public interface ProjectTaskService extends BaseService<ProjectTaskMapper, Proje
      * @return
      * @throws SysException
      */
-    boolean doComplete(Integer taskId, Integer loginUserId) throws SysException;
+    boolean doComplete(Integer taskId, Integer loginUserId, Integer informWay) throws SysException;
 
     /**
      * 完成任务
@@ -56,7 +56,7 @@ public interface ProjectTaskService extends BaseService<ProjectTaskMapper, Proje
      * @return
      * @throws SysException
      */
-    boolean doCancel(Integer taskId, Integer loginUserId) throws SysException;
+    boolean doCancel(Integer taskId, Integer loginUserId, Integer informWay) throws SysException;
 
     /**
      * 逻辑删除，更新表中del_flag字段为1

@@ -168,15 +168,16 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 		SecurityUtils.getSubject().checkPermission(TaskIdentityEnum.getPermission(identity));
 		Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
 		Integer projectTaskId = (Integer) models.get("projectTaskId");
+		Integer informWay = (Integer) models.get("informWay");
 		ProjectTask projectTask = new ProjectTask();
 		projectTask.setId(projectTaskId);
 		boolean flag = false;
 		if (TaskIdentityEnum.COMPLETE.getIdentity().equals(identity)) {
 			//完成任务
-			flag = service.doComplete(projectTaskId, loginUserId);
+			flag = service.doComplete(projectTaskId, loginUserId, informWay);
 		} else if (TaskIdentityEnum.CANCEL.getIdentity().equals(identity)) {
 			//取消任务
-			flag = service.doCancel(projectTaskId, loginUserId);
+			flag = service.doCancel(projectTaskId, loginUserId, informWay);
 		}
 		if (flag) {
 			return new Result(ResultEnum.SUCCESS);
