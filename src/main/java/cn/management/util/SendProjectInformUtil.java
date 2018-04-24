@@ -1,8 +1,11 @@
 package cn.management.util;
 
+import cn.management.conf.ApplicationContextHelper;
 import cn.management.domain.admin.AdminUser;
 import cn.management.domain.project.ProjectNotice;
+import cn.management.domain.project.ProjectNoticeInform;
 import cn.management.exception.SysException;
+import cn.management.service.admin.AdminUserService;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -59,10 +62,21 @@ public class SendProjectInformUtil {
      * @param projectNotice
      * @throws Exception
      */
-    public static void sendProjectNoticeMessage(ProjectNotice projectNotice, List<AdminUser> users)
-        throws Exception {
+    public static void sendProjectNoticeMessage(ProjectNotice projectNotice) throws Exception {
         //模版填充内容
         ArrayList<String> params = new ArrayList<String>(5);
+        //从spring容器获取实例对象
+        AdminUserService adminUserService =  ApplicationContextHelper.getBean(AdminUserService.class);
+        List<ProjectNoticeInform> list = projectNotice.getInformList();
+        List<AdminUser> users = new ArrayList<AdminUser>();
+        for (ProjectNoticeInform projectNoticeInform : list) {
+            AdminUser user = adminUserService.getItemById(projectNoticeInform.getUserId());
+            if (null != user) {
+                users.add(user);
+            }
+        }
+        //短信接收人
+        ArrayList<String> phoneNumbers = buildPhoneNumbers(users);
         //短信模版id
         int tmplId = 0;
         //通知标题
@@ -74,7 +88,7 @@ public class SendProjectInformUtil {
             //发布时间
             String createDateStr = dateFormat.format(projectNotice.getCreateTime());
             params.add(createDateStr);
-        } else if (null != projectNotice.getId()) {
+        } else {
             //短信模版id
             tmplId = 102703;
             //修改时间
@@ -84,8 +98,6 @@ public class SendProjectInformUtil {
         //发布人
         String createName = projectNotice.getCreateName();
         params.add(createName);
-        //短信接收人
-        ArrayList<String> phoneNumbers = buildPhoneNumbers(users);
         //发送短信通知
         SmsUtil.sendMultiMessageWithParam(tmplId, params, phoneNumbers);
     }
@@ -93,13 +105,21 @@ public class SendProjectInformUtil {
     /**
      * 发送项目通知邮件
      * @param projectNotice
-     * @param users
      * @throws SysException
      * @throws MessagingException
      * @throws IOException
      */
-    public static void sendProjectNoticeMail(ProjectNotice projectNotice, List<AdminUser> users)
-        throws SysException, MessagingException, IOException {
+    public static void sendProjectNoticeMail(ProjectNotice projectNotice) throws SysException, MessagingException, IOException {
+        //从spring容器获取实例对象
+        AdminUserService adminUserService =  ApplicationContextHelper.getBean(AdminUserService.class);
+        List<ProjectNoticeInform> list = projectNotice.getInformList();
+        List<AdminUser> users = new ArrayList<AdminUser>();
+        for (ProjectNoticeInform projectNoticeInform : list) {
+            AdminUser user = adminUserService.getItemById(projectNoticeInform.getUserId());
+            if (null != user) {
+                users.add(user);
+            }
+        }
         //收件人地址
         List<String> toAddrs = buildToAddrs(users);
         //邮件主题
@@ -122,7 +142,7 @@ public class SendProjectInformUtil {
                     + "<b>内容：</b>" + content + "<br/>"
                     + "<b>发布人：</b>" + createName + "<br/>"
                     + "<b>发布时间：</b>" + createDateStr);
-        } else if (null != projectNotice) {
+        } else {
             mailContent.append("您有变更的项目通知.<br/>"
                     + "<b>标题：</b>" + title + "<br/>"
                     + "<b>内容：</b>" + content + "<br/>"

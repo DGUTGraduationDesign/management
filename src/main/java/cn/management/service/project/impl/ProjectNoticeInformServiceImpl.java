@@ -1,27 +1,34 @@
 package cn.management.service.project.impl;
 
-import cn.management.domain.admin.AdminUser;
-import cn.management.domain.project.ProjectItem;
 import cn.management.domain.project.ProjectNoticeInform;
 import cn.management.enums.DeleteTypeEnum;
-import cn.management.enums.ItemStateEnum;
-import cn.management.mapper.project.ProjectItemMapper;
+import cn.management.enums.NoticeReadEnum;
 import cn.management.mapper.project.ProjectNoticeInformMapper;
-import cn.management.service.admin.AdminUserService;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectNoticeInformService;
-import com.github.pagehelper.PageHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
-
-import java.util.List;
 
 /**
  * 通知知会人Service层实现类
  */
 @Service
 public class ProjectNoticeInformServiceImpl extends BaseServiceImpl<ProjectNoticeInformMapper, ProjectNoticeInform> implements ProjectNoticeInformService {
+
+    /**
+     * 标记为已读
+     * @param projectNoticeId
+     * @param loginUserId
+     */
+    public boolean updateReadFlag(Integer projectNoticeId, Integer loginUserId) {
+        Example example = new Example(ProjectNoticeInform.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("noticeId", projectNoticeId);
+        criteria.andEqualTo("userId", loginUserId);
+        criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
+        ProjectNoticeInform projectNoticeInform = new ProjectNoticeInform();
+        projectNoticeInform.setReadFlag(NoticeReadEnum.READ.getValue());
+        return updateByExampleSelective(projectNoticeInform, example);
+    }
 
 }

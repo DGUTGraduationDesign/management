@@ -1,12 +1,5 @@
 package cn.management.domain.project.dto;
 
-import cn.management.domain.BaseEntity;
-import cn.management.domain.project.ProjectNoticeInform;
-
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.List;
-
 /**
  * 条件查询通知Dto
  */
@@ -27,6 +20,11 @@ public class ProjectNoticeDto {
      */
     private Integer readFlag;
 
+    /**
+     * 标题
+     */
+    private String title;
+
     public void setCreateBy(Integer createBy) {
         this.createBy = createBy;
     }
@@ -37,6 +35,10 @@ public class ProjectNoticeDto {
 
     public void setReadFlag(Integer readFlag) {
         this.readFlag = readFlag;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Integer getCreateBy() {
@@ -51,12 +53,17 @@ public class ProjectNoticeDto {
         return readFlag;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     @Override
     public String toString() {
         return "ProjectNoticeDto{" +
                 "createBy=" + createBy +
                 ", userId=" + userId +
                 ", readFlag=" + readFlag +
+                ", title='" + title + '\'' +
                 '}';
     }
 

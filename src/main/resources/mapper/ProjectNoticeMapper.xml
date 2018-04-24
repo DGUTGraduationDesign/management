@@ -11,7 +11,7 @@
 		<result column="update_time" property="updateTime"></result>
 		<result column="del_flag" property="delFlag"></result>
 		<collection property="informList" ofType="cn.management.domain.project.ProjectNoticeInform">
-			<result column="id" property="noticeId"></result>
+			<result column="notice_id" property="noticeId"></result>
 			<result column="user_id" property="userId"></result>
 			<result column="read_flag" property="readFlag"></result>
 			<result column="create_time" property="createTime"></result>
@@ -20,32 +20,37 @@
 		</collection>
 	</resultMap>
 
-  <sql id="allClounm">
-  	t1.id, title, content, create_by, t1.create_time, t1.update_time, t1.del_flag, user_id, read_flag, t2.create_time, t2.update_time, t2.del_flag
-  </sql>
-  
-  <sql id="conditionQuery">
-  	<if test="createBy != null">
-  		and create_by = #{createBy}
-  	</if>
-	  <if test="userId != null">
-		  and user_id = #{userId}
-	  </if>
-	  <if test="readFlag != null">
-		  and read_flag = #{readFlag}
-	  </if>
-  </sql>
+	<sql id="baseClounm">
+      t1.id, title, content, create_by, t1.create_time, t1.update_time, t1.del_flag
+	</sql>
 
-  <select id="getItemsByCondition" parameterType="cn.management.domain.project.dto.ProjectNoticeDto"
-    resultMap="noticeMap">
-    select <include refid="allClounm" />
-    from project_notice t1
-    left join project_notice_inform t2 on t1.id = t2.notice_id and t1.del_flag = 1
+    <sql id="allClounm">
+      t1.id, title, content, create_by, t1.create_time, t1.update_time, t1.del_flag,
+      notice_id, user_id, read_flag, t2.create_time, t2.update_time, t2.del_flag
+    </sql>
+
+    <sql id="conditionQuery">
+        <if test="createBy != null">
+            and create_by = #{createBy}
+        </if>
+        <if test="userId != null">
+          and user_id = #{userId}
+        </if>
+        <if test="readFlag != null">
+          and read_flag = #{readFlag}
+        </if>
+    </sql>
+
+    <select id="getItemsByCondition" parameterType="cn.management.domain.project.dto.ProjectNoticeDto"
+        resultType="cn.management.domain.project.ProjectNotice">
+        select <include refid="baseClounm" />
+        from project_notice t1
+        left join project_notice_inform t2 on t1.id = t2.notice_id and t1.del_flag = 1
     <where>
-    	<include refid="conditionQuery" />
+        <include refid="conditionQuery" />
     </where>
-	order by t1.id DESC
-  </select>
+    order by t1.id DESC
+    </select>
 
 	<select id="getReadFlagById" resultType="int">
 		select read_flag
@@ -58,6 +63,7 @@
 		from project_notice t1
 		left join project_notice_inform t2 on t1.id = t2.notice_id and t1.del_flag = 1
 		where t1.id = #{projectNoticeId}
+          and t1.del_flag = 1;
 	</select>
 
 </mapper>

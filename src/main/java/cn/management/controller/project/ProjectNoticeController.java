@@ -3,13 +3,16 @@ package cn.management.controller.project;
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectItem;
 import cn.management.domain.project.ProjectNotice;
+import cn.management.domain.project.ProjectNoticeInform;
 import cn.management.domain.project.dto.ProjectNoticeDto;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.NoticeIdentityEnum;
+import cn.management.enums.NoticeReadEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectItemService;
+import cn.management.service.project.ProjectNoticeInformService;
 import cn.management.service.project.ProjectNoticeService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
@@ -17,6 +20,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +42,9 @@ import java.util.Map;
 @RequestMapping("project/notice")
 public class ProjectNoticeController extends BaseController<ProjectNoticeService, ProjectNotice> {
 
+    @Autowired
+    private ProjectNoticeInformService projectNoticeInformService;
+
     /**
      * 条件查询通知列表
      * @param models
@@ -49,7 +56,8 @@ public class ProjectNoticeController extends BaseController<ProjectNoticeService
         // 检查权限
         SecurityUtils.getSubject().checkPermission(NoticeIdentityEnum.getPermission(identity));
         // 拼接条件
-        Integer readFlag = JSON.parseObject((String)models.get("readFlag"), Integer.class);
+        Integer readFlag = (Integer) models.get("readFlag");
+        String title = (String) models.get("title");
         Integer page = (Integer) models.get("page");
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         ProjectNoticeDto projectNoticeDto = new ProjectNoticeDto();
@@ -62,6 +70,9 @@ public class ProjectNoticeController extends BaseController<ProjectNoticeService
         if (null != readFlag) {
             projectNoticeDto.setReadFlag(readFlag);
         }
+        if (StringUtils.isNotBlank(title)) {
+            projectNoticeDto.setTitle(title);
+        }
         List<ProjectNotice> list = service.getItemsByPage(projectNoticeDto, page, getPageSize(), identity);
         if (list == null || list.size() == 0) {
             return new Result(ResultEnum.NO_RECORDS);
@@ -73,12 +84,17 @@ public class ProjectNoticeController extends BaseController<ProjectNoticeService
     /**
      * 查询通知详细信息
      * @param models
+     * @param request
      * @return
      */
     @RequestMapping("/findProjectNoticeById")
     @ResponseBody
-    public Result findProjectNoticeById(@RequestBody Map<String, Object> models) {
+    public Result findProjectNoticeById(@RequestBody Map<String, Object> models, HttpServletRequest request) {
         Integer projectNoticeId = (Integer) models.get("projectNoticeId");
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        //标记为已读
+        projectNoticeInformService.updateReadFlag(projectNoticeId, loginUserId);
+        //查询通知详细信息
         ProjectNotice projectNotice = service.getItemById(projectNoticeId);
         if (null == projectNotice) {
             return new Result(ResultEnum.NO_RECORDS);

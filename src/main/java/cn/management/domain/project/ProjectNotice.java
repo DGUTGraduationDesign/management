@@ -34,6 +34,12 @@ public class ProjectNotice extends BaseEntity<Integer> {
     private String createName;
 
     /**
+     * 知会人id,json字符串
+     */
+    @Transient
+    private String userIds;
+
+    /**
      * 知会人
      */
     @Transient
@@ -75,6 +81,10 @@ public class ProjectNotice extends BaseEntity<Integer> {
         return createName;
     }
 
+    public String getUserIds() {
+        return userIds;
+    }
+
     public List<ProjectNoticeInform> getInformList() { return informList; }
 
     public String getReadFlagName() {
@@ -97,6 +107,10 @@ public class ProjectNotice extends BaseEntity<Integer> {
         this.createName = createName;
     }
 
+    public void setUserIds(String userIds) {
+        this.userIds = userIds;
+    }
+
     public void setInformList(List<ProjectNoticeInform> informList) { this.informList = informList; }
 
     public void setReadFlagName(String readFlagName) {
@@ -114,6 +128,7 @@ public class ProjectNotice extends BaseEntity<Integer> {
                 "content='" + content + '\'' +
                 ", createBy=" + createBy +
                 ", createName='" + createName + '\'' +
+                ", userIds=" + userIds +
                 ", informList=" + informList +
                 ", readFlagName='" + readFlagName + '\'' +
                 ", id=" + id +
