@@ -35,7 +35,7 @@
         FROM project_catalog t1, project_group_user t2, project_catalog_group t3
         WHERE t1.id = t3.catalog_id
           AND t2.group_id = t3.group_id
-          AND t2.user_id = #{loginId}
+          AND (t2.user_id = #{loginId} OR t1.create_by = #{loginId})
           AND t1.del_flag = 1
           <if test="parentId == null">
               AND t1.parent_id IS NULL
@@ -43,6 +43,18 @@
           <if test="parentId != null">
               AND t1.parent_id = #{parentId}
           </if>
+        GROUP BY t1.id
+        ORDER BY t1.id DESC
+    </select>
+
+    <select id="getByLoginIdAndCId" resultType="cn.management.domain.project.ProjectCatalog">
+        SELECT <include refid="baseClounm" />
+        FROM project_catalog t1, project_group_user t2, project_catalog_group t3
+        WHERE t1.id = t3.catalog_id
+        AND t1.id = #{catalogId}
+        AND t2.group_id = t3.group_id
+        AND t2.user_id = #{loginId}
+        AND t1.del_flag = 1
         GROUP BY t1.id
         ORDER BY t1.id DESC
     </select>

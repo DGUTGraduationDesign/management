@@ -89,7 +89,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         projectCatalog.setCreateBy(loginUserId);
         projectCatalog.setCreateTime(new Date());
         projectCatalog.setUpdateTime(new Date());
-        if (null == service.doAdd(projectCatalog)) {
+        if (null == service.doAdd(projectCatalog, loginUserId)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -106,7 +106,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequestMapping("/upload")
     @RequiresPermissions("projectCatalog:upload")
     @ResponseBody
-    public Result upload(ProjectCatalog projectCatalog, HttpServletRequest request) throws IOException {
+    public Result upload(ProjectCatalog projectCatalog, HttpServletRequest request) throws IOException, SysException {
         MultipartFile file = projectCatalog.getFile();
         //判断文件大小
         long fileSize = file.getSize();
@@ -154,7 +154,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         projectCatalog.setCreateBy(loginId);
         projectCatalog.setCreateTime(new Date());
         projectCatalog.setUpdateTime(new Date());
-        if (null == service.doAdd(projectCatalog)) {
+        if (null == service.doAdd(projectCatalog, loginId)) {
             return new Result(ResultEnum.FAIL);
         } else {
             return new Result(ResultEnum.SUCCESS);
@@ -172,8 +172,9 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequiresPermissions("projectCatalog:edit")
     @ResponseBody
     public Result edit(@RequestBody ProjectCatalog projectCatalog, HttpServletRequest request) throws SysException {
+        Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         projectCatalog.setUpdateTime(new Date());
-        if (service.doUpdate(projectCatalog)) {
+        if (service.doUpdate(projectCatalog, loginId)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);
@@ -188,9 +189,14 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
      */
     @RequestMapping("/download")
     @RequiresPermissions("projectCatalog:download")
-    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
+    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, SysException {
+        Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         Integer fileId = (Integer) models.get("fileId");
-        ProjectCatalog projectCatalog = service.getItemById(fileId);
+        //判断文件是否存在
+        ProjectCatalog projectCatalog = service.getByLoginIdAndCId(loginId, fileId);
+        if (null == projectCatalog) {
+            throw new SysException("文件目录不存在.");
+        }
         String path = Commons.FILE_HOST + projectCatalog.getFilePath();
         //创建jersey服务器，进行跨服务器下载
         Client client = new Client();
@@ -227,7 +233,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         if (!StringUtils.isNotBlank(ids)) {
             return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
         }
-        if (service.doDelete(ids)) {
+        if (service.doDelete(ids, loginUserId)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);

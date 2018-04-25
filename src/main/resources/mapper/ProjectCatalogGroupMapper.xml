@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.management.mapper.project.ProjectCatalogGroupMapper" >
 
+    <select id="getGroupIdsByCId" parameterType="int">
+        SELECT group_id
+        FROM project_catalog_group
+        WHERE catalog_id = #{catalogId}
+    </select>
+
     <delete id="deleteByCatalogId" parameterType="int">
         DELETE FROM project_catalog_group
         WHERE catalog_id = #{catalogId}

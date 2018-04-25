@@ -20,24 +20,34 @@ public interface ProjectCatalogService extends BaseService<ProjectCatalogMapper,
     List<ProjectCatalog> getCatalogsByIds(Integer loginId, Integer parentId);
 
     /**
+     * 根据用户id和文件目录id获取文件目录
+     * @param loginId
+     * @param catalogId
+     * @return
+     */
+    ProjectCatalog getByLoginIdAndCId(Integer loginId, Integer catalogId);
+
+    /**
      * 添加文件目录信息
      * @param projectCatalog
      * @return
      */
-    ProjectCatalog doAdd(ProjectCatalog projectCatalog);
+    ProjectCatalog doAdd(ProjectCatalog projectCatalog, Integer loginId) throws SysException;
 
     /**
      * 修改文件目录信息
      * @param projectCatalog
+     * @param loginId
      * @return
      */
-    boolean doUpdate(ProjectCatalog projectCatalog);
+    boolean doUpdate(ProjectCatalog projectCatalog, Integer loginId) throws SysException;
 
     /**
      * 删除文件目录
      * @param ids
+     * @param loginId
      * @return
      */
-    boolean doDelete(String ids);
+    boolean doDelete(String ids, Integer loginId);
 
 }
