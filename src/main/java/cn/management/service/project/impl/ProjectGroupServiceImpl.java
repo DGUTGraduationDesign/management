@@ -76,6 +76,21 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
     }
 
     /**
+     * 条件查询项目组
+     * @param condition
+     * @return
+     */
+    @Override
+    public List<ProjectGroup> getItems(ProjectGroup condition) {
+        List<ProjectGroup> items = mapper.select(condition);
+        for (ProjectGroup projectGroup : items) {
+            //设置项目名称、项目组组长、创建人姓名
+            setName(projectGroup);
+        }
+        return items;
+    }
+
+    /**
      * 设置项目名称、项目组组长、创建人姓名
      * @param projectGroup
      */

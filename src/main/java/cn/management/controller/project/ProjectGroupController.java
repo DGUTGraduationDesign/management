@@ -19,6 +19,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,6 +71,23 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         } else {
             return new Result(ResultEnum.SUCCESS, projectGroup, 1, 0, 1);
         }
+    }
+
+    /**
+     * 查询所创建的项目组
+     * @param request
+     * @return
+     */
+    @RequestMapping("/listGroupByLoginId")
+    @RequiresPermissions("projectGroup:list")
+    @ResponseBody
+    public Result listGroupByLoginId(HttpServletRequest request) {
+        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        ProjectGroup condition = new ProjectGroup();
+        condition.setCreateBy(loginUserId);
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<ProjectGroup> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
     }
 
     /**
