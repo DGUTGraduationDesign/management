@@ -96,13 +96,13 @@ public class ProjectCatalogServiceImpl extends BaseServiceImpl<ProjectCatalogMap
         List<Integer> groupIds = new ArrayList<Integer>(5);
         //判断父目录是否为空
         if (null != projectCatalog.getParentId()) {
-            ProjectCatalog parentCatalog = getByLoginIdAndCId(loginId, projectCatalog.getId());
+            ProjectCatalog parentCatalog = getByLoginIdAndCId(loginId, projectCatalog.getParentId());
             if (null == parentCatalog) {
                 throw new SysException("父目录不存在.");
             }
             groupIds = projectCatalogGroupService.getGroupIdsByCId(parentCatalog.getId());
         } else {
-            if (StringUtils.isNotBlank(projectCatalog.getGroupIds())) {
+            if (!StringUtils.isNotBlank(projectCatalog.getGroupIds())) {
                 throw new SysException("项目组不能为空.");
             }
             groupIds = JSONObject.parseArray(projectCatalog.getGroupIds(), Integer.class);
