@@ -57,6 +57,24 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     }
 
     /**
+     * 根据id查询目录详细信息
+     * @param models
+     * @return
+     */
+    @RequestMapping("/findById")
+    @RequiresPermissions("projectCatalog:list")
+    @ResponseBody
+    public Result findById(@RequestBody Map<String, Object> models) {
+        Integer catalogId = (Integer) models.get("catalogId");
+        ProjectCatalog projectCatalog = service.getItemById(catalogId);
+        if (null == projectCatalog) {
+            return new Result(ResultEnum.NO_RECORDS);
+        } else {
+            return new Result(ResultEnum.SUCCESS, projectCatalog);
+        }
+    }
+
+    /**
      * 新建目录
      * @param projectCatalog
      * @param request
@@ -209,7 +227,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         if (!StringUtils.isNotBlank(ids)) {
             return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
         }
-        if (service.logicalDelete(ids)) {
+        if (service.doDelete(ids)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);

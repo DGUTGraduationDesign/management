@@ -34,10 +34,10 @@ public interface ProjectCatalogService extends BaseService<ProjectCatalogMapper,
     boolean doUpdate(ProjectCatalog projectCatalog);
 
     /**
-     * 逻辑删除，更新表中del_flag字段为1
+     * 删除文件目录
      * @param ids
      * @return
      */
-    boolean logicalDelete(String ids);
+    boolean doDelete(String ids);
 
 }

@@ -18,4 +18,11 @@ public interface ProjectCatalogMapper extends MyMapper<ProjectCatalog> {
      */
     List<ProjectCatalog> getCatalogsByIds(@Param("loginId") Integer loginId, @Param("parentId") Integer parentId);
 
+    /**
+     * 根据id查询目录详细信息
+     * @param catalogId
+     * @return
+     */
+    ProjectCatalog getById(Integer catalogId);
+
 }
