@@ -42,7 +42,7 @@ public class BusinessCustomerController extends BaseController<BusinessCustomerS
         Example example = new Example(BusinessCustomer.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(businessCustomer.getName())) {
-            criteria.andLike("name", businessCustomer.getName());
+            criteria.andLike("name", "%" + businessCustomer.getName() + "%");
         }
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);

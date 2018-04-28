@@ -47,6 +47,11 @@ public class Result {
      * 每页记录数
      */
     private Integer pageSize = 0;
+
+    /**
+     * 分页,html代码
+     */
+    private String pageMenu;
     
     public Result(int code, String message) {
         this.code = code;
@@ -65,6 +70,16 @@ public class Result {
         this.count = count;
         this.page = page;
         this.pageSize = pageSize;
+    }
+
+    public Result(ResultEnum resultEnum, Object data, Integer count, Integer page, Integer pageSize, String pageMenu) {
+        this.code = resultEnum.getCode();
+        this.message = resultEnum.getMessage();
+        this.data = data;
+        this.count = count;
+        this.page = page;
+        this.pageSize = pageSize;
+        this.pageMenu = pageMenu;
     }
 
     public Result(ResultEnum resultEnum, Object data) {
@@ -103,6 +118,10 @@ public class Result {
         return pageSize;
     }
 
+    public String getPageMenu() {
+        return pageMenu;
+    }
+
     public void setCode(int code) {
         this.code = code;
     }
@@ -127,4 +146,7 @@ public class Result {
         this.pageSize = pageSize;
     }
 
+    public void setPageMenu(String pageMenu) {
+        this.pageMenu = pageMenu;
+    }
 }

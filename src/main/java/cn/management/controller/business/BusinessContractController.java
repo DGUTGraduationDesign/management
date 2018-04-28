@@ -51,7 +51,7 @@ public class BusinessContractController extends BaseController<BusinessContractS
         Example example = new Example(BusinessContract.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(businessContract.getContractName())) {
-            criteria.andLike("contractName", businessContract.getContractName());
+            criteria.andLike("contractName", "%" + businessContract.getContractName() + "%");
         }
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);

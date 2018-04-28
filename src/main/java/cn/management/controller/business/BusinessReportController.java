@@ -50,7 +50,7 @@ public class BusinessReportController extends BaseController<BusinessReportServi
         Example example = new Example(BusinessReport.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotBlank(businessReport.getReportName())) {
-            criteria.andLike("reportName", businessReport.getReportName());
+            criteria.andLike("reportName", "%" + businessReport.getReportName() + "%");
         }
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);
