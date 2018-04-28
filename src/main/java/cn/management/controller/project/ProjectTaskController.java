@@ -62,7 +62,9 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
             return new Result(ResultEnum.NO_RECORDS);
         }
         PageInfo<ProjectMyTaskDto> pageInfo = new PageInfo<ProjectMyTaskDto>(list);
-        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), (int) pageInfo.getTotal(), pageInfo.getPageNum(), getPageSize());
+		//分页信息
+		String pageMenu = getPagination(list, page);
+        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), (int) pageInfo.getTotal(), pageInfo.getPageNum(), getPageSize(), pageMenu);
     }
 
     /**
