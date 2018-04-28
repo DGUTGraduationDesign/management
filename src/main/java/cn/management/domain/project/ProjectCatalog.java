@@ -3,12 +3,14 @@ package cn.management.domain.project;
 import cn.management.domain.BaseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
 
 /**
  * 网盘目录/文件实体类
  */
+@Table(name = "project_catalog")
 public class ProjectCatalog extends BaseEntity<Integer> {
 
     /**
@@ -20,6 +22,11 @@ public class ProjectCatalog extends BaseEntity<Integer> {
      * 文件类型
      */
     private Integer fileType;
+
+    /**
+     * 文件大小,单位KB
+     */
+    private Integer fileSize;
 
     /**
      * 下载路径,目录为空
@@ -60,6 +67,10 @@ public class ProjectCatalog extends BaseEntity<Integer> {
     @Transient
     private List<ProjectCatalogGroup> catalogGroups;
 
+    public Integer getFileSize() {
+        return fileSize;
+    }
+
     public String getCreateByName() {
         return createByName;
     }
@@ -94,6 +105,10 @@ public class ProjectCatalog extends BaseEntity<Integer> {
 
     public String getGroupIds() {
         return groupIds;
+    }
+
+    public void setFileSize(Integer fileSize) {
+        this.fileSize = fileSize;
     }
 
     public void setName(String name) {
@@ -137,6 +152,7 @@ public class ProjectCatalog extends BaseEntity<Integer> {
         return "ProjectCatalog{" +
                 "name='" + name + '\'' +
                 ", fileType=" + fileType +
+                ", fileSize=" + fileSize +
                 ", filePath='" + filePath + '\'' +
                 ", parentId=" + parentId +
                 ", groupIds='" + groupIds + '\'' +

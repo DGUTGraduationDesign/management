@@ -6,6 +6,7 @@
 		<id column="id" property="id"></id>
         <result column="name" property="name"></result>
 		<result column="file_type" property="fileType"></result>
+        <result column="file_size" property="fileSize"></result>
 		<result column="file_path" property="filePath"></result>
 		<result column="parent_id" property="parentId"></result>
 		<result column="create_by" property="createBy"></result>
@@ -22,11 +23,11 @@
 	</resultMap>
 
 	  <sql id="baseClounm">
-		t1.id, name, file_type, file_path, parent_id, create_by, t1.create_time, t1.update_time, t1.del_flag
+		t1.id, name, file_type, file_size, file_path, parent_id, create_by, t1.create_time, t1.update_time, t1.del_flag
 	  </sql>
 
     <sql id="allClounm">
-        t1.id, name, file_type, file_path, parent_id, create_by, t1.create_time, t1.update_time, t1.del_flag
+        t1.id, name, file_type, file_size, file_path, parent_id, create_by, t1.create_time, t1.update_time, t1.del_flag
         catalog_id, group_id, t2.create_time, t2.update_time, t2.del_flag
     </sql>
 

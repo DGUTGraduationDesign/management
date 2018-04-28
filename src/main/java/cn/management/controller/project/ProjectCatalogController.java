@@ -113,8 +113,12 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
         if (file == null || fileSize == 0) {
             return new Result(ResultEnum.DATA_ERROR, "操作失败！请选择要上传的文件！");
         }
-        if (fileSize > (10 * 1024 * 1024)) {
-            return new Result(ResultEnum.DATA_ERROR, "操作失败！文件大小不能超过10M！");
+        //设置文件大小
+        int size = (int) (fileSize/1024);
+        if (0 != size) {
+            projectCatalog.setFileSize(size);
+        } else {
+            projectCatalog.setFileSize(1);
         }
         //获取文件完整名
         String fileName = file.getOriginalFilename();
