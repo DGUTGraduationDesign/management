@@ -47,6 +47,26 @@ public class AdminPositionController extends BaseController<AdminPositionService
         List<AdminPosition> list = service.getItems(condition);
         return new Result(ResultEnum.SUCCESS, list);
     }
+
+    /**
+     * 根据部门id查询职位
+     * @param models
+     * @return
+     */
+    @RequestMapping("/findPostByDeptId")
+    @ResponseBody
+    public Result findPostByDeptId(@RequestBody Map<String, Object> models) {
+        Integer deptId = (Integer) models.get("deptId");
+        AdminPosition condition = new AdminPosition();
+        condition.setDeptId(deptId);
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<AdminPosition> list = service.getItems(condition);
+        if (null != list && 0 != list.size()) {
+            return new Result(ResultEnum.SUCCESS, list);
+        } else {
+            return new Result(ResultEnum.NO_RECORDS);
+        }
+    }
     
     /**
      * 条件查询职位列表
