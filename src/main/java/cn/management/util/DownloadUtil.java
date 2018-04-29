@@ -41,7 +41,7 @@ public class DownloadUtil {
         //刷数据
         outputstream.flush();
     }
-    
+
     /**
      * 下载文件时，针对不同浏览器，进行附件名的编码
      * @param fileName

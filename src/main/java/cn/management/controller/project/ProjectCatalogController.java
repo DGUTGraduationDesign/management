@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 项目网盘控制器
@@ -195,30 +197,75 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequiresPermissions("projectCatalog:download")
     public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, SysException {
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
-        Integer fileId = (Integer) models.get("fileId");
+        String fileIds = (String) models.get("fileIds");
         //判断文件是否存在
-        ProjectCatalog projectCatalog = service.getByLoginIdAndCId(loginId, fileId);
-        if (null == projectCatalog) {
+        List<ProjectCatalog> list = service.getByLoginIdAndCIds(loginId, fileIds);
+        if (null == list || 0 == list.size()) {
             throw new SysException("文件目录不存在.");
         }
-        String path = Commons.FILE_HOST + projectCatalog.getFilePath();
-        //创建jersey服务器，进行跨服务器下载
-        Client client = new Client();
-        //把文件关联到远程服务器
-        WebResource resource = client.resource(path);
-        //下载
-        File file = resource.get(File.class);
-        InputStream inputStream = new FileInputStream(file);
-        //内存中的缓存区
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int date = -1;
-        while ((date = bis.read()) != -1) {
-            baos.write(date);
+        String fileName = "";
+        if (1 == list.size()) {
+            ProjectCatalog projectCatalog = list.get(0);
+            fileName = projectCatalog.getName();
+            String path = Commons.FILE_HOST + projectCatalog.getFilePath();
+            //创建jersey服务器，进行跨服务器下载
+            Client client = new Client();
+            //把文件关联到远程服务器
+            WebResource resource = client.resource(path);
+            //下载
+            File file = resource.get(File.class);
+            InputStream inputStream = new FileInputStream(file);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+        } else {
+            fileName = Commons.ZIP_NAME;
+            String zipPath = request.getSession().getServletContext().getRealPath(Commons.ZIP_PATH + "/" + Commons.ZIP_NAME);
+            //如果不存在则创建一个
+            File zipFile = new File(zipPath);
+            if (!zipFile.exists()) {
+                zipFile.createNewFile();
+            }
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(zipPath));
+            ZipOutputStream zos = new ZipOutputStream(bos);
+            ZipEntry ze = null;
+            //将所有需要下载的pdf文件都写入临时zip文件
+            for (ProjectCatalog projectCatalog : list) {
+                //创建jersey服务器，进行跨服务器读取文件
+                Client client = new Client();
+                String path = Commons.FILE_HOST + projectCatalog.getFilePath();
+                WebResource resource = client.resource(path);
+                File catalog = resource.get(File.class);
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(catalog));
+                ze = new ZipEntry(projectCatalog.getName());
+                zos.putNextEntry(ze);
+                int s = -1;
+                while ((s = bis.read()) != -1) {
+                    zos.write(s);
+                }
+                bis.close();
+            }
+            zos.flush();
+            zos.close();
+            //将zip输出到baos
+            InputStream inputStream = new FileInputStream(zipPath);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+            //删除临时文件
+            zipFile.delete();
         }
-        inputStream.close();
         //文件下载
-        DownloadUtil.download(baos, request, response, projectCatalog.getName());
+        DownloadUtil.download(baos, request, response, fileName);
         return null;
     }
 

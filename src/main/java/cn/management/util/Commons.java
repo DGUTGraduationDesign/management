@@ -25,4 +25,14 @@ public class Commons {
      */
     public static final String PROJECTS_PATH = "/upload/files/projects";
 
+    /**
+     * 网盘压缩文件临时路径
+     */
+    public static final String ZIP_PATH = "/upload";
+
+    /**
+     * 网盘压缩文件名称
+     */
+    public static final String ZIP_NAME = "fileZip.zip";
+
 }

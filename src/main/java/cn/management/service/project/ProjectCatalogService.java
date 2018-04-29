@@ -28,6 +28,14 @@ public interface ProjectCatalogService extends BaseService<ProjectCatalogMapper,
     ProjectCatalog getByLoginIdAndCId(Integer loginId, Integer catalogId);
 
     /**
+     * 根据用户id和文件目录id获取文件路径
+     * @param loginId
+     * @param catalogIds
+     * @return
+     */
+    List<ProjectCatalog> getByLoginIdAndCIds(Integer loginId, String catalogIds);
+
+    /**
      * 添加文件目录信息
      * @param projectCatalog
      * @return

@@ -17,6 +17,7 @@ import cn.management.util.Commons;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
+import org.apache.catalina.util.LifecycleMBeanBase;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,9 +55,56 @@ public class ProjectCatalogServiceImpl extends BaseServiceImpl<ProjectCatalogMap
         return catalogList;
     }
 
+    /**
+     * 根据用户id和文件目录id获取文件路径
+     * @param loginId
+     * @param catalogId
+     * @return
+     */
     @Override
     public ProjectCatalog getByLoginIdAndCId(Integer loginId, Integer catalogId) {
         return mapper.getByLoginIdAndCId(loginId, catalogId);
+    }
+
+    /**
+     * 根据用户id和（多个）文件目录id获取文件路径
+     * @param loginId
+     * @param catalogIds
+     * @return
+     */
+    @Override
+    public List<ProjectCatalog> getByLoginIdAndCIds(Integer loginId, String catalogIds) {
+        String[] fileIds = catalogIds.split(",");
+        List<ProjectCatalog> catalogs = new ArrayList<ProjectCatalog>();
+        for (String fileId : fileIds) {
+            ProjectCatalog projectCatalog = mapper.getByLoginIdAndCId(loginId, Integer.valueOf(fileId));
+            //如果是目录则查询子目录中的文件
+            if (CatalogTypeEnum.DIR.getValue().equals(projectCatalog.getFileType())) {
+                getChildPathByLIdAndCId(catalogs, projectCatalog.getId());
+            } else {
+                catalogs.add(projectCatalog);
+            }
+        }
+        return catalogs;
+    }
+
+    /**
+     * 递归查询子目录中的文件
+     * @param catalogs
+     * @param catalogId
+     */
+    private void getChildPathByLIdAndCId(List<ProjectCatalog> catalogs, Integer catalogId) {
+        ProjectCatalog condition = new ProjectCatalog();
+        condition.setParentId(catalogId);
+        List<ProjectCatalog> childs = getItems(condition);
+        for (ProjectCatalog projectCatalog : childs) {
+            //如果是目录则查询子目录中的文件
+            if (CatalogTypeEnum.DIR.getValue().equals(projectCatalog.getFileType())) {
+                getChildPathByLIdAndCId(catalogs, projectCatalog.getId());
+            } else {
+                catalogs.add(projectCatalog);
+            }
+        }
     }
 
     @Override
