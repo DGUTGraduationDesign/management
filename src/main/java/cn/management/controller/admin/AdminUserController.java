@@ -46,6 +46,28 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
         List<AdminUser> list = service.getItems(condition);
         return new Result(ResultEnum.SUCCESS, list);
     }
+
+    /**
+     * 查询员工详细信息
+     * @param models
+     * @return
+     */
+    @RequestMapping("/findUserById")
+    @RequiresPermissions("adminUser:findUserById")
+    @ResponseBody
+    public Result findUserById(@RequestBody Map<String, Object> models) {
+        Integer taskId = (Integer) models.get("userId");
+        AdminUser condition = new AdminUser();
+        condition.setId(taskId);
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        AdminUser aminUser = service.getUserAndRoles(condition);
+        if (null == aminUser) {
+            return new Result(ResultEnum.NO_RECORDS);
+        } else {
+            return new Result(ResultEnum.SUCCESS, aminUser, 1, 0, 1);
+        }
+    }
+
     /**
      * 条件查询员工列表
      * @param models
