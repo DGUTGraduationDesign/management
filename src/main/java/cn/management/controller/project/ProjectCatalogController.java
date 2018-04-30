@@ -190,15 +190,14 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
 
     /**
      * 下载文件
-     * @param models
+     * @param fileIds
      * @param request
      * @return
      */
     @RequestMapping("/download")
     @RequiresPermissions("projectCatalog:download")
-    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, SysException {
+    public String download(String fileIds, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, SysException {
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
-        String fileIds = (String) models.get("fileIds");
         //判断文件是否存在
         List<ProjectCatalog> list = service.getByLoginIdAndCIds(loginId, fileIds);
         if (null == list || 0 == list.size()) {
