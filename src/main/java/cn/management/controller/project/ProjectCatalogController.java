@@ -25,10 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -50,11 +47,15 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     public Result index(@RequestBody Map<String, Object> models, HttpServletRequest request) {
         Integer parentId = (Integer) models.get("catalogId");
         Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        Map<String, Object> map = new HashMap<String, Object>();
         List<ProjectCatalog> list = service.getCatalogsByIds(loginId, parentId);
+        map.put("list", list);
+        ProjectCatalog catalog = service.getByLoginIdAndCId(loginId, parentId);
+        map.put("catalog", catalog);
         if (list == null || list.size() == 0) {
-            return new Result(ResultEnum.NO_RECORDS);
+            return new Result(ResultEnum.NO_RECORDS, map);
         } else {
-            return new Result(ResultEnum.SUCCESS, list);
+            return new Result(ResultEnum.SUCCESS, map);
         }
     }
 

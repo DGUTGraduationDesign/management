@@ -17,7 +17,6 @@ import cn.management.util.Commons;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
-import org.apache.catalina.util.LifecycleMBeanBase;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
