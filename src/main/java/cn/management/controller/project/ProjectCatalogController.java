@@ -131,7 +131,7 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
             //文件后缀名
             String suffix = fileName.substring(fileName.lastIndexOf("."));
             //设置文件类型
-            if ("doc".equals(suffix) || "docx".equals(suffix)) {
+            if (".doc".equals(suffix) || ".docx".equals(suffix)) {
                 catalog.setFileType(CatalogTypeEnum.DOC.getValue());
             } else if (".xls".equals(suffix) || ".xlsx".equals(suffix)) {
                 catalog.setFileType(CatalogTypeEnum.XLS.getValue());
