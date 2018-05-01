@@ -11,6 +11,11 @@ public class Commons {
     public static final String FILE_HOST = "http://123.207.255.83:8090/image";
 
     /**
+     * 头像上传路径
+     */
+    public static final String USER_PICTURE_PATH = "/upload/files/users";
+
+    /**
      * 报告上传路径
      */
     public static final String REPORTS_PATH = "/upload/files/reports";

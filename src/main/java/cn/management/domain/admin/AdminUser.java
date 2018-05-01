@@ -66,7 +66,7 @@ public class AdminUser extends BaseEntity<Integer> implements Serializable {
     private String leaderName;
 
     /**
-     * 个性化签名图片路径
+     * 头像路径
      */
     private String uploadPath;
     
