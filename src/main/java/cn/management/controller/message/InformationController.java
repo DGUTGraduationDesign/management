@@ -71,7 +71,7 @@ public class InformationController extends BaseController<AdminUserService, Admi
      */
     @RequestMapping("/export")
     @RequiresPermissions("messageInformation:export")
-    public String export(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String export(AdminUser condition, HttpServletRequest request, HttpServletResponse response) throws Exception {
         //通用变量
         int rowNo = 0, cellNo = 1;
         Row nRow = null;
@@ -100,7 +100,21 @@ public class InformationController extends BaseController<AdminUserService, Admi
         CellStyle phoneCellStyle = nRow.getCell(cellNo++).getCellStyle();
         CellStyle mailCellStyle = nRow.getCell(cellNo++).getCellStyle();
 
-        List<AdminUser> userList = service.getAllUsers();
+        StringBuffer str = new StringBuffer();
+        str.append("del_flag = 1");
+        if (StringUtils.isNotBlank(condition.getRealName())) {
+            str.append(" and real_name like '%" + condition.getRealName() + "%'");
+        }
+        if (null != condition.getNumber()) {
+            str.append(" and number like '%" + condition.getNumber() + "%'");
+        }
+        if (null != condition.getDeptId()) {
+            str.append(" and dept_id = "+ condition.getDeptId());
+        }
+        if (null != condition.getPostId()) {
+            str.append(" and post_id = " + condition.getPostId());
+        }
+        List<AdminUser> userList = service.getByCondition(str.toString());
         for(AdminUser user :userList){
             nRow = sheet.createRow(rowNo++);	//产生数据行
             nRow.setHeightInPoints(24); 		//设置行高

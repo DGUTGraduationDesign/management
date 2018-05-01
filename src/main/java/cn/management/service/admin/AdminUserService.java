@@ -39,6 +39,13 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
     List<AdminUser> getAllUsers();
 
     /**
+     * 条件查询员工信息
+     * @param condition
+     * @return
+     */
+    public List<AdminUser> getByCondition(String condition);
+
+    /**
      * 添加员工信息
      * @param adminUser
      * @return
