@@ -2,6 +2,7 @@ package cn.management.conf;
 
 import java.io.IOException;
 
+import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
 
 import org.activiti.spring.SpringAsyncExecutor;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -48,6 +50,13 @@ public class ActivitiConfiguration {
                 SpringAsyncExecutor springAsyncExecutor) throws IOException {
             SpringProcessEngineConfiguration configuration = this.baseSpringProcessEngineConfiguration(dataSource, transactionManager, springAsyncExecutor);
             return configuration;
+        }
+
+        @Bean
+        public MultipartConfigElement multipartConfigElement() {
+            MultipartConfigFactory factory = new MultipartConfigFactory();
+            factory.setMaxFileSize(1024L * 1024L * 500L);
+            return factory.createMultipartConfig();
         }
     }
 }

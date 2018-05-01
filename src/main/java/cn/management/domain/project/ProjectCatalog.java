@@ -59,7 +59,7 @@ public class ProjectCatalog extends BaseEntity<Integer> {
      * 报给文件
      */
     @Transient
-    private MultipartFile file;
+    private MultipartFile[] files;
 
     /**
      * 文件目录项目组关联信息
@@ -95,8 +95,8 @@ public class ProjectCatalog extends BaseEntity<Integer> {
         return createBy;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    public MultipartFile[] getFiles() {
+        return files;
     }
 
     public List<ProjectCatalogGroup> getCatalogGroups() {
@@ -131,8 +131,8 @@ public class ProjectCatalog extends BaseEntity<Integer> {
         this.createBy = createBy;
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
     }
 
     public void setCatalogGroups(List<ProjectCatalogGroup> catalogGroups) {
@@ -158,7 +158,7 @@ public class ProjectCatalog extends BaseEntity<Integer> {
                 ", groupIds='" + groupIds + '\'' +
                 ", createBy=" + createBy +
                 ", createByName='" + createByName + '\'' +
-                ", file=" + file +
+                ", files=" + files +
                 ", catalogGroups=" + catalogGroups +
                 ", id=" + id +
                 ", createTime=" + createTime +

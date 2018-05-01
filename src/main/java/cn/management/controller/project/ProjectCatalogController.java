@@ -110,62 +110,63 @@ public class ProjectCatalogController extends BaseController<ProjectCatalogServi
     @RequiresPermissions("projectCatalog:upload")
     @ResponseBody
     public Result upload(ProjectCatalog projectCatalog, HttpServletRequest request) throws IOException, SysException {
-        MultipartFile file = projectCatalog.getFile();
-        //判断文件大小
-        long fileSize = file.getSize();
-        if (file == null || fileSize == 0) {
-            return new Result(ResultEnum.DATA_ERROR, "操作失败！请选择要上传的文件！");
+        MultipartFile[] files = projectCatalog.getFiles();
+        for (MultipartFile file : files) {
+            ProjectCatalog catalog = new ProjectCatalog();
+            catalog.setParentId(projectCatalog.getParentId());
+            //判断文件大小
+            long fileSize = file.getSize();
+            if (file == null || fileSize == 0) {
+                return new Result(ResultEnum.DATA_ERROR, "操作失败！请选择要上传的文件！");
+            }
+            //设置文件大小
+            int size = (int) (fileSize/1024);
+            if (0 != size) {
+                catalog.setFileSize(size);
+            } else {
+                catalog.setFileSize(1);
+            }
+            //获取文件完整名
+            String fileName = file.getOriginalFilename();
+            //文件后缀名
+            String suffix = fileName.substring(fileName.lastIndexOf("."));
+            //设置文件类型
+            if ("doc".equals(suffix) || "docx".equals(suffix)) {
+                catalog.setFileType(CatalogTypeEnum.DOC.getValue());
+            } else if (".xls".equals(suffix) || ".xlsx".equals(suffix)) {
+                catalog.setFileType(CatalogTypeEnum.XLS.getValue());
+            } else if (".ppt".equals(suffix) || ".pptx".equals(suffix)) {
+                catalog.setFileType(CatalogTypeEnum.PPT.getValue());
+            } else if (".txt".equals(suffix)) {
+                catalog.setFileType(CatalogTypeEnum.TXT.getValue());
+            } else if (".zip".equals(suffix) || ".rar".equals(suffix) ) {
+                catalog.setFileType(CatalogTypeEnum.ZIP.getValue());
+            } else {
+                catalog.setFileType(CatalogTypeEnum.OTHER.getValue());
+            }
+            //生成新的文件名
+            String prefix = UUID.randomUUID().toString().replace("-", "");
+            String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String newFileName = date + "-" + prefix + suffix;
+            //创建jersey服务器，进行跨服务器上传
+            Client client = new Client();
+            //把文件关联到远程服务器
+            WebResource resource = client.resource(Commons.FILE_HOST + Commons.PROJECTS_PATH + "/" + newFileName);
+            //上传
+            resource.put(String.class, file.getBytes());
+            //更新到数据库
+            //原文件名
+            catalog.setName(fileName);
+            //文件下载地址
+            catalog.setFilePath(Commons.PROJECTS_PATH + "/" + newFileName);
+            //上传者
+            Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+            catalog.setCreateBy(loginId);
+            catalog.setCreateTime(new Date());
+            catalog.setUpdateTime(new Date());
+            service.doAdd(catalog, loginId);
         }
-        //设置文件大小
-        int size = (int) (fileSize/1024);
-        if (0 != size) {
-            projectCatalog.setFileSize(size);
-        } else {
-            projectCatalog.setFileSize(1);
-        }
-        //获取文件完整名
-        String fileName = file.getOriginalFilename();
-        //文件后缀名
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
-        //设置文件类型
-        if ("doc".equals(suffix) || "docx".equals(suffix)) {
-            projectCatalog.setFileType(CatalogTypeEnum.DOC.getValue());
-        } else if (".xls".equals(suffix) || ".xlsx".equals(suffix)) {
-            projectCatalog.setFileType(CatalogTypeEnum.XLS.getValue());
-        } else if (".ppt".equals(suffix) || ".pptx".equals(suffix)) {
-            projectCatalog.setFileType(CatalogTypeEnum.PPT.getValue());
-        } else if (".txt".equals(suffix)) {
-            projectCatalog.setFileType(CatalogTypeEnum.TXT.getValue());
-        } else if (".zip".equals(suffix) || ".rar".equals(suffix) ) {
-            projectCatalog.setFileType(CatalogTypeEnum.ZIP.getValue());
-        } else {
-            projectCatalog.setFileType(CatalogTypeEnum.OTHER.getValue());
-        }
-        //生成新的文件名
-        String prefix = UUID.randomUUID().toString().replace("-", "");
-        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String newFileName = date + "-" + prefix + suffix;
-        //创建jersey服务器，进行跨服务器上传
-        Client client = new Client();
-        //把文件关联到远程服务器
-        WebResource resource = client.resource(Commons.FILE_HOST + Commons.PROJECTS_PATH + "/" + newFileName);
-        //上传
-        resource.put(String.class, file.getBytes());
-        //更新到数据库
-        //原文件名
-        projectCatalog.setName(fileName);
-        //文件下载地址
-        projectCatalog.setFilePath(Commons.PROJECTS_PATH + "/" + newFileName);
-        //上传者
-        Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
-        projectCatalog.setCreateBy(loginId);
-        projectCatalog.setCreateTime(new Date());
-        projectCatalog.setUpdateTime(new Date());
-        if (null == service.doAdd(projectCatalog, loginId)) {
-            return new Result(ResultEnum.FAIL);
-        } else {
-            return new Result(ResultEnum.SUCCESS);
-        }
+        return new Result(ResultEnum.SUCCESS);
     }
 
     /**
