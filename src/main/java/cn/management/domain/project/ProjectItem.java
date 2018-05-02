@@ -36,9 +36,19 @@ public class ProjectItem extends BaseEntity<Integer> {
     private Integer itemTask;
 
     /**
-     * 已完成任务数
+     * 按时完成任务数
      */
     private Integer completeTask;
+
+    /**
+     * 逾期完成任务数
+     */
+    private Integer delayTask;
+
+    /**
+     * 取消任务数
+     */
+    private Integer cancelTask;
 
     /**
      * 项目开始时间
@@ -96,6 +106,22 @@ public class ProjectItem extends BaseEntity<Integer> {
         return completeTask;
     }
 
+    public Integer getDelayTask() {
+        return delayTask;
+    }
+
+    public Integer getCancelTask() {
+        return cancelTask;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
     public Integer getMainId() {
         return mainId;
     }
@@ -111,10 +137,6 @@ public class ProjectItem extends BaseEntity<Integer> {
     public String getCreateName() {
         return createName;
     }
-
-    public Date getBeginDate() { return beginDate; }
-
-    public Date getEndDate() { return endDate; }
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
@@ -136,6 +158,22 @@ public class ProjectItem extends BaseEntity<Integer> {
         this.completeTask = completeTask;
     }
 
+    public void setDelayTask(Integer delayask) {
+        this.delayTask = delayask;
+    }
+
+    public void setCancelTask(Integer cancelask) {
+        this.cancelTask = cancelask;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public void setMainId(Integer mainId) {
         this.mainId = mainId;
     }
@@ -152,18 +190,18 @@ public class ProjectItem extends BaseEntity<Integer> {
         this.createName = createName;
     }
 
-    public void setBeginDate(Date beginDate) { this.beginDate = beginDate; }
-
-    public void setEndDate(Date endDate) { this.endDate = endDate; }
-
     @Override
     public String toString() {
-        return "ProtjectItem{" +
+        return "ProjectItem{" +
                 "itemName='" + itemName + '\'' +
-                ", itemState='" + itemState + '\'' +
+                ", itemState=" + itemState +
                 ", itemStateName='" + itemStateName + '\'' +
                 ", itemTask=" + itemTask +
                 ", completeTask=" + completeTask +
+                ", delayTask=" + delayTask +
+                ", cancelTask=" + cancelTask +
+                ", beginDate=" + beginDate +
+                ", endDate=" + endDate +
                 ", mainId=" + mainId +
                 ", mainName='" + mainName + '\'' +
                 ", createBy=" + createBy +
@@ -174,4 +212,5 @@ public class ProjectItem extends BaseEntity<Integer> {
                 ", delFlag=" + delFlag +
                 '}';
     }
+
 }

@@ -7,10 +7,7 @@ import cn.management.domain.project.ProjectItem;
 import cn.management.domain.project.ProjectTask;
 import cn.management.domain.project.ProjectTaskUser;
 import cn.management.domain.project.dto.ProjectMyTaskDto;
-import cn.management.enums.DeleteTypeEnum;
-import cn.management.enums.InformWayEnum;
-import cn.management.enums.TaskIdentityEnum;
-import cn.management.enums.TaskStateEnum;
+import cn.management.enums.*;
 import cn.management.exception.SysException;
 import cn.management.mapper.project.ProjectGroupMapper;
 import cn.management.mapper.project.ProjectTaskMapper;
@@ -164,6 +161,17 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
     @Override
     @Transactional
     public ProjectTask doPublish(ProjectTask projectTask, Integer loginUserId) throws SysException {
+        //对应项目
+        ProjectItem condition = new ProjectItem();
+        condition.setId(projectTask.getItemId());
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        ProjectItem projectItem = projectItemService.getItem(condition);
+        if (null == projectItem) {
+            throw new SysException("对应项目不存在.");
+        }
+        if (ItemStateEnum.FINISHED.getValue().equals(projectItem.getItemState())) {
+            throw new SysException("该项目已结项.");
+        }
         //发布人id
         projectTask.setCreateBy(loginUserId);
         addSelectiveMapper(projectTask);
@@ -177,6 +185,9 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
             projectTaskUser.setUpdateTime(new Date());
             projectTaskUserService.addSelectiveMapper(projectTaskUser);
         }
+        //对应项目总任务数加一
+        projectItem.setItemTask(projectItem.getItemTask() + 1);
+        projectItemService.update(projectItem);
         //发送通知
         projectTask.setId(null);
         setName(projectTask);
@@ -263,14 +274,29 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
         boolean flag = projectTaskUserService.update(taskUser);
         //如果任务对象都已经完成任务则更新任务总状态
         if (0 == projectTaskUserService.countUnComleteByTaskId(taskId)) {
+            //查询对应项目
+            ProjectItem condition = new ProjectItem();
+            condition.setId(task.getItemId());
+            condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+            ProjectItem projectItem = projectItemService.getItem(condition);
+            if (null == projectItem) {
+                throw new SysException("对应项目不存在.");
+            }
+            //判断是否逾期
             if (Integer.valueOf(completeDate) > Integer.valueOf(closingDate)) {
                 task.setTaskState(TaskStateEnum.DELAY.getValue());
+                //对应项目完成任务数加一
+                projectItem.setDelayTask(projectItem.getDelayTask() + 1);
             } else {
                 task.setTaskState(TaskStateEnum.COMPLETE.getValue());
+                //对应项目完成任务数加一
+                projectItem.setCompleteTask(projectItem.getCompleteTask() + 1);
             }
             task.setUpdateTime(new Date());
             //更新任务信息
             update(task);
+            //更新项目信息
+            projectItemService.update(projectItem);
             //发送通知
             task = getItem(task);
             sendTaskInform(task, informWay);
@@ -309,6 +335,16 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
         boolean flag = update(task);
         //更新任务对象关联信息
         projectTaskUserService.setCancelByTaskId(taskId);
+        //查询对应项目,项目取消任务数加一
+        ProjectItem itemCondition = new ProjectItem();
+        itemCondition.setId(task.getItemId());
+        itemCondition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        ProjectItem projectItem = projectItemService.getItem(itemCondition);
+        if (null == projectItem) {
+            throw new SysException("对应项目不存在.");
+        }
+        projectItem.setCancelTask(projectItem.getCancelTask() + 1);
+        projectItemService.update(projectItem);
         //发送通知
         sendTaskInform(task, informWay);
         return flag;

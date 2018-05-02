@@ -80,7 +80,7 @@ public class ProjectItemServiceImpl extends BaseServiceImpl<ProjectItemMapper, P
             throw new SysException("只能由创建人或负责人修改.");
         }
         if (ItemStateEnum.FINISHED.getValue().equals(projectItem.getItemState())) {
-            if (!findItem.getItemTask().equals(findItem.getCompleteTask())) {
+            if (!findItem.getItemTask().equals(findItem.getCompleteTask() + findItem.getDelayTask() + findItem.getCancelTask())) {
                 throw new SysException("还有任务未完成.");
             }
             projectItem.setEndDate(new Date());

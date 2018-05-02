@@ -3,6 +3,7 @@ package cn.management.controller.project;
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectItem;
 import cn.management.enums.DeleteTypeEnum;
+import cn.management.enums.ItemStateEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
@@ -56,17 +57,14 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     }
 
     /**
-     * 查询所创建的项目
-     * @param request
+     * 查询所创建的进行中的项目
      * @return
      */
-    @RequestMapping("/findItemByUserId")
-    @RequiresPermissions("projectItem:list")
+    @RequestMapping("/listUnfinishItem")
     @ResponseBody
-    public Result findItemByUserId(HttpServletRequest request) {
-        Integer loginUserId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+    public Result listUnfinishItem() {
         ProjectItem condition = new ProjectItem();
-        condition.setCreateBy(loginUserId);
+        condition.setItemState(ItemStateEnum.UNFINISHED.getValue());
         condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
         List<ProjectItem> list = service.getItems(condition);
         return new Result(ResultEnum.SUCCESS, list);
@@ -95,7 +93,7 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     }
 
     /**
-     * 更改项目组
+     * 更改项目
      * @param projectItem
      * @param request
      * @return

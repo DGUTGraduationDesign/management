@@ -7,8 +7,8 @@ package cn.management.enums;
  */
 public enum ItemStateEnum {
 
-    UNFINISHED("未完成", 0),
-    FINISHED("已完成", 1);
+    UNFINISHED("进行中", 0),
+    FINISHED("已结项", 1);
 
     private String name;
 
