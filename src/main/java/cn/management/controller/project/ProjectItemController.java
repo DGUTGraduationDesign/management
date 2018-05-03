@@ -57,6 +57,19 @@ public class ProjectItemController extends BaseController<ProjectItemService, Pr
     }
 
     /**
+     * 查询所有项目
+     * @return
+     */
+    @RequestMapping("/listAll")
+    @ResponseBody
+    public Result listAll() {
+        ProjectItem condition = new ProjectItem();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<ProjectItem> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
+    }
+
+    /**
      * 查询所创建的进行中的项目
      * @return
      */

@@ -41,9 +41,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
     @RequestMapping("/listAll")
     @ResponseBody
     public Result listAll() {
-        AdminUser condition = new AdminUser();
-        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
-        List<AdminUser> list = service.getItems(condition);
+        List<AdminUser> list = service.getAllUsers();
         return new Result(ResultEnum.SUCCESS, list);
     }
 
