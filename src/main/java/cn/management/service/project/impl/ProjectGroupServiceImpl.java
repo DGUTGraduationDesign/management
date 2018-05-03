@@ -133,6 +133,7 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
      * @return
      */
     @Override
+    @Transactional
     public Object doAdd(ProjectGroup projectGroup) {
         //添加项目组信息
         addSelectiveMapper(projectGroup);
@@ -150,6 +151,7 @@ public class ProjectGroupServiceImpl extends BaseServiceImpl<ProjectGroupMapper,
     }
 
     @Override
+    @Transactional
     public boolean doUpdate(ProjectGroup projectGroup) {
         //修改项目组员工关联信息
         projectGroupUserService.deleteByGroupId(projectGroup.getId());

@@ -47,6 +47,9 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         if (StringUtils.isNotBlank(projectGroup.getGroupName())) {
             criteria.andLike("groupName", "%" + projectGroup.getGroupName() + "%");
         }
+        if (null != projectGroup.getItemId()) {
+            criteria.andEqualTo("itemId", projectGroup.getItemId());
+        }
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);
         return list(page);
