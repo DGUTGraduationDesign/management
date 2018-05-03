@@ -1,16 +1,19 @@
 package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
+import cn.management.domain.admin.AdminUser;
 import cn.management.domain.project.ProjectGroup;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectGroupService;
+import cn.management.service.project.ProjectGroupUserService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,9 @@ import java.util.Map;
 @Controller
 @RequestMapping("project/group")
 public class ProjectGroupController extends BaseController<ProjectGroupService, ProjectGroup> {
+
+    @Autowired
+    private ProjectGroupUserService projectGroupUserService;
 
     /**
      * 条件查询项目组列表
@@ -90,6 +96,19 @@ public class ProjectGroupController extends BaseController<ProjectGroupService, 
         condition.setCreateBy(loginUserId);
         condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
         List<ProjectGroup> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
+    }
+
+    /**
+     * 根据项目Id查找员工
+     * @param models
+     * @return
+     */
+    @RequestMapping("/listUsersByItemId")
+    @ResponseBody
+    public Result listUsersByItemId(@RequestBody Map<String, Object> models) {
+        Integer itemId = (Integer) models.get("itemId");
+        List<AdminUser> list = projectGroupUserService.getUsersByItemId(itemId);
         return new Result(ResultEnum.SUCCESS, list);
     }
 

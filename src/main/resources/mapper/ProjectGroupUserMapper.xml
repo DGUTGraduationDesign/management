@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.management.mapper.project.ProjectGroupUserMapper" >
 
+	<select id="getUsersByItemId" parameterType="int" resultType="cn.management.domain.admin.AdminUser">
+        SELECT t1.id, t1.real_name
+        FROM admin_user t1, project_group t2, project_group_user t3
+        WHERE t1.id = t3.user_id
+          AND t2.id = t3.group_id
+          AND t2.item_id = #{itemId}
+        GROUP BY t1.id
+    </select>
+
 	<delete id="deleteByGroupId" parameterType="int">
 		DELETE FROM project_group_user
 		WHERE group_id = #{groupId}
