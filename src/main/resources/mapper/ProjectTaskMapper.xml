@@ -7,6 +7,12 @@
             <if test="projectTask.taskState != null">
                 AND t2.task_state = #{projectTask.taskState}
             </if>
+            <if test="projectTask.itemId != null">
+                AND t1.item_id = #{projectTask.itemId}
+            </if>
+            <if test="projectTask.taskName != null and projectTask.taskName != ''">
+                AND t1.task_name like "%${projectTask.taskName}%"
+            </if>
         </if>
     </sql>
 

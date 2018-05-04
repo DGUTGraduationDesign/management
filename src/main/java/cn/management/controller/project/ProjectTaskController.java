@@ -85,8 +85,17 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 		Example.Criteria criteria = example.createCriteria();
 		// 发布的任务
         criteria.andEqualTo("createBy", loginId);
+        //任务状态
 		if (null != projectTask.getTaskState()) {
 			criteria.andEqualTo("taskState", projectTask.getTaskState());
+		}
+		//对应项目
+		if (null != projectTask.getItemId()) {
+			criteria.andEqualTo("itemId", projectTask.getItemId());
+		}
+		//任务名
+		if (StringUtils.isNotBlank(projectTask.getTaskName())) {
+			criteria.andLike("taskName", "%" + projectTask.getTaskName() + "%");
 		}
 		criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
 		setExample(example);

@@ -15,7 +15,7 @@ public interface ProjectTaskMapper extends MyMapper<ProjectTask> {
     /**
      * 查询我的任务列表
      * @param projectTask
-     * @param loginUserId
+     * @param userId
      * @return
      */
     List<ProjectMyTaskDto> selectItemByUserIdAndCond(@Param("projectTask") ProjectTask projectTask, @Param("userId") Integer userId);
