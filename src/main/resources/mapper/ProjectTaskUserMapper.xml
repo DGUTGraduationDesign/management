@@ -4,27 +4,27 @@
 
     <select id="countUnComleteByTaskId" parameterType="int" resultType="int">
         SELECT COUNT(id) FROM project_task_user
-        WHERE task_id = #{taskId} AND task_state = 0
+        WHERE task_id = #{taskId} AND task_state = 0 AND del_flag = 1
     </select>
 
     <select id="countMyUnCompletetTask" resultType="int" parameterType="int">
         SELECT COUNT(id) FROM project_task_user
-        WHERE user_id = #{userId} AND task_state = 0;
+        WHERE user_id = #{userId} AND task_state = 0 AND del_flag = 1
     </select>
 
     <select id="countMyCompletetTask" resultType="int" parameterType="int">
         SELECT COUNT(id) FROM project_task_user
-        WHERE user_id = #{userId} AND task_state = 1;
+        WHERE user_id = #{userId} AND task_state = 1 AND del_flag = 1
     </select>
 
     <select id="countMyDelayTask" resultType="int" parameterType="int">
         SELECT COUNT(id) FROM project_task_user
-        WHERE user_id = #{userId} AND task_state = 2;
+        WHERE user_id = #{userId} AND task_state = 2 AND del_flag = 1
     </select>
 
     <select id="countMyCancelTask" resultType="int" parameterType="int">
         SELECT COUNT(id) FROM project_task_user
-        WHERE user_id = #{userId} AND task_state = 3;
+        WHERE user_id = #{userId} AND task_state = 3 AND del_flag = 1
     </select>
 
     <update id="setCancelByTaskId" parameterType="int">

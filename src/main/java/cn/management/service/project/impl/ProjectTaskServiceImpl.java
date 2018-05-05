@@ -392,6 +392,21 @@ public class ProjectTaskServiceImpl extends BaseServiceImpl<ProjectTaskMapper, P
             if (TaskStateEnum.UNCOMPLETE.getValue().equals(task.getTaskState())) {
                 throw new SysException("任务进行中，若想删除请先取消.");
             }
+            //更新项目信息
+            ProjectItem projectItem = projectItemService.getItemById(task.getItemId());
+            if (null != projectItem) {
+                projectItem.setItemTask(projectItem.getItemTask() - 1);
+                if (TaskStateEnum.COMPLETE.getValue().equals(task.getTaskState())) {
+                    projectItem.setCompleteTask(projectItem.getCompleteTask() - 1);
+                }
+                if (TaskStateEnum.DELAY.getValue().equals(task.getTaskState())) {
+                    projectItem.setDelayTask(projectItem.getDelayTask() - 1);
+                }
+                if (TaskStateEnum.CANCEL.getValue().equals(task.getTaskState())) {
+                    projectItem.setCancelTask(projectItem.getCancelTask() - 1);
+                }
+                projectItemService.update(projectItem);
+            }
             //删除任务对象关联信息
             projectTaskUserService.deleteByTaskId(Integer.valueOf(id));
             //删除任务信息
