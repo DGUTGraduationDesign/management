@@ -2,6 +2,7 @@ package cn.management.controller.project;
 
 import cn.management.controller.BaseController;
 import cn.management.domain.project.ProjectTask;
+import cn.management.domain.project.dto.ProjectMyTaskCountDto;
 import cn.management.domain.project.dto.ProjectMyTaskDto;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
@@ -10,6 +11,7 @@ import cn.management.enums.TaskStateEnum;
 import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.project.ProjectTaskService;
+import cn.management.service.project.ProjectTaskUserService;
 import cn.management.util.Result;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
@@ -18,6 +20,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +44,9 @@ import java.util.Map;
 public class ProjectTaskController extends BaseController<ProjectTaskService, ProjectTask> {
 
 	static Logger logger = LoggerFactory.getLogger(ProjectTaskController.class);
+
+	@Autowired
+    private ProjectTaskUserService projectTaskUserService;
 
     /**
      * 我的任务
@@ -122,6 +128,24 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 			return new Result(ResultEnum.SUCCESS, projectTask, 1, 0, 1);
 		}
 	}
+
+    /**
+     * 统计我的任务情况
+     * @param request
+     * @return
+     */
+    @RequestMapping("/countMyTaskInfo")
+    @RequiresPermissions("projectTask:self")
+    @ResponseBody
+	public Result countMyTaskInfo(HttpServletRequest request) {
+	    Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+        ProjectMyTaskCountDto projectMyTaskCountDto = projectTaskUserService.countMyTask(loginId);
+        if (null == projectMyTaskCountDto) {
+            return new Result(ResultEnum.NO_RECORDS);
+        } else {
+            return new Result(ResultEnum.SUCCESS, projectMyTaskCountDto, 1, 0, 1);
+        }
+    }
 
 	/**
 	 * 发布任务

@@ -16,6 +16,34 @@ public interface ProjectTaskUserMapper extends MyMapper<ProjectTaskUser> {
     int countUnComleteByTaskId(Integer taskId);
 
     /**
+     * 根据用户Id统计未完成的任务对象数目
+     * @param userId
+     * @return
+     */
+    int countMyUnCompletetTask(Integer userId);
+
+    /**
+     * 根据用户Id统计按时完成的任务对象数目
+     * @param userId
+     * @return
+     */
+    int countMyCompletetTask(Integer userId);
+
+    /**
+     * 根据用户Id统计延期完成的任务对象数目
+     * @param userId
+     * @return
+     */
+    int countMyDelayTask(Integer userId);
+
+    /**
+     * 根据用户Id统计已取消的任务对象数目
+     * @param userId
+     * @return
+     */
+    int countMyCancelTask(Integer userId);
+
+    /**
      * 任务取消
      * @param taskId
      */

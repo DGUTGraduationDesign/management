@@ -7,6 +7,26 @@
         WHERE task_id = #{taskId} AND task_state = 0
     </select>
 
+    <select id="countMyUnCompletetTask" resultType="int" parameterType="int">
+        SELECT COUNT(id) FROM project_task_user
+        WHERE user_id = #{userId} AND task_state = 0;
+    </select>
+
+    <select id="countMyCompletetTask" resultType="int" parameterType="int">
+        SELECT COUNT(id) FROM project_task_user
+        WHERE user_id = #{userId} AND task_state = 1;
+    </select>
+
+    <select id="countMyDelayTask" resultType="int" parameterType="int">
+        SELECT COUNT(id) FROM project_task_user
+        WHERE user_id = #{userId} AND task_state = 2;
+    </select>
+
+    <select id="countMyCancelTask" resultType="int" parameterType="int">
+        SELECT COUNT(id) FROM project_task_user
+        WHERE user_id = #{userId} AND task_state = 3;
+    </select>
+
     <update id="setCancelByTaskId" parameterType="int">
         UPDATE project_task_user
         SET task_state = 3

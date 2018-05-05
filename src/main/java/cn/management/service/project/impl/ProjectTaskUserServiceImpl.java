@@ -1,6 +1,7 @@
 package cn.management.service.project.impl;
 
 import cn.management.domain.project.ProjectTaskUser;
+import cn.management.domain.project.dto.ProjectMyTaskCountDto;
 import cn.management.mapper.project.ProjectTaskUserMapper;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectTaskUserService;
@@ -20,6 +21,25 @@ public class ProjectTaskUserServiceImpl extends BaseServiceImpl<ProjectTaskUserM
     @Override
     public int countUnComleteByTaskId(Integer taskId) {
         return mapper.countUnComleteByTaskId(taskId);
+    }
+
+    /**
+     * 统计用户任务的完成情况
+     * @param userId
+     * @return
+     */
+    @Override
+    public ProjectMyTaskCountDto countMyTask(Integer userId) {
+        ProjectMyTaskCountDto projectMyTaskCountDto = new ProjectMyTaskCountDto();
+        int unCompleteTask = mapper.countMyUnCompletetTask(userId);
+        int completeTask = mapper.countMyCompletetTask(userId);
+        int delayTask = mapper.countMyDelayTask(userId);
+        int cancelTask = mapper.countMyCancelTask(userId);
+        projectMyTaskCountDto.setMyUnCompletetTask(unCompleteTask);
+        projectMyTaskCountDto.setMyCompleteTask(completeTask);
+        projectMyTaskCountDto.setMyDelayTask(delayTask);
+        projectMyTaskCountDto.setMyCancelTask(cancelTask);
+        return projectMyTaskCountDto;
     }
 
     /**

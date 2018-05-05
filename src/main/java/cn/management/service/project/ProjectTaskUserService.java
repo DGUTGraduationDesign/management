@@ -1,6 +1,7 @@
 package cn.management.service.project;
 
 import cn.management.domain.project.ProjectTaskUser;
+import cn.management.domain.project.dto.ProjectMyTaskCountDto;
 import cn.management.exception.SysException;
 import cn.management.mapper.project.ProjectTaskUserMapper;
 import cn.management.service.BaseService;
@@ -17,6 +18,13 @@ public interface ProjectTaskUserService extends BaseService<ProjectTaskUserMappe
      * @return
      */
     int countUnComleteByTaskId(Integer taskId);
+
+    /**
+     * 统计用户任务的完成情况
+     * @param userId
+     * @return
+     */
+    ProjectMyTaskCountDto countMyTask(Integer userId);
 
     /**
      * 任务取消
