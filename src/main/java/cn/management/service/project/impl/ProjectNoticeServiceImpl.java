@@ -160,11 +160,19 @@ public class ProjectNoticeServiceImpl extends BaseServiceImpl<ProjectNoticeMappe
     @Override
     @Transactional
     public boolean logicalDelete(String ids) {
+        //更新通知表
         Example example = new Example(ProjectNotice.class);
         example.createCriteria().andCondition("id IN(" + ids + ")");
         ProjectNotice projectNotice = new ProjectNotice();
         projectNotice.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
-        return updateByExampleSelective(projectNotice, example);
+        updateByExampleSelective(projectNotice, example);
+        //更新通知知会人表
+        Example infromExample = new Example(ProjectNoticeInform.class);
+        infromExample.createCriteria().andCondition("notice_id IN(" + ids + ")");
+        ProjectNoticeInform projectNoticeInform = new ProjectNoticeInform();
+        projectNoticeInform.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
+        projectNoticeInformService.updateByExampleSelective(projectNoticeInform, infromExample);
+        return true;
     }
 
 }
