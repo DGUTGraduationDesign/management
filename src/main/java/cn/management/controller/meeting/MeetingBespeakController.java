@@ -1,10 +1,14 @@
 package cn.management.controller.meeting;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.quartz.SchedulerException;
@@ -43,20 +47,37 @@ public class MeetingBespeakController extends BaseController<MeetingBespeakServi
     @RequestMapping("/index")
     @RequiresPermissions("meetingBespeak:list")
     @ResponseBody
-    public Result index(@RequestBody Map<String, Object> models) {
-    	MeetingBespeak meetingBespeak = JSON.parseObject((String)models.get("meetingBespeak"), MeetingBespeak.class);
+    public Result index(@RequestBody Map<String, Object> models) throws ParseException {
+        String meetingTheme = (String) models.get("meetingTheme");
+        Integer meetingRoomId = (Integer) models.get("meetingRoomId");
+        String beginTime = (String) models.get("beginTime");
+        String endTime = (String) models.get("endTime");
+        Integer bespeakStatus = (Integer) models.get("bespeakStatus");
         Integer page = (Integer) models.get("page");
-        Example example = new Example(AdminDataDict.class);
-        Example.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(meetingBespeak.getMeetingTheme())) {
-            criteria.andLike("meetingTheme", "%" + meetingBespeak.getMeetingTheme() + "%");
+        MeetingBespeak condition = new MeetingBespeak();
+        if (StringUtils.isNotBlank(meetingTheme)) {
+            condition.setMeetingTheme(meetingTheme);
         }
-        if (null != meetingBespeak.getBespeakStatus()) {
-            criteria.andEqualTo("bespeakStatus", meetingBespeak.getBespeakStatus());
+        if (null != meetingRoomId) {
+            condition.setMeetingRoomId(meetingRoomId);
         }
-        criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
-        setExample(example);
-        return list(page);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        if (StringUtils.isNotBlank(beginTime)) {
+            condition.setBeginTime(dateFormat.parse(beginTime));
+        }
+        if (StringUtils.isNotBlank(endTime)) {
+            condition.setEndTime(dateFormat.parse(endTime));
+        }
+        if (null != bespeakStatus) {
+            condition.setBespeakStatus(bespeakStatus);
+        }
+        List<MeetingBespeak> list = service.getBespeakByCondition(condition, page, getPageSize());
+        if (list == null || list.size() == 0) {
+            return new Result(ResultEnum.NO_RECORDS);
+        }
+        PageInfo<MeetingBespeak> pageInfo = new PageInfo<MeetingBespeak>(list);
+        String pageMenu = getPagination(list, page);
+        return new Result(ResultEnum.SUCCESS, pageInfo.getList(), (int) pageInfo.getTotal(), pageInfo.getPageNum(), getPageSize(), pageMenu);
     }
     
     /**

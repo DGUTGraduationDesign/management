@@ -2,6 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.management.mapper.meeting.MeetingBespeakMapper" >
 
+    <sql id="conditionQuery">
+        <if test="meetingTheme != null and meetingTheme!= ''">
+            AND meeting_theme like '%${meetingTheme}%'
+        </if>
+        <if test="meetingRoomId != null">
+            AND meeting_room_id = #{meetingRoomId}
+        </if>
+        <if test="beginTime != null and endTime != null">
+            AND ((begin_time &gt;= #{beginTime} AND begin_time &lt;= #{endTime})
+            OR (begin_time &lt;= #{beginTime} AND end_time &gt;= #{endTime})
+            OR (end_time &gt;= #{beginTime} AND end_time &lt;= #{endTime}))
+        </if>
+        <if test="beginTime != null and endTime == null">
+            AND end_time &gt;= #{beginTime}
+        </if>
+        <if test="beginTime == null and endTime != null">
+            AND begin_time &lt;= #{endTime}
+        </if>
+        <if test="bespeakStatus != null">
+            AND bespeak_status = #{bespeakStatus}
+        </if>
+    </sql>
+    
+    <select id="getBespeakByCondition" parameterType="cn.management.domain.meeting.MeetingBespeak" resultType="cn.management.domain.meeting.MeetingBespeak">
+        SELECT *
+        FROM meeting_bespeak
+        <where>
+            del_flag = 1
+            <include refid="conditionQuery"/>
+        </where>
+        ORDER BY id DESC
+    </select>
+
   <select id="countBespeakByIdAndTime" parameterType="cn.management.domain.meeting.MeetingBespeak" resultType="int">
     SELECT COUNT(*)
         FROM meeting_bespeak

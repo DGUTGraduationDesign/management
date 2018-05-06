@@ -7,12 +7,23 @@ import cn.management.exception.SysException;
 import cn.management.mapper.meeting.MeetingBespeakMapper;
 import cn.management.service.BaseService;
 
+import java.util.List;
+
 /**
  * 会议室预约service层接口
  * @author ZhouJiaKai
  * @date 2018-03-06
  */
 public interface MeetingBespeakService extends BaseService<MeetingBespeakMapper, MeetingBespeak> {
+
+	/**
+	 * 条件查询预约记录
+	 * @param meetingBespeak
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	List<MeetingBespeak> getBespeakByCondition(MeetingBespeak meetingBespeak, Integer page, int pageSize);
 
 	/**
 	 * 查询会议室在对应时间段内是否被预约

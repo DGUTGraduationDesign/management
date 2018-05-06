@@ -48,25 +48,25 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 
 	@Autowired
 	private MeetingRoomService meetingRoomService;
-	
+
 	/**
-	 * 条件查询会议室预约列表
-     * @param example
-     * @param page
-     * @param pageSize
-     * @return
-     */
+	 * 条件查询预约记录
+	 * @param meetingBespeak
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
 	@Override
-    public List<MeetingBespeak> getItemsByPage(Example example, int page, int pageSize) {
-        PageHelper.startPage(page, pageSize);
-        List<MeetingBespeak> list = mapper.selectByExample(example);
-        for (MeetingBespeak meetingBespeak : list) {
-        	//设置预约状态、通知方式、预约人、对应的会议室
-        	setName(meetingBespeak);
-        }
-        return list;
-    }
-	
+	public List<MeetingBespeak> getBespeakByCondition(MeetingBespeak meetingBespeak, Integer page, int pageSize) {
+		PageHelper.startPage(page, pageSize);
+		List<MeetingBespeak> list = mapper.getBespeakByCondition(meetingBespeak);
+		for (MeetingBespeak bespeak : list) {
+			//设置预约状态、通知方式、预约人、对应的会议室
+			setName(bespeak);
+		}
+		return list;
+	}
+
 	/**
 	 * 查询会议室预约详情
      * @param condition
