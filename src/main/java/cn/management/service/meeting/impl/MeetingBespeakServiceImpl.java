@@ -166,6 +166,11 @@ public class MeetingBespeakServiceImpl extends BaseServiceImpl<MeetingBespeakMap
 	public MeetingBespeak doBespeak(MeetingBespeak meetingBespeak) throws SysException {
 	    //会议室预约常规判断
 		checkBespeak(meetingBespeak);
+		//判断有无选择参会人
+		List<Integer> userIds = JSONObject.parseArray(meetingBespeak.getUserIds(), Integer.class);
+		if (null == userIds || 0 == userIds.size()) {
+			throw new SysException("请选择参会人员.");
+		}
 		//更新数据库
 		MeetingBespeak bespeak = addSelectiveMapper(meetingBespeak);
 		if (null != bespeak) {
