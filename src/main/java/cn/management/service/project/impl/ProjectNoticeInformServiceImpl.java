@@ -31,4 +31,14 @@ public class ProjectNoticeInformServiceImpl extends BaseServiceImpl<ProjectNotic
         return updateByExampleSelective(projectNoticeInform, example);
     }
 
+    @Override
+    public boolean logicalDeleteByNoticeId(String ids) {
+        Example infromExample = new Example(ProjectNoticeInform.class);
+        infromExample.createCriteria().andCondition("notice_id IN(" + ids + ")");
+        ProjectNoticeInform projectNoticeInform = new ProjectNoticeInform();
+        projectNoticeInform.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
+        updateByExampleSelective(projectNoticeInform, infromExample);
+        return true;
+    }
+
 }

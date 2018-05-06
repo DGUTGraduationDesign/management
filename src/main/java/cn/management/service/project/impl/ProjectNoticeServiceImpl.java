@@ -49,7 +49,7 @@ public class ProjectNoticeServiceImpl extends BaseServiceImpl<ProjectNoticeMappe
             if (NoticeIdentityEnum.SELF.getIdentity().equals(identity)) {
                 //设置是否读取中文名
                 Integer readFlag = mapper.getReadFlagById(projectNotice.getId(), projectNoticeDto.getUserId());
-                projectNotice.setReadFlagName(NoticeReadEnum.getName(readFlag));
+                projectNotice.setReadFlag(readFlag);
             }
         }
         return list;

@@ -49,7 +49,7 @@ public class ProjectNotice extends BaseEntity<Integer> {
      * 是否已读
      */
     @Transient
-    private String readFlagName;
+    private Integer readFlag;
 
     /**
      * 通知方式
@@ -85,11 +85,11 @@ public class ProjectNotice extends BaseEntity<Integer> {
         return userIds;
     }
 
-    public List<ProjectNoticeInform> getInformList() { return informList; }
-
-    public String getReadFlagName() {
-        return readFlagName;
+    public Integer getReadFlag() {
+        return readFlag;
     }
+
+    public List<ProjectNoticeInform> getInformList() { return informList; }
 
     public void setTitle(String title) {
         this.title = title;
@@ -111,11 +111,11 @@ public class ProjectNotice extends BaseEntity<Integer> {
         this.userIds = userIds;
     }
 
-    public void setInformList(List<ProjectNoticeInform> informList) { this.informList = informList; }
-
-    public void setReadFlagName(String readFlagName) {
-        this.readFlagName = readFlagName;
+    public void setReadFlag(Integer readFlag) {
+        this.readFlag = readFlag;
     }
+
+    public void setInformList(List<ProjectNoticeInform> informList) { this.informList = informList; }
 
     public void setInformWay(Integer informWay) {
         this.informWay = informWay;
@@ -130,7 +130,7 @@ public class ProjectNotice extends BaseEntity<Integer> {
                 ", createName='" + createName + '\'' +
                 ", userIds=" + userIds +
                 ", informList=" + informList +
-                ", readFlagName='" + readFlagName + '\'' +
+                ", readFlag='" + readFlag + '\'' +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

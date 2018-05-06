@@ -16,4 +16,11 @@ public interface ProjectNoticeInformService extends BaseService<ProjectNoticeInf
      */
     boolean updateReadFlag(Integer projectNoticeId, Integer loginUserId);
 
+    /**
+     * 根据通知id删除通知
+     * @param ids
+     * @return
+     */
+    boolean logicalDeleteByNoticeId(String ids);
+
 }
