@@ -166,17 +166,19 @@ public class ProjectNoticeController extends BaseController<ProjectNoticeService
     /**
      * 批量删除通知(用于我的通知)
      * @param models
+     * @param request
      * @return
      */
     @RequestMapping("/deleteMyNotice")
     @RequiresPermissions("projectNotice:delete")
     @ResponseBody
-    public Result deleteMyNotice(@RequestBody Map<String, Object> models) {
+    public Result deleteMyNotice(@RequestBody Map<String, Object> models, HttpServletRequest request) {
+        Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
         String ids = (String) models.get("ids");
         if (!StringUtils.isNotBlank(ids)) {
             return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
         }
-        if (projectNoticeInformService.logicalDeleteByNoticeId(ids)) {
+        if (projectNoticeInformService.logicalDeleteByNoticeId(ids, loginId)) {
             return new Result(ResultEnum.SUCCESS);
         } else {
             return new Result(ResultEnum.FAIL);

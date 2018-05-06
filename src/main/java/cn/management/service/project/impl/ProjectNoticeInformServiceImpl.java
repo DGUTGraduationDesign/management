@@ -32,9 +32,11 @@ public class ProjectNoticeInformServiceImpl extends BaseServiceImpl<ProjectNotic
     }
 
     @Override
-    public boolean logicalDeleteByNoticeId(String ids) {
+    public boolean logicalDeleteByNoticeId(String ids, Integer loginId) {
         Example infromExample = new Example(ProjectNoticeInform.class);
-        infromExample.createCriteria().andCondition("notice_id IN(" + ids + ")");
+        Example.Criteria criteria = infromExample.createCriteria();
+        criteria.andCondition("notice_id IN(" + ids + ")");
+        criteria.andCondition("user_id = " + loginId);
         ProjectNoticeInform projectNoticeInform = new ProjectNoticeInform();
         projectNoticeInform.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
         updateByExampleSelective(projectNoticeInform, infromExample);

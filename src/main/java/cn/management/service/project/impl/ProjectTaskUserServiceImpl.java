@@ -2,10 +2,12 @@ package cn.management.service.project.impl;
 
 import cn.management.domain.project.ProjectTaskUser;
 import cn.management.domain.project.dto.ProjectMyTaskCountDto;
+import cn.management.enums.DeleteTypeEnum;
 import cn.management.mapper.project.ProjectTaskUserMapper;
 import cn.management.service.impl.BaseServiceImpl;
 import cn.management.service.project.ProjectTaskUserService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * 任务对象关联表Service层实现类
@@ -58,6 +60,18 @@ public class ProjectTaskUserServiceImpl extends BaseServiceImpl<ProjectTaskUserM
     @Override
     public void deleteByTaskId(Integer taskId) {
         mapper.deleteByTaskId(taskId);
+    }
+
+    @Override
+    public boolean logicalDeleteByTaskId(String ids, Integer loginId) {
+        Example example = new Example(ProjectTaskUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andCondition("task_id IN(" + ids + ")");
+        criteria.andCondition("user_id = " + loginId);
+        ProjectTaskUser projectTaskUser = new ProjectTaskUser();
+        projectTaskUser.setDelFlag(DeleteTypeEnum.DELETED_TRUE.getVal());
+        updateByExampleSelective(projectTaskUser, example);
+        return true;
     }
 
 }

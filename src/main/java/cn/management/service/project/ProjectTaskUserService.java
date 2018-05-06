@@ -38,4 +38,12 @@ public interface ProjectTaskUserService extends BaseService<ProjectTaskUserMappe
      */
     void deleteByTaskId(Integer taskId);
 
+    /**
+     * 根据任务id删除任务对象关联信息，逻辑删除
+     * @param ids
+     * @param loginId
+     * @return
+     */
+    boolean logicalDeleteByTaskId(String ids, Integer loginId);
+
 }

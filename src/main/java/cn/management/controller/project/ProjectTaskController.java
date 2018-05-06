@@ -241,4 +241,26 @@ public class ProjectTaskController extends BaseController<ProjectTaskService, Pr
 		}
 	}
 
+	/**
+	 * 批量删除任务(用于我的任务)
+	 * @param models
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/deleteMyTask")
+	@RequiresPermissions("projectTask:delete")
+	@ResponseBody
+	public Result deleteMyTask(@RequestBody Map<String, Object> models, HttpServletRequest request) {
+		Integer loginId = (Integer) request.getSession().getAttribute(AdminUserService.LOGIN_SESSION_KEY);
+		String ids = (String) models.get("ids");
+		if (!StringUtils.isNotBlank(ids)) {
+			return new Result(ResultEnum.DATA_ERROR.getCode(), "操作失败，id不能为空");
+		}
+		if (projectTaskUserService.logicalDeleteByTaskId(ids, loginId)) {
+			return new Result(ResultEnum.SUCCESS);
+		} else {
+			return new Result(ResultEnum.FAIL);
+		}
+	}
+
 }
