@@ -94,14 +94,16 @@ public class AttendanceApplicationController
 			criteria.andEqualTo("state", attendanceApplication.getState());
 		}
 		if (null != attendanceApplication.getStartDate()) {
-		    Date startDate = attendanceApplication.getStartDate();
-            Calendar ct = Calendar.getInstance();
-            ct.setTime(startDate);
-            ct.add(Calendar.MONTH, +1);
-            Date endDate = ct.getTime();
-            criteria.andGreaterThanOrEqualTo("startDate", startDate);
-            criteria.andLessThan("endDate", endDate);
+            criteria.andGreaterThanOrEqualTo("startDate", attendanceApplication.getStartDate());
         }
+		if (null != attendanceApplication.getEndDate()) {
+			Date date = attendanceApplication.getEndDate();
+			Calendar ct = Calendar.getInstance();
+			ct.setTime(date);
+			ct.add(Calendar.DATE, +1);
+			Date endDate = ct.getTime();
+			criteria.andLessThan("startDate", endDate);
+		}
 		criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
 		setExample(example);
 		return list(page);
