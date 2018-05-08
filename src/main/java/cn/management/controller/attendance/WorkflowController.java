@@ -76,16 +76,15 @@ public class WorkflowController {
 
     /**
      * 查看流程图
-     * @param models
+     * @param deploymentId
+     * @param imageName
      * @param response
      * @return
      * @throws IOException
      */
     @RequestMapping("/image")
     @RequiresPermissions("attendanceWorkflow:image")
-    public String viewImage(@RequestBody Map<String, Object> models, HttpServletResponse response) throws IOException {
-        String deploymentId = (String) models.get("deploymentId");
-        String imageName = (String) models.get("imageName");
+    public String viewImage(String deploymentId, String imageName, HttpServletResponse response) throws IOException {
         //获取图片输入流
         InputStream in = workflowService.findImageInputStream(deploymentId, imageName);
         //从response对象获取输出流

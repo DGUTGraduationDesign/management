@@ -1,6 +1,8 @@
 package cn.management.controller.attendance;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +81,27 @@ public class AttendanceApplicationController
 				criteria.andEqualTo("userId", attendanceApplication.getUserId());
 			}
 		}
+        // 汇总
+        if (AttendanceIdentityEnum.HR.getIdentity().equals(identity)) {
+            if (null != attendanceApplication.getUserId()) {
+                criteria.andEqualTo("userId", attendanceApplication.getUserId());
+            }
+        }
+		if (null != attendanceApplication.getType()) {
+			criteria.andEqualTo("type", attendanceApplication.getType());
+		}
 		if (null != attendanceApplication.getState()) {
 			criteria.andEqualTo("state", attendanceApplication.getState());
 		}
+		if (null != attendanceApplication.getStartDate()) {
+		    Date startDate = attendanceApplication.getStartDate();
+            Calendar ct = Calendar.getInstance();
+            ct.setTime(startDate);
+            ct.add(Calendar.MONTH, +1);
+            Date endDate = ct.getTime();
+            criteria.andGreaterThanOrEqualTo("startDate", startDate);
+            criteria.andLessThan("endDate", endDate);
+        }
 		criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
 		setExample(example);
 		return list(page);
