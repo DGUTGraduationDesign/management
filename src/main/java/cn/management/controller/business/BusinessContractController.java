@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 合同控制器
@@ -110,32 +110,87 @@ public class BusinessContractController extends BaseController<BusinessContractS
 
     /**
      * 下载报告
-     * @param contractId
+     * @param contractIds
      * @param request
      * @return
      */
     @RequestMapping("/download")
     @RequiresPermissions("businessContract:download")
-    public String download(String contractId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        BusinessContract businessContract = service.getItemById(Integer.valueOf(contractId));
-        String path = Commons.FILE_HOST + businessContract.getFilePath();
-        //创建jersey服务器，进行跨服务器下载
-        Client client = new Client();
-        //把文件关联到远程服务器
-        WebResource resource = client.resource(path);
-        //下载
-        File file = resource.get(File.class);
-        InputStream inputStream = new FileInputStream(file);
-        //内存中的缓存区
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int date = -1;
-        while ((date = bis.read()) != -1) {
-            baos.write(date);
+    public String download(String contractIds, HttpServletRequest request, HttpServletResponse response) throws IOException, SysException {
+        List<BusinessContract> list = new ArrayList<BusinessContract>();
+        String[] rId = contractIds.split(",");
+        for (String contractId : rId) {
+            BusinessContract contract = service.getItemById(Integer.valueOf(contractId));
+            if (null != contract) {
+                list.add(contract);
+            }
         }
-        inputStream.close();
+        if (null == list || 0 == list.size()) {
+            throw new SysException("文件不存在.");
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String fileName = "";
+        if (1 == list.size()) {
+            BusinessContract businessContract = list.get(0);
+            fileName = businessContract.getFileName();
+            String path = Commons.FILE_HOST + businessContract.getFilePath();
+            //创建jersey服务器，进行跨服务器下载
+            Client client = new Client();
+            //把文件关联到远程服务器
+            WebResource resource = client.resource(path);
+            //下载
+            File file = resource.get(File.class);
+            InputStream inputStream = new FileInputStream(file);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+        } else {
+            fileName = Commons.ZIP_NAME;
+            String zipPath = request.getSession().getServletContext().getRealPath(Commons.ZIP_PATH + "/" + Commons.ZIP_NAME);
+            //如果不存在则创建一个
+            File zipFile = new File(zipPath);
+            if (!zipFile.exists()) {
+                zipFile.createNewFile();
+            }
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(zipPath));
+            ZipOutputStream zos = new ZipOutputStream(bos);
+            ZipEntry ze = null;
+            //将所有需要下载的pdf文件都写入临时zip文件
+            for (BusinessContract businessContract : list) {
+                //创建jersey服务器，进行跨服务器读取文件
+                Client client = new Client();
+                String path = Commons.FILE_HOST + businessContract.getFilePath();
+                WebResource resource = client.resource(path);
+                File catalog = resource.get(File.class);
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(catalog));
+                ze = new ZipEntry(businessContract.getFileName());
+                zos.putNextEntry(ze);
+                int s = -1;
+                while ((s = bis.read()) != -1) {
+                    zos.write(s);
+                }
+                bis.close();
+            }
+            zos.flush();
+            zos.close();
+            //将zip输出到baos
+            InputStream inputStream = new FileInputStream(zipPath);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+            //删除临时文件
+            zipFile.delete();
+        }
         //文件下载
-        DownloadUtil.download(baos, request, response, businessContract.getFileName());
+        DownloadUtil.download(baos, request, response, fileName);
         return null;
     }
 

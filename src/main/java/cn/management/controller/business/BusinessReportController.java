@@ -4,6 +4,7 @@ import cn.management.controller.BaseController;
 import cn.management.domain.business.BusinessReport;
 import cn.management.enums.DeleteTypeEnum;
 import cn.management.enums.ResultEnum;
+import cn.management.exception.SysException;
 import cn.management.service.admin.AdminUserService;
 import cn.management.service.business.BusinessReportService;
 import cn.management.util.Commons;
@@ -25,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 报告控制器
@@ -111,32 +112,87 @@ public class BusinessReportController extends BaseController<BusinessReportServi
 
     /**
      * 下载报告
-     * @param reportId
+     * @param reportIds
      * @param request
      * @return
      */
     @RequestMapping("/download")
     @RequiresPermissions("businessReport:download")
-    public String download(String reportId, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
-        BusinessReport businessReport = service.getItemById(Integer.valueOf(reportId));
-        String path = Commons.FILE_HOST + businessReport.getFilePath();
-        //创建jersey服务器，进行跨服务器下载
-        Client client = new Client();
-        //把文件关联到远程服务器
-        WebResource resource = client.resource(path);
-        //下载
-        File file = resource.get(File.class);
-        InputStream inputStream = new FileInputStream(file);
-        //内存中的缓存区
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int date = -1;
-        while ((date = bis.read()) != -1) {
-            baos.write(date);
+    public String download(String reportIds, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException, SysException {
+        List<BusinessReport> list = new ArrayList<BusinessReport>();
+        String[] rId = reportIds.split(",");
+        for (String reportId : rId) {
+            BusinessReport report = service.getItemById(Integer.valueOf(reportId));
+            if (null != report) {
+                list.add(report);
+            }
         }
-        inputStream.close();
+        if (null == list || 0 == list.size()) {
+            throw new SysException("文件不存在.");
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String fileName = "";
+        if (1 == list.size()) {
+            BusinessReport businessReport = list.get(0);
+            fileName = businessReport.getFileName();
+            String path = Commons.FILE_HOST + businessReport.getFilePath();
+            //创建jersey服务器，进行跨服务器下载
+            Client client = new Client();
+            //把文件关联到远程服务器
+            WebResource resource = client.resource(path);
+            //下载
+            File file = resource.get(File.class);
+            InputStream inputStream = new FileInputStream(file);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+        } else {
+            fileName = Commons.ZIP_NAME;
+            String zipPath = request.getSession().getServletContext().getRealPath(Commons.ZIP_PATH + "/" + Commons.ZIP_NAME);
+            //如果不存在则创建一个
+            File zipFile = new File(zipPath);
+            if (!zipFile.exists()) {
+                zipFile.createNewFile();
+            }
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(zipPath));
+            ZipOutputStream zos = new ZipOutputStream(bos);
+            ZipEntry ze = null;
+            //将所有需要下载的pdf文件都写入临时zip文件
+            for (BusinessReport businessReport : list) {
+                //创建jersey服务器，进行跨服务器读取文件
+                Client client = new Client();
+                String path = Commons.FILE_HOST + businessReport.getFilePath();
+                WebResource resource = client.resource(path);
+                File catalog = resource.get(File.class);
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(catalog));
+                ze = new ZipEntry(businessReport.getFileName());
+                zos.putNextEntry(ze);
+                int s = -1;
+                while ((s = bis.read()) != -1) {
+                    zos.write(s);
+                }
+                bis.close();
+            }
+            zos.flush();
+            zos.close();
+            //将zip输出到baos
+            InputStream inputStream = new FileInputStream(zipPath);
+            //内存中的缓存区
+            BufferedInputStream bis = new BufferedInputStream(inputStream);
+            int date = -1;
+            while ((date = bis.read()) != -1) {
+                baos.write(date);
+            }
+            inputStream.close();
+            //删除临时文件
+            zipFile.delete();
+        }
         //文件下载
-        DownloadUtil.download(baos, request, response, businessReport.getFileName());
+        DownloadUtil.download(baos, request, response, fileName);
         return null;
     }
 

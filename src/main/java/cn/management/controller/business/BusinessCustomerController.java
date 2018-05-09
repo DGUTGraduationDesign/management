@@ -19,6 +19,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +48,19 @@ public class BusinessCustomerController extends BaseController<BusinessCustomerS
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);
         return list(page);
+    }
+
+    /**
+     * 查询所有客户
+     * @return
+     */
+    @RequestMapping("/listAll")
+    @ResponseBody
+    public Result listAll() {
+        BusinessCustomer condition = new BusinessCustomer();
+        condition.setDelFlag(DeleteTypeEnum.DELETED_FALSE.getVal());
+        List<BusinessCustomer> list = service.getItems(condition);
+        return new Result(ResultEnum.SUCCESS, list);
     }
 
     /**
