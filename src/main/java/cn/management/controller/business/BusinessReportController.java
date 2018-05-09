@@ -111,15 +111,14 @@ public class BusinessReportController extends BaseController<BusinessReportServi
 
     /**
      * 下载报告
-     * @param models
+     * @param reportId
      * @param request
      * @return
      */
     @RequestMapping("/download")
     @RequiresPermissions("businessReport:download")
-    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
-        Integer reportId = (Integer) models.get("reportId");
-        BusinessReport businessReport = service.getItemById(reportId);
+    public String download(String reportId, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
+        BusinessReport businessReport = service.getItemById(Integer.valueOf(reportId));
         String path = Commons.FILE_HOST + businessReport.getFilePath();
         //创建jersey服务器，进行跨服务器下载
         Client client = new Client();

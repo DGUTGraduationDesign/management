@@ -110,15 +110,14 @@ public class BusinessContractController extends BaseController<BusinessContractS
 
     /**
      * 下载报告
-     * @param models
+     * @param contractId
      * @param request
      * @return
      */
     @RequestMapping("/download")
     @RequiresPermissions("businessContract:download")
-    public String download(@RequestBody Map<String, Object> models, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer contractId = (Integer) models.get("contractId");
-        BusinessContract businessContract = service.getItemById(contractId);
+    public String download(String contractId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BusinessContract businessContract = service.getItemById(Integer.valueOf(contractId));
         String path = Commons.FILE_HOST + businessContract.getFilePath();
         //创建jersey服务器，进行跨服务器下载
         Client client = new Client();
