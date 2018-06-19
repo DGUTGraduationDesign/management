@@ -16,7 +16,9 @@ public interface AdminUserService extends BaseService<AdminUserMapper, AdminUser
     /**
      * 用户登录 session key
      */
-    String LOGIN_SESSION_KEY = "admin_user_session";
+    String LOGIN_SESSION_KEY = "admin_user_id_session";
+
+    String LOGIN_USER_SESSION_KEY = "admin_user_session";
     
     /**
      * 用户登录

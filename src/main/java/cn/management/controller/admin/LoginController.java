@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.management.annotation.OptLog;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -43,6 +44,7 @@ public class LoginController {
      * @param request
      * @return
      */
+    @OptLog(msg = "登录")
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result doLogin(@RequestBody Map<String, Object> models, HttpServletRequest request) {
@@ -58,6 +60,7 @@ public class LoginController {
             //登录成功时，就从Shiro中取出用户的登录信息
             AdminUser user = (AdminUser)subject.getPrincipal();
             request.getSession().setAttribute(AdminUserService.LOGIN_SESSION_KEY, user.getId());
+            request.getSession().setAttribute(AdminUserService.LOGIN_USER_SESSION_KEY, user);
             return new Result(ResultEnum.SUCCESS.getCode(), "登录成功！", user.getRoleList());
         } catch (AuthenticationException e) {
             return new Result(ResultEnum.FAIL.getCode(), "用户名或密码错误！");
