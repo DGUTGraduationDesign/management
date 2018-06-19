@@ -3,6 +3,7 @@ package cn.management.controller.admin;
 import java.util.List;
 import java.util.Map;
 
+import cn.management.annotation.OptLog;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -102,6 +103,7 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
      * @return
      * @throws SysException 
      */
+    @OptLog(msg = "添加了用户,name:{adminUser.realName},id:{adminUser.id}")
     @RequestMapping("/add")
     @RequiresPermissions("adminUser:add")
     @ResponseBody
