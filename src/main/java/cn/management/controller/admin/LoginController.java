@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import cn.management.annotation.OptLog;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -45,6 +46,7 @@ public class LoginController {
      * @return
      */
     @OptLog(msg = "登录")
+    @ApiOperation(value = "用户登录")
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result doLogin(@RequestBody Map<String, Object> models, HttpServletRequest request) {
@@ -82,6 +84,8 @@ public class LoginController {
      * @param request
      * @return
      */
+    @OptLog(msg = "注销")
+    @ApiOperation(value = "用户注销")
     @RequestMapping("/logout")
     @ResponseBody
     public Result logout(HttpServletRequest request) {

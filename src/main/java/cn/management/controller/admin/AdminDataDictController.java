@@ -3,9 +3,12 @@ package cn.management.controller.admin;
 import java.util.Date;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +29,7 @@ import tk.mybatis.mapper.entity.Example;
  * @author ZhouJiaKai
  * @date 2018-03-05
  */
-
+@Api(tags = "数据字典控制器")
 @Controller
 @RequestMapping("admin/dataDict")
 public class AdminDataDictController extends BaseController<AdminDataDictService, AdminDataDict> {
@@ -36,7 +39,8 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @param models
      * @return
      */
-    @RequestMapping("/index")
+    @ApiOperation(value = "数据字典列表", notes = "可以传递两个参数:{dictDesc(字典描述)}")
+    @PostMapping("/index")
     @RequiresPermissions("adminDataDict:list")
     @ResponseBody
     public Result index(@RequestBody Map<String, Object> models) {
@@ -61,7 +65,8 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @return
      * @throws SysException 
      */
-    @RequestMapping("/add")
+    @ApiOperation(value = "添加数据字典")
+    @PostMapping("/add")
     @RequiresPermissions("adminDataDict:add")
     @ResponseBody
     public Result add(@RequestBody AdminDataDict adminDataDict) throws SysException {
@@ -80,7 +85,8 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
      * @return
      * @throws SysException 
      */
-    @RequestMapping("/edit")
+    @ApiOperation(value = "更改数据字典")
+    @PostMapping("/edit")
     @RequiresPermissions("adminDataDict:edit")
     @ResponseBody
     public Result edit(@RequestBody AdminDataDict adminDataDict) throws SysException {
@@ -94,10 +100,11 @@ public class AdminDataDictController extends BaseController<AdminDataDictService
     
     /**
      * 批量删除数据字典
-     * @param ids
+     * @param models
      * @return
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除数据字典", notes = "根据id删除数据字典,接收id的json数据 {'id':['1','2',..]}")
+    @PostMapping("/delete")
     @RequiresPermissions("adminDataDict:delete")
     @ResponseBody
     public Result delete(@RequestBody Map<String, Object> models) {
