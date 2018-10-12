@@ -33,7 +33,7 @@ import tk.mybatis.mapper.entity.Example;
 @Controller
 @RequestMapping("admin/dataDict")
 public class AdminDataDictController extends BaseController<AdminDataDictService, AdminDataDict> {
-	
+
 	/**
      * 条件数据字典列表
      * @param models

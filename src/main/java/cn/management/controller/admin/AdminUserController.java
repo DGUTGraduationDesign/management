@@ -24,6 +24,8 @@ import cn.management.service.admin.AdminUserService;
 import cn.management.util.Result;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 员工控制器
  * @author ZhouJiaKai
@@ -95,6 +97,43 @@ public class AdminUserController extends BaseController<AdminUserService, AdminU
         criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
         setExample(example);
         return list(page);
+    }
+
+    @RequestMapping("/indexUser")
+    @RequiresPermissions("adminUser:list")
+    @ResponseBody
+    public List<AdminUser> indexUser(HttpServletRequest request) {
+
+        Integer page = Integer.valueOf(request.getParameter("pageNumber"));
+        Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
+        String sortOrder = request.getParameter("sortOrder");
+
+        Example example = new Example(AdminUser.class);
+        Example.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotBlank(request.getParameter("realName"))) {
+            criteria.andLike("realName", "%" + request.getParameter("realName") + "%");
+        }
+        if (StringUtils.isNotBlank(request.getParameter("number"))) {
+            criteria.andEqualTo("number", request.getParameter("number"));
+        }
+        if (null != request.getParameter("deptId")) {
+            criteria.andEqualTo("deptId", request.getParameter("deptId"));
+        }
+        if (null != request.getParameter("postId")) {
+            criteria.andEqualTo("postId", request.getParameter("postId"));
+        }
+        if (StringUtils.isNotBlank(sortOrder) && "asc".equals(sortOrder)) {
+            example.setOrderByClause("create_time asc");
+        } else {
+            example.setOrderByClause("create_time desc");
+        }
+        criteria.andEqualTo("delFlag", DeleteTypeEnum.DELETED_FALSE.getVal());
+        setPageSize(pageSize);
+        setExample(example);
+        //return list(page);
+
+        List<AdminUser> list = service.getItemsByPage(getExample(), page, getPageSize());
+        return list;
     }
     
     /**

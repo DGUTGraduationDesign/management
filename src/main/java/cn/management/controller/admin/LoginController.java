@@ -39,6 +39,11 @@ public class LoginController {
     public String login() {
         return "admin/login";
     }
+
+    @RequestMapping("/index")
+    public String index() {
+        return "index";
+    }
     
     /**
      * 用户登录

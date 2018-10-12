@@ -1,11 +1,101 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title></title>
-</head>
-<body>
-    <!-- <img src="http://localhost:8090/images/top2.jpg" /> -->
-    login success!
-</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Admin Template</title>
+        <meta charset="UTF-8">
+        <!--BootStrap设计的页面支持响应式的 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+        <!--引入BootStrap的CSS-->
+        <link th:href="@{/css/bootstrap.css}" type="text/css" rel="stylesheet" />
+        <!--引入通用css-->
+        <link th:href="@{/css/common.css}" type="text/css" rel="stylesheet" />
+        <!--引入BootStrap的CSS-->
+        <link th:href="@{/css/bootstrap.css}" type="text/css" rel="stylesheet" />
+        <!--引入BootStrap-table的CSS-->
+        <link th:href="@{/css/bootstrap-table.css}" type="text/css" rel="stylesheet" />
+        <!--引入JQuery的JS文件：JQuery的JS文件要在BootStrap的js的文件的前面引入-->
+        <script type="text/javascript" th:src="@{/js/jquery-2.1.0.min.js}"></script>
+        <!--引入BootStrap的JS的文件-->
+        <script type="text/javascript" th:src="@{/js/bootstrap.js}"></script>
+        <!--引入BootStrap-table的JS的文件-->
+        <script type="text/javascript" th:src="@{/js/bootstrap-table.js}"></script>
+        <!--汉化文件，放在 bootstrap-table.js 后面-->
+        <script type="text/javascript" th:src="@{/js/bootstrap-table-zh-CN.js}"></script>
+    </head>
+
+    <body onload="initTable()">
+        <!-- <img src="http://localhost:8090/images/top2.jpg" /> -->
+        <!-- login success! -->
+        <div class="col-xs-12 col-md-12 col-lg-12">
+            <div class="col-xs-6 col-md-6 col-lg-6">
+                <table id="test-table" class="col-xs-6 col-md-6 col-lg-6"></table>
+            </div>
+            <div class="col-xs-6 col-md-6 col-lg-6"></div>
+        </div>
+    </body>
+
+    <script type="text/javascript">
+        function initTable(){
+            //先销毁表格
+            $('#test-table').bootstrapTable('destroy');
+            //初始化表格,动态从服务器加载数据
+            $('#test-table').bootstrapTable({
+                method: 'get',
+                //toolbar: '#toolbar',    //工具按钮用哪个容器
+                striped: true,      //是否显示行间隔色
+                cache: false,      //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,     //是否显示分页（*）
+                sortable: false,      //是否启用排序
+                sortOrder: "asc",     //排序方式
+                pageNumber:1,      //初始化加载第一页，默认第一页
+                pageSize: 10,      //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],  //可供选择的每页的行数（*）
+                url: "http://localhost:8090/admin/manager/indexUser",//接口路径
+                queryParamsType : "undefined",
+                queryParams: function queryParams(params) {   //设置查询参数
+                    var param = {
+                        pageNumber: params.pageNumber,
+                        pageSize: params.pageSize
+                        //orderNum : $("#orderNum").val()   //自定义条件
+                    };
+                    return param;
+                },
+                sidePagination: "server",   //分页方式：client客户端分页，server服务端分页（*）
+                //search: true,      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                //showColumns: true,     //是否显示所有的列
+                //showRefresh: true,     //是否显示刷新按钮
+                minimumCountColumns: 2,    //最少允许的列数
+                clickToSelect: true,    //是否启用点击选中行
+                searchOnEnterKey: true,
+                columns: [{
+                    checkbox: true,
+                    visible: true                  //是否显示复选框
+                },{
+                    field: 'id',
+                    title: 'id',
+                    align: 'center'
+                },{
+                    field: 'loginName',
+                    title: '用户名',
+                    align: 'center'
+                },{
+                    field: 'realName',
+                    title: '姓名',
+                    align: 'center'
+                },{
+                    field: 'id',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<button class="btn btn-primary btn-sm" onclick="del(\'' + row.id + '\')">删除</button>';
+                    }
+                }],
+                pagination:true
+            });
+        }
+    </script>
+
 </html>

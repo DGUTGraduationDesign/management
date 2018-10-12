@@ -164,9 +164,10 @@
                 data:JSON.stringify({"loginName":loginName,"password":password}),
                 dataType:"json",  
                 contentType:"application/json;charset=utf-8",
-                url: "http://123.207.255.83:8080/management/admin/doLogin",
+                url: "http://localhost:8090/admin/doLogin",
                 success:function(result) {
-                	alert(result.message)
+                	//alert(result.message)
+                    window.location.href = "http://localhost:8090/admin/index";
                 }
             });
         }
